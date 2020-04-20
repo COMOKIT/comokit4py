@@ -16,6 +16,7 @@
 
 import sys
 import numpy
+import itertools 
 
 #
 #	VARIABLES
@@ -120,7 +121,7 @@ except:
 #
 
 # 1 _ Gather all parameters
-print(gamlFilePath)
+# 
 with open(gamlFilePath) as f:
 	for l in f.readlines():
 		if "parameter" in l: 
@@ -129,14 +130,18 @@ with open(gamlFilePath) as f:
 				parametersList.append( extractParametersAttributes( l.strip()  ) )
 
 # 2 _ Create list of possible values for every parameters
+# 
+allParamValues = []
 for parameter in parametersList:
 	t = []
 	for i in numpy.arange(float(parameter["value_min"]), float(parameter["value_max"]) + float(parameter["value_step"]), float(parameter["value_step"])):
 		t.append(i)
-	parameter["values"] = t
-
-print(parametersList)
+	allParamValues.append( t )
 
 # 3 _ Calculate all the possible universe
-# 
+#	https://www.geeksforgeeks.org/python-all-possible-permutations-of-n-lists/
+res = list(itertools.product(*allParamValues)) 
+print(len(res))
+
 # 4 _ Generate XML
+# 
