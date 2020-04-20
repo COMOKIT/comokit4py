@@ -15,6 +15,7 @@
 ##################################################
 
 import sys
+import numpy
 
 #
 #	VARIABLES
@@ -127,9 +128,15 @@ with open(gamlFilePath) as f:
 			if temp is not None:
 				parametersList.append( extractParametersAttributes( l.strip()  ) )
 
-print(parametersList)
 # 2 _ Create list of possible values for every parameters
-# 
+for parameter in parametersList:
+	t = []
+	for i in numpy.arange(float(parameter["value_min"]), float(parameter["value_max"]) + float(parameter["value_step"]), float(parameter["value_step"])):
+		t.append(i)
+	parameter["values"] = t
+
+print(parametersList)
+
 # 3 _ Calculate all the possible universe
 # 
 # 4 _ Generate XML
