@@ -26,11 +26,70 @@ parametersList = []
 #	FUNCTIONS
 #
 
+def removeEndLine (splittedLine):
+	try:
+		result = splittedLine.split(";")[0].split(":")[0].split(" ")[-2]
+		if result == "":
+			raise
+	except:
+		result = splittedLine.split(";")[0]
+
+	return result
+
 def extract_ExperimentLine( line ):
-	return line
+	result = {
+		"name" : "",
+		"type": "INT",
+		"value_inital": "",
+		"value_min": "0",
+		"value_max": "",
+		"value_step": "1",
+		"varName": ""
+	}
+
+	result["name"] = line.split("\"")[1]
+	result["varName"] = removeEndLine( line.split("var:")[1] )
+	result["value_inital"] = removeEndLine( line.split("init:")[1] )
+
+	if isinstance(result["value_inital"], bool):
+		result["value_min"] = "0"
+		result["value_max"] = "1"
+		result["value_step"] = "1"
+		result["type"] = "BOOL"
+
+	else:
+		result["value_min"] = removeEndLine( line.split("min:")[1] )
+		result["value_max"] = removeEndLine( line.split("max:")[1] )
+		result["value_step"] = removeEndLine( line.split("step:")[1] )
+		
+		if '.' in result["value_inital"]: 
+			result["type"] = "FLOAT"
+
+
+	return result
 
 def extract_VariableLine( line ):
-	return line
+	result = {
+		"name" : "",
+		"type": "INT",
+		"value_inital": "",
+		"value_min": "0",
+		"value_max": "",
+		"value_step": "1",
+		"varName": ""
+	}
+
+	result["name"] = result["varName"] = removeEndLine( line.split(" ")[1] )
+	result["type"] = line.split(" ")[0].capitalize()
+	result["value_inital"] = removeEndLine( line.split("<-")[1] )
+	if result["type"] == "BOOL":
+		result["value_max"] = "1"
+	else:
+		result["value_min"] = removeEndLine( line.split("min:")[1] )
+		result["value_max"] = removeEndLine( line.split("max:")[1] )
+		result["value_step"] = removeEndLine( line.split("step:")[1] )
+	
+	return result
 
 def extractParametersAttributes( parameterLine ):
 	stringExtractor = parameterLine[0:2]
