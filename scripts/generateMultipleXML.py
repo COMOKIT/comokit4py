@@ -109,16 +109,17 @@ def extractParametersAttributes( parameterLine ):
 
 	return result
 
-try:
-	[t, expName, gamlFilePath, xmlFilePath] = sys.argv
-except:
-	print("Please use this script as followed :\n$ python3 generateMultipleXML.py experimentName /path/to/file.gaml /path/to/export.xml")
-	raise
 
 
 #
 #	MAIN
 #
+
+try:
+	[t, expName, gamlFilePath, xmlFilePath] = sys.argv
+except:
+	print("Please use this script as followed :\n$ python3 generateMultipleXML.py experimentName /path/to/file.gaml /path/to/export.xml")
+	raise
 
 # 1 _ Gather all parameters
 # 
@@ -140,8 +141,30 @@ for parameter in parametersList:
 
 # 3 _ Calculate all the possible universe
 #	https://www.geeksforgeeks.org/python-all-possible-permutations-of-n-lists/
-res = list(itertools.product(*allParamValues)) 
-print(len(res))
+allParamValues = list(itertools.product(*allParamValues)) 
 
 # 4 _ Generate XML
 # 
+import xml.etree.ElementTree as ET
+
+root = ET.Element("Experiment_plan")
+for k in range(len(allParamValues)):
+	for i in range(10):
+		simu = ET.SubElement(root, "Simulation", {
+			"id"		: str(i),
+			"experiment": expName,
+			"finalStep"	: "5000",
+			"sourcePath": gamlFilePath
+			})
+		parameters = ET.SubElement(simu, "Parameters")
+		for j in range(len(parametersList)):
+			ET.SubElement(parameters, "Parameter", {
+				"name"	: parametersList[j]["name"],
+				"type"	: parametersList[j]["type"],
+				"value" : str(allParamValues[k][j]),
+				"var"	: parametersList[j]["varName"]
+				})
+		ET.SubElement(simu, "Outputs")
+
+tree = ET.ElementTree(root)
+tree.write(xmlFilePath)
