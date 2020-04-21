@@ -17,6 +17,7 @@
 import sys
 import numpy
 import itertools 
+import xml.etree.ElementTree as ET
 
 #
 #	VARIABLES
@@ -136,6 +137,8 @@ with open(gamlFilePath) as f:
 			if temp is not None:
 				parametersList.append( extractParametersAttributes( l.strip()  ) )
 
+print("Total number of parameters detected : " + str(len(parametersList)))
+
 # 2 _ Create list of possible values for every parameters
 # 
 allParamValues = []
@@ -149,10 +152,11 @@ for parameter in parametersList:
 #	https://www.geeksforgeeks.org/python-all-possible-permutations-of-n-lists/
 allParamValues = list(itertools.product(*allParamValues)) 
 
+print("Total number of possible combinaison : " + str(len(allParamValues)))
+
 # 4 _ Generate XML
 # 
-import xml.etree.ElementTree as ET
-
+print("=== Start generating XML file :\n(every dot will be a simulation with all the replications created)")
 root = ET.Element("Experiment_plan")
 # Every dot in the explorable universe
 for k in range(len(allParamValues)):
@@ -174,6 +178,10 @@ for k in range(len(allParamValues)):
 				"var"	: parametersList[j]["varName"]
 				})
 		ET.SubElement(simu, "Outputs")
+	sys.stdout.write('.')
+	sys.stdout.flush()
 
+print("\n=== Start saving XML file")
 tree = ET.ElementTree(root)
 tree.write(xmlFilePath)
+print("\n=== Done ;)")
