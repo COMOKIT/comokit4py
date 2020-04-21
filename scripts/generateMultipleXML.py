@@ -177,6 +177,12 @@ for k in range(len(allParamValues)):
 				"value" : str(allParamValues[k][j]),
 				"var"	: parametersList[j]["varName"]
 				})
+		# Set simulation id for csv name
+		ET.SubElement(parameters, "Parameter", {
+			"type"	: "INT",
+			"value" : str( len(list(root.iter("Simulation"))) ),
+			"var"	: "idSimulation"
+			})
 		ET.SubElement(simu, "Outputs")
 	sys.stdout.write('.')
 	sys.stdout.flush()
