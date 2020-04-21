@@ -163,7 +163,7 @@ for k in range(len(allParamValues)):
 	# Number of replication for every simulation
 	for i in range(1000):
 		simu = ET.SubElement(root, "Simulation", {
-			"id"		: str(k),
+			"id"		: str( len(list(root.iter("Simulation"))) ),
 			"experiment": expName,
 			"finalStep"	: "5000",
 			"sourcePath": gamlFilePath
