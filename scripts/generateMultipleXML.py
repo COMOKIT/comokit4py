@@ -107,6 +107,12 @@ def extractParametersAttributes( parameterLine ):
 	else :
 		result = extract_VariableLine(parameterLine)
 
+	#check if the variable hasn't already be saved
+	for p in parametersList:
+		if result != None and result["varName"] == p["varName"]:
+			result = None
+			break
+
 	return result
 
 
@@ -148,15 +154,18 @@ allParamValues = list(itertools.product(*allParamValues))
 import xml.etree.ElementTree as ET
 
 root = ET.Element("Experiment_plan")
+# Every dot in the explorable universe
 for k in range(len(allParamValues)):
-	for i in range(10):
+	# Number of replication for every simulation
+	for i in range(1000):
 		simu = ET.SubElement(root, "Simulation", {
-			"id"		: str(i),
+			"id"		: str(k),
 			"experiment": expName,
 			"finalStep"	: "5000",
 			"sourcePath": gamlFilePath
 			})
 		parameters = ET.SubElement(simu, "Parameters")
+		# Set values for every parameters in the experiment
 		for j in range(len(parametersList)):
 			ET.SubElement(parameters, "Parameter", {
 				"name"	: parametersList[j]["name"],
