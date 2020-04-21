@@ -166,7 +166,8 @@ for k in range(len(allParamValues)):
 			"id"		: str( len(list(root.iter("Simulation"))) ),
 			"experiment": expName,
 			"finalStep"	: "5000",
-			"sourcePath": gamlFilePath
+			"sourcePath": gamlFilePath,
+			"until"		: "sim_stop()"
 			})
 		parameters = ET.SubElement(simu, "Parameters")
 		# Set values for every parameters in the experiment
