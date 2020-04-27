@@ -127,10 +127,10 @@ if __name__ == '__main__':
 	# 0 _ Get/Set parameters
 	# 
 	parser = argparse.ArgumentParser()
-	parser.add_argument('-xml', nargs = 3, help = 'some ids')
-	parser.add_argument('-r', '--replication', help="Number of replication for each paramater space", default=1000, type=int)
-	parser.add_argument('-s', '--split', help="Split XML file every S replications", default=1000, type=int)
-	parser.add_argument('-f', '--final', help="Final step for simulations", default=5000, type=int)
+	parser.add_argument('-r', '--replication', metavar='INT', help="Number of replication for each paramater space", default=1000, type=int)
+	parser.add_argument('-s', '--split', metavar='INT', help="Split XML file every S replications", default=1000, type=int)
+	parser.add_argument('-f', '--final', metavar='INT', help="Final step for simulations", default=5000, type=int)
+	parser.add_argument('-xml', metavar=("<experiment name>", "/path/to/file.gaml", "/path/to/file.xml"), nargs = 3, help = 'Classical xml arguments', required=True)
 	args = parser.parse_args()
 
 	expName, gamlFilePath, xmlFilePath = args.xml
