@@ -129,6 +129,7 @@ if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-xml', nargs = 3, help = 'some ids')
 	parser.add_argument('-r', '--replication', help="Number of replication for each paramater space", default=1000, type=int)
+	parser.add_argument('-s', '--split', help="Split XML file every S replications", default=1000, type=int)
 	args = parser.parse_args()
 
 	expName, gamlFilePath, xmlFilePath = args.xml
@@ -165,6 +166,7 @@ if __name__ == '__main__':
 	# 
 	print("=== Start generating XML file :\n(every dot will be a simulation with all the replications created)")
 	root = ET.Element("Experiment_plan")
+	xmlNumber = 0
 	# Every dot in the explorable universe
 	for k in range(len(allParamValues)):
 		# Number of replication for every simulation
@@ -191,10 +193,21 @@ if __name__ == '__main__':
 				"var"	: "idSimulation"
 				})
 			ET.SubElement(simu, "Outputs")
+
+			if( len(list(root)) >= args.split ):
+				tree = ET.ElementTree(root)
+				tree.write(xmlFilePath[:-4]+"-"+str(xmlNumber)+".xml")
+				
+				root = ET.Element("Experiment_plan");
+				xmlNumber = xmlNumber + 1
+
 		sys.stdout.write('.')
 		sys.stdout.flush()
 
 	print("\n=== Start saving XML file")
 	tree = ET.ElementTree(root)
-	tree.write(xmlFilePath)
+	if xmlNumber == 0:
+		tree.write(xmlFilePath)
+	else:
+		tree.write(xmlFilePath[:-4]+"-"+str(xmlNumber)+".xml")
 	print("\n=== Done ;)")
