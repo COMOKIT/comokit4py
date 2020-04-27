@@ -130,6 +130,7 @@ if __name__ == '__main__':
 	parser.add_argument('-xml', nargs = 3, help = 'some ids')
 	parser.add_argument('-r', '--replication', help="Number of replication for each paramater space", default=1000, type=int)
 	parser.add_argument('-s', '--split', help="Split XML file every S replications", default=1000, type=int)
+	parser.add_argument('-f', '--final', help="Final step for simulations", default=5000, type=int)
 	args = parser.parse_args()
 
 	expName, gamlFilePath, xmlFilePath = args.xml
@@ -174,7 +175,7 @@ if __name__ == '__main__':
 			simu = ET.SubElement(root, "Simulation", {
 				"id"		: str( len(list(root.iter("Simulation"))) ),
 				"experiment": expName,
-				"finalStep"	: "5000",
+				"finalStep"	: str(args.final),
 				"sourcePath": gamlFilePath
 				})
 			parameters = ET.SubElement(simu, "Parameters")
