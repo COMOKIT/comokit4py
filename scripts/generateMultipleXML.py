@@ -18,6 +18,7 @@ import sys
 import numpy
 import itertools 
 import xml.etree.ElementTree as ET
+import argparse
 
 #
 #	VARIABLES
@@ -121,74 +122,78 @@ def extractParametersAttributes( parameterLine ):
 #
 #	MAIN
 #
+if __name__ == '__main__':
 
-try:
-	[t, expName, gamlFilePath, xmlFilePath] = sys.argv
-except:
-	print("Please use this script as followed :\n$ python3 generateMultipleXML.py experimentName /path/to/file.gaml /path/to/export.xml")
-	raise
+	# 0 _ Get/Set parameters
+	# 
+	parser = argparse.ArgumentParser()
+	parser.add_argument('-xml', nargs = 3, help = 'some ids')
+	args = parser.parse_args()
 
-# 1 _ Gather all parameters
-# 
-with open(gamlFilePath) as f:
-	for l in f.readlines():
-		if "parameter" in l: 
-			temp = extractParametersAttributes( l.strip()  )
-			if temp is not None:
-				parametersList.append( extractParametersAttributes( l.strip()  ) )
+	expName, gamlFilePath, xmlFilePath = args.xml
+	
+	# 1 _ Gather all parameters
+	# 
+	with open(gamlFilePath) as f:
+		for l in f.readlines():
+			if "parameter" in l: 
+				temp = extractParametersAttributes( l.strip()  )
+				if temp is not None:
+					parametersList.append( extractParametersAttributes( l.strip()  ) )
+			#if expName in l:
 
-print("Total number of parameters detected : " + str(len(parametersList)))
 
-# 2 _ Create list of possible values for every parameters
-# 
-allParamValues = []
-for parameter in parametersList:
-	t = []
-	for i in numpy.arange(float(parameter["value_min"]), float(parameter["value_max"]) + float(parameter["value_step"]), float(parameter["value_step"])):
-		t.append(i)
-	allParamValues.append( t )
+	print("Total number of parameters detected : " + str(len(parametersList)))
 
-# 3 _ Calculate all the possible universe
-#	https://www.geeksforgeeks.org/python-all-possible-permutations-of-n-lists/
-allParamValues = list(itertools.product(*allParamValues)) 
+	# 2 _ Create list of possible values for every parameters
+	# 
+	allParamValues = []
+	for parameter in parametersList:
+		t = []
+		for i in numpy.arange(float(parameter["value_min"]), float(parameter["value_max"]) + float(parameter["value_step"]), float(parameter["value_step"])):
+			t.append(i)
+		allParamValues.append( t )
 
-print("Total number of possible combinaison : " + str(len(allParamValues)))
+	# 3 _ Calculate all the possible universe
+	#	https://www.geeksforgeeks.org/python-all-possible-permutations-of-n-lists/
+	allParamValues = list(itertools.product(*allParamValues)) 
 
-# 4 _ Generate XML
-# 
-print("=== Start generating XML file :\n(every dot will be a simulation with all the replications created)")
-root = ET.Element("Experiment_plan")
-# Every dot in the explorable universe
-for k in range(len(allParamValues)):
-	# Number of replication for every simulation
-	for i in range(1000):
-		simu = ET.SubElement(root, "Simulation", {
-			"id"		: str( len(list(root.iter("Simulation"))) ),
-			"experiment": expName,
-			"finalStep"	: "5000",
-			"sourcePath": gamlFilePath,
-			"until"		: "sim_stop()"
-			})
-		parameters = ET.SubElement(simu, "Parameters")
-		# Set values for every parameters in the experiment
-		for j in range(len(parametersList)):
-			ET.SubElement(parameters, "Parameter", {
-				"name"	: parametersList[j]["name"],
-				"type"	: parametersList[j]["type"],
-				"value" : str(allParamValues[k][j]),
-				"var"	: parametersList[j]["varName"]
+	print("Total number of possible combinaison : " + str(len(allParamValues)))
+
+	# 4 _ Generate XML
+	# 
+	print("=== Start generating XML file :\n(every dot will be a simulation with all the replications created)")
+	root = ET.Element("Experiment_plan")
+	# Every dot in the explorable universe
+	for k in range(len(allParamValues)):
+		# Number of replication for every simulation
+		for i in range(1000):
+			simu = ET.SubElement(root, "Simulation", {
+				"id"		: str( len(list(root.iter("Simulation"))) ),
+				"experiment": expName,
+				"finalStep"	: "5000",
+				"sourcePath": gamlFilePath
 				})
-		# Set simulation id for csv name
-		ET.SubElement(parameters, "Parameter", {
-			"type"	: "INT",
-			"value" : str( len(list(root.iter("Simulation"))) ),
-			"var"	: "idSimulation"
-			})
-		ET.SubElement(simu, "Outputs")
-	sys.stdout.write('.')
-	sys.stdout.flush()
+			parameters = ET.SubElement(simu, "Parameters")
+			# Set values for every parameters in the experiment
+			for j in range(len(parametersList)):
+				ET.SubElement(parameters, "Parameter", {
+					"name"	: parametersList[j]["name"],
+					"type"	: parametersList[j]["type"],
+					"value" : str(allParamValues[k][j]),
+					"var"	: parametersList[j]["varName"]
+					})
+			# Set simulation id for csv name
+			ET.SubElement(parameters, "Parameter", {
+				"type"	: "INT",
+				"value" : str( len(list(root.iter("Simulation"))) ),
+				"var"	: "idSimulation"
+				})
+			ET.SubElement(simu, "Outputs")
+		sys.stdout.write('.')
+		sys.stdout.flush()
 
-print("\n=== Start saving XML file")
-tree = ET.ElementTree(root)
-tree.write(xmlFilePath)
-print("\n=== Done ;)")
+	print("\n=== Start saving XML file")
+	tree = ET.ElementTree(root)
+	tree.write(xmlFilePath)
+	print("\n=== Done ;)")
