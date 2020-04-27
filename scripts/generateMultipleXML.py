@@ -128,6 +128,7 @@ if __name__ == '__main__':
 	# 
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-xml', nargs = 3, help = 'some ids')
+	parser.add_argument('-r', '--replication', help="Number of replication for each paramater space", default=1000, type=int)
 	args = parser.parse_args()
 
 	expName, gamlFilePath, xmlFilePath = args.xml
@@ -167,7 +168,7 @@ if __name__ == '__main__':
 	# Every dot in the explorable universe
 	for k in range(len(allParamValues)):
 		# Number of replication for every simulation
-		for i in range(1000):
+		for i in range(args.replication):
 			simu = ET.SubElement(root, "Simulation", {
 				"id"		: str( len(list(root.iter("Simulation"))) ),
 				"experiment": expName,
