@@ -131,7 +131,7 @@ if __name__ == '__main__':
 	# 
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-r', '--replication', metavar='INT', help="Number of replication for each paramater space", default=1000, type=int)
-	parser.add_argument('-s', '--split', metavar='INT', help="Split XML file every S replications", default=1000, type=int)
+	parser.add_argument('-s', '--split', metavar='INT', help="Split XML file every S replications", default=-1, type=int)
 	parser.add_argument('-f', '--final', metavar='INT', help="Final step for simulations", default=5000, type=int)
 	parser.add_argument('-xml', metavar=("<experiment name>", "/path/to/file.gaml", "/path/to/file.xml"), nargs = 3, help = 'Classical xml arguments', required=True)
 	args = parser.parse_args()
@@ -198,7 +198,7 @@ if __name__ == '__main__':
 				})
 			ET.SubElement(simu, "Outputs")
 
-			if( len(list(root)) >= args.split ):
+			if( len(list(root)) >= args.split and args.split != -1):
 				tree = ET.ElementTree(root)
 				tree.write(xmlFilePath[:-4]+"-"+str(xmlNumber)+".xml")
 				
