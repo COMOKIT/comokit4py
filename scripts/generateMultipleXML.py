@@ -51,24 +51,28 @@ def extract_ExperimentLine( line ):
 		"varName": ""
 	}
 
-	result["name"] = line.split("\"")[1]
 	result["varName"] = removeEndLine( line.split("var:")[1] )
-	result["value_inital"] = removeEndLine( line.split("init:")[1] )
 
-	if isinstance(result["value_inital"], bool):
-		result["value_min"] = "0"
-		result["value_max"] = "1"
-		result["value_step"] = "1"
-		result["type"] = "BOOL"
-
+	# Damien's particular variable
+	if result["varName"] == "force_parameters":
+		result = None
 	else:
-		result["value_min"] = removeEndLine( line.split("min:")[1] )
-		result["value_max"] = removeEndLine( line.split("max:")[1] )
-		result["value_step"] = removeEndLine( line.split("step:")[1] )
-		
-		if '.' in result["value_inital"]: 
-			result["type"] = "FLOAT"
+		result["name"] = line.split("\"")[1]
+		result["value_inital"] = removeEndLine( line.split("init:")[1] )
 
+		if isinstance(result["value_inital"], bool):
+			result["value_min"] = "0"
+			result["value_max"] = "1"
+			result["value_step"] = "1"
+			result["type"] = "BOOL"
+
+		else:
+			result["value_min"] = removeEndLine( line.split("min:")[1] )
+			result["value_max"] = removeEndLine( line.split("max:")[1] )
+			result["value_step"] = removeEndLine( line.split("step:")[1] )
+			
+			if '.' in result["value_inital"]: 
+				result["type"] = "FLOAT"
 
 	return result
 
@@ -162,7 +166,7 @@ if __name__ == '__main__':
 
 	# 3.1 _ Inform for whole parameters
 	print("\tReplications : " + str(args.replication))
-	print("\tNumber of file : " + str(args.split))
+	print("\tNumber of exp in file : " + str(args.split))
 	print("\tFinal step : " + str(args.final))
 
 	# 4 _ Generate XML
@@ -170,12 +174,16 @@ if __name__ == '__main__':
 	print("=== Start generating XML file :\n(every dot will be a simulation with all the replications created)")
 	root = ET.Element("Experiment_plan")
 	xmlNumber = 0
+	seed = -1
 	# Every dot in the explorable universe
 	for k in range(len(allParamValues)):
 		# Number of replication for every simulation
 		for i in range(args.replication):
+			seed = seed +1
+			
 			simu = ET.SubElement(root, "Simulation", {
 				"id"		: str( len(list(root.iter("Simulation"))) ),
+				"seed"		: str( seed ),
 				"experiment": expName,
 				"finalStep"	: str(args.final),
 				"sourcePath": gamlFilePath
