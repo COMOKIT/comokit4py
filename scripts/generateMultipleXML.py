@@ -102,6 +102,9 @@ def extractParametersAttributes( parameterLine ):
 	# It's a comment => Drop
 	if stringExtractor == "//":
 		pass
+	# Create simulation -> Wrong exp => Drop
+	elif stringExtractor == "cr":
+		pass
 	# It's without the experiment
 	elif stringExtractor == "pa":
 		result = extract_ExperimentLine(parameterLine)
