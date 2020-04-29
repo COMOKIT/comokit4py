@@ -99,18 +99,12 @@ def extractParametersAttributes( parameterLine ):
 	stringExtractor = parameterLine[0:2]
 	result = None
 	
-	# It's a comment => Drop
-	if stringExtractor == "//":
-		pass
-	# Create simulation -> Wrong exp => Drop
-	elif stringExtractor == "cr":
-		pass
-	# It's without the experiment
-	elif stringExtractor == "pa":
+	# It's an explicite parameter
+	if stringExtractor == "pa":
 		result = extract_ExperimentLine(parameterLine)
 	# It's within a facet
 	else :
-		result = extract_VariableLine(parameterLine)
+		pass
 
 	#check if the variable hasn't already be saved
 	for p in parametersList:
