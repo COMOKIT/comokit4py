@@ -166,6 +166,11 @@ if __name__ == '__main__':
 
 	print("Total number of possible combinaison : " + str(len(allParamValues)))
 
+	# 3.1 _ Inform for whole parameters
+	print("\tReplications : " + str(args.replication))
+	print("\tNumber of file : " + str(args.split))
+	print("\tFinal step : " + str(args.final))
+
 	# 4 _ Generate XML
 	# 
 	print("=== Start generating XML file :\n(every dot will be a simulation with all the replications created)")
