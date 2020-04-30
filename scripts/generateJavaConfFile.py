@@ -14,15 +14,14 @@
 ## Maintainer: RoiArthurB
 ##################################################
 
-import sys
+import os
 import argparse
 
 #
 #	VARIABLES
 #
 
-pathToJar = "D:/Downloads/a/gama-headless1.8.jar"
-batchOutputFolder = "D:/Downloads/a/"
+xmlList = []
 
 #
 #	MAIN
@@ -44,3 +43,27 @@ if __name__ == '__main__':
 
 	#parser.add_argument('-xml', metavar=("<experiment name>", "/path/to/file.gaml", "/path/to/file.xml"), nargs = 3, help = 'Classical xml arguments', required=False)
 	args = parser.parse_args()
+
+	# 1 _ Setup environment to be sure to launch
+	#
+	print("=== Prepare everything")
+	# Make gama executable
+	os.chmod(args.gama, 0o665)
+
+	# Gather XML in a list
+	if args.folder != None:
+		if os.path.isdir(args.folder):
+			for fname in os.listdir(args.folder):
+				if fname.endswith('.xml'):
+					xmlList.append(args.folder + "/" + fname)
+			if len(xmlList) == 0:
+				raise ValueError('The folder doesn\'t contain any XML file.')
+		else: 
+			raise ValueError('The folder doesn\'t exist.')
+	elif args.xml != None:
+		if os.path.isfile(args.xml) and args.xml.endswith('.xml'):
+			xmlList.append(args.xml)
+		else: 
+			raise ValueError('The XML file do not exist or is not an XML file.')
+	else:
+		raise ValueError('You should specify a folder with XML (w/ `-f`) or an XML (w/ `-x`) in your command.\nTry to launch the script with `-h` for full help options.')
