@@ -181,6 +181,7 @@ if __name__ == '__main__':
 		# Number of replication for every simulation
 		for i in range(args.replication):
 			seed = seed +1
+			resultSubFolder = ""
 			
 			simu = ET.SubElement(root, "Simulation", {
 				"id"		: str( len(list(root.iter("Simulation"))) ),
@@ -192,6 +193,10 @@ if __name__ == '__main__':
 			parameters = ET.SubElement(simu, "Parameters")
 			# Set values for every parameters in the experiment
 			for j in range(len(parametersList)):
+				
+				resultSubFolder += parametersList[j]["varName"] + "_" + str(allParamValues[k][j]) + "-"
+
+				# Set exploration point
 				ET.SubElement(parameters, "Parameter", {
 					"name"	: parametersList[j]["name"],
 					"type"	: parametersList[j]["type"],
@@ -201,8 +206,14 @@ if __name__ == '__main__':
 			# Set simulation id for csv name
 			ET.SubElement(parameters, "Parameter", {
 				"type"	: "INT",
-				"value" : str( len(list(root.iter("Simulation"))) ),
+				"value" : str( seed ),
 				"var"	: "idSimulation"
+				})
+			# Set batch_output Path
+			ET.SubElement(parameters, "Parameter", {
+				"type"	: "STRING",
+				"value" : args.output + "/" + resultSubFolder[:-1],
+				"var"	: "result_folder"
 				})
 			ET.SubElement(simu, "Outputs")
 
