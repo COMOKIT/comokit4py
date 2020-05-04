@@ -14,8 +14,15 @@ load_matrix_from_array_ages <- function(mat,id_category,arr,step){
   return(mat)
 }
 
-read_folder <- function(path_input, path_output, age_categories,building_types,nb_simulation){
-  nb_steps <- 10000
+read_folder <- function(path_input, path_output, age_categories,building_types,nb_steps){
+  print(path_input)
+  print(path_output)
+  print(nb_steps)
+  
+  files <- list.files(path_input,all.files = F,full.names = T,recursive = F, pattern = "*_building.csv")
+  nb_simulation <- length(files)
+  
+  
   array_incidence_ages <- array(0,dim=c(length(age_categories),nb_simulation,nb_steps))
   array_hospitalisation_ages <- array(0,dim=c(length(age_categories),nb_simulation,nb_steps))
   array_ICU_ages <- array(0,dim=c(length(age_categories),nb_simulation,nb_steps))
@@ -46,7 +53,8 @@ read_folder <- function(path_input, path_output, age_categories,building_types,n
       #FOR BUILDINGS
       for(a_column in 1:ncol(tmp_df)){
         id_building <- which(building_types==colnames(a_column))
-        array_building[id_building,id_simulation,1:nrow(tmp_df)] <- tmp_df[,a_column]
+        max_nb_row <- min(nb_steps,nrow(tmp_df))
+        array_building[id_building,id_simulation,1:max_nb_row] <- tmp_df[1:max_nb_row,a_column]
       }
     }else{
       age_category <- unlist(strsplit(age_category,"-",fixed=TRUE))
@@ -54,16 +62,17 @@ read_folder <- function(path_input, path_output, age_categories,building_types,n
       age_category <- which(age_categories==age_category)
       if(is.na(age_category)==FALSE){
         #FOR AGES
-        array_incidence_ages[age_category,id_simulation,1:nrow(tmp_df)] <- tmp_df[1:nrow(tmp_df),1]
-        array_hospitalisation_ages[age_category,id_simulation,1:nrow(tmp_df)] <- tmp_df[1:nrow(tmp_df),2]
-        array_ICU_ages[age_category,id_simulation,1:nrow(tmp_df)] <- tmp_df[1:nrow(tmp_df),3]
-        array_susceptible_ages[age_category,id_simulation,1:nrow(tmp_df)] <- tmp_df[1:nrow(tmp_df),4]
-        array_latent_ages[age_category,id_simulation,1:nrow(tmp_df)] <- tmp_df[1:nrow(tmp_df),5]
-        array_asymptomatic_ages[age_category,id_simulation,1:nrow(tmp_df)] <- tmp_df[1:nrow(tmp_df),6]
-        array_presymptomatic_ages[age_category,id_simulation,1:nrow(tmp_df)] <- tmp_df[1:nrow(tmp_df),7]
-        array_symptomatic_ages[age_category,id_simulation,1:nrow(tmp_df)] <- tmp_df[1:nrow(tmp_df),8]
-        array_recovered_ages[age_category,id_simulation,1:nrow(tmp_df)] <- tmp_df[1:nrow(tmp_df),9]
-        array_dead_ages[age_category,id_simulation,1:nrow(tmp_df)] <- tmp_df[1:nrow(tmp_df),10]
+        max_nb_row <- min(nb_steps,nrow(tmp_df))
+        array_incidence_ages[age_category,id_simulation,1:max_nb_row] <- tmp_df[1:max_nb_row,1]
+        array_hospitalisation_ages[age_category,id_simulation,1:max_nb_row] <- tmp_df[1:max_nb_row,2]
+        array_ICU_ages[age_category,id_simulation,1:max_nb_row] <- tmp_df[1:max_nb_row,3]
+        array_susceptible_ages[age_category,id_simulation,1:max_nb_row] <- tmp_df[1:max_nb_row,4]
+        array_latent_ages[age_category,id_simulation,1:max_nb_row] <- tmp_df[1:max_nb_row,5]
+        array_asymptomatic_ages[age_category,id_simulation,1:max_nb_row] <- tmp_df[1:max_nb_row,6]
+        array_presymptomatic_ages[age_category,id_simulation,1:max_nb_row] <- tmp_df[1:max_nb_row,7]
+        array_symptomatic_ages[age_category,id_simulation,1:max_nb_row] <- tmp_df[1:max_nb_row,8]
+        array_recovered_ages[age_category,id_simulation,1:max_nb_row] <- tmp_df[1:max_nb_row,9]
+        array_dead_ages[age_category,id_simulation,1:max_nb_row] <- tmp_df[1:max_nb_row,10]
       }
     }
   }
@@ -118,4 +127,4 @@ read_folder <- function(path_input, path_output, age_categories,building_types,n
 param_age_categories <- seq(0,95,by = 5)
 param_building_categories <- c("","school","shop","place_of_worship","meeting","restaurant","coffee","supermarket","playground","supplypoint","market","industry","hotel","karaoke")
 #read_folder("/Users/damie/Downloads/batch_output_building2_0-80/batch_output/","/Users/damie/Downloads/batch_aggregated/",seq(0,95,by = 5),c("","school","shop","place_of_worship","meeting","restaurant","coffee","supermarket","playground","supplypoint","market","industry","hotel","karaoke"),90)
-read_folder(args[1],args[2],param_age_categories,param_building_categories,args[3])
+read_folder(args[1],args[2],param_age_categories,param_building_categories,as.numeric(args[3]))
