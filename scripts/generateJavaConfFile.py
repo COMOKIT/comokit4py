@@ -67,3 +67,14 @@ if __name__ == '__main__':
 			raise ValueError('The XML file do not exist or is not an XML file.')
 	else:
 		raise ValueError('You should specify a folder with XML (w/ `-f`) or an XML (w/ `-x`) in your command.\nTry to launch the script with `-h` for full help options.')
+
+	# 2 _ Create conf file
+	#
+	print("=== Generate " + args.output + " file")
+	file = open(args.output,"w") 
+
+	for i in range(len(xmlList)):
+		file.write( str(i) + " " + args.gama + " " + xmlList[i] + " /dev/null\n" )
+	 
+	file.close() 
+	
