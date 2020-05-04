@@ -15,10 +15,6 @@ load_matrix_from_array_ages <- function(mat,id_category,arr,step){
 }
 
 read_folder <- function(path_input, path_output, age_categories,building_types,nb_steps){
-  print(path_input)
-  print(path_output)
-  print(nb_steps)
-  
   files <- list.files(path_input,all.files = F,full.names = T,recursive = F, pattern = "*_building.csv")
   nb_simulation <- length(files)
   
@@ -102,16 +98,16 @@ read_folder <- function(path_input, path_output, age_categories,building_types,n
       mat_dead <- load_matrix_from_array_ages(mat_dead,id_age_category,array_dead_ages,a_step)
     }
     
-    write.csv(mat_incidence,paste(path_output,"Incidence_",an_age_category,".csv",sep=""))
-    write.csv(mat_hospitalisation,paste(path_output,"Hospitalisation_",an_age_category,".csv",sep=""))
-    write.csv(mat_ICU,paste(path_output,"ICU_",an_age_category,".csv",sep=""))
-    write.csv(mat_susceptible,paste(path_output,"Susceptible_",an_age_category,".csv",sep=""))
-    write.csv(mat_latent,paste(path_output,"Latent_",an_age_category,".csv",sep=""))
-    write.csv(mat_presymptomatic,paste(path_output,"Presymptomatic_",an_age_category,".csv",sep=""))
-    write.csv(mat_asymptomatic,paste(path_output,"Asymptomatic_",an_age_category,".csv",sep=""))
-    write.csv(mat_symptomatic,paste(path_output,"Symptomatic_",an_age_category,".csv",sep=""))
-    write.csv(mat_recovered,paste(path_output,"Recovered_",an_age_category,".csv",sep=""))
-    write.csv(mat_dead,paste(path_output,"Dead_",an_age_category,".csv",sep=""))
+    write.csv(mat_incidence,file.path(path_output,paste("Incidence_",an_age_category,".csv",sep="")))
+    write.csv(mat_hospitalisation,file.path(path_output,paste("Hospitalisation_",an_age_category,".csv",sep="")))
+    write.csv(mat_ICU,file.path(path_output,paste("ICU_",an_age_category,".csv",sep="")))
+    write.csv(mat_susceptible,file.path(path_output,paste("Susceptible_",an_age_category,".csv",sep="")))
+    write.csv(mat_latent,file.path(path_output,paste("Latent_",an_age_category,".csv",sep="")))
+    write.csv(mat_presymptomatic,file.path(path_output,paste("Presymptomatic_",an_age_category,".csv",sep="")))
+    write.csv(mat_asymptomatic,file.path(path_output,paste("Asymptomatic_",an_age_category,".csv",sep="")))
+    write.csv(mat_symptomatic,file.path(path_output,paste("Symptomatic_",an_age_category,".csv",sep="")))
+    write.csv(mat_recovered,file.path(path_output,paste("Recovered_",an_age_category,".csv",sep="")))
+    write.csv(mat_dead,file.path(path_output,paste("Dead_",an_age_category,".csv",sep="")))
   }
   
   for(a_building_type in building_types){
@@ -120,11 +116,20 @@ read_folder <- function(path_input, path_output, age_categories,building_types,n
     for(a_step in 1:nb_steps){
       mat_incidence_building <- load_matrix_from_array_ages(mat_incidence_building,id_building_type,array_building,a_step)
     }
-    write.csv(mat_incidence_building,paste(path_output,"Building_",a_building_type,".csv",sep=""))
+    write.csv(mat_incidence_building,file.path(path_output,paste("Building_",a_building_type,".csv",sep="")))
   }
   
 }
 param_age_categories <- seq(0,95,by = 5)
 param_building_categories <- c("","school","shop","place_of_worship","meeting","restaurant","coffee","supermarket","playground","supplypoint","market","industry","hotel","karaoke")
 #read_folder("/Users/damie/Downloads/batch_output_building2_0-80/batch_output/","/Users/damie/Downloads/batch_aggregated/",seq(0,95,by = 5),c("","school","shop","place_of_worship","meeting","restaurant","coffee","supermarket","playground","supplypoint","market","industry","hotel","karaoke"),90)
-read_folder(args[1],args[2],param_age_categories,param_building_categories,as.numeric(args[3]))
+folder_input <- args[1]
+folder_output <- args[2]
+steps <- args[3]
+sub_folders <- list.dirs(path=folder_input,full.names = T,recursive = F)
+for(aFolder in sub_folders){
+  name_folder <- basename(aFolder)
+  path_folder_output <- file.path(folder_output,name_folder)
+  dir.create(path_folder_output, recursive=T,showWarnings = T)
+  read_folder(aFolder,path_folder_output,param_age_categories,param_building_categories,as.numeric(args[3]))
+}
