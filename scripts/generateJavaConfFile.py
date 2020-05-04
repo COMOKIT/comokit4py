@@ -77,4 +77,8 @@ if __name__ == '__main__':
 		file.write( str(i) + " " + args.gama + " " + xmlList[i] + " /dev/null\n" )
 	 
 	file.close() 
-	
+
+	# 3 _ Create SLURM Command(s)
+	#
+	print("=== Generate SLURM command")
+	print("srun --wckey=ird:gama -n " + args.core + " --partition=cn -J COMOKIT --exclusive -N " + args.node + " ----ntasks-per-node=" + args.core + " -o log.txt --comment COMOKIT --multi-prog gama-headless.conf &")
