@@ -127,9 +127,11 @@ folder_input <- args[1]
 folder_output <- args[2]
 steps <- args[3]
 sub_folders <- list.dirs(path=folder_input,full.names = T,recursive = F)
+print(paste("Preparing to do",folder_input,"and saving to",folder_output))
 for(aFolder in sub_folders){
   name_folder <- basename(aFolder)
+  print(paste("----Doing",name_folder))
   path_folder_output <- file.path(folder_output,name_folder)
-  dir.create(path_folder_output, recursive=T,showWarnings = T)
+  dir.create(path_folder_output, recursive=T,showWarnings = F)
   read_folder(aFolder,path_folder_output,param_age_categories,param_building_categories,as.numeric(args[3]))
 }
