@@ -54,7 +54,7 @@ if __name__ == '__main__':
 	# Gather XML in a list
 	if args.folder != None:
 		if os.path.isdir(args.folder):
-			for fname in os.listdir(args.folder):
+			for fname in os.listdir(args.folder)[::-1]:
 				if fname.endswith('.xml'):
 					xmlList.append( os.path.abspath(args.folder + "/" + fname) )
 			if len(xmlList) == 0:
