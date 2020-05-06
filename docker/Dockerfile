@@ -23,4 +23,3 @@ WORKDIR /usr/lib/gama/headless
 
 ENTRYPOINT ["gama-headless"]
 CMD ["-help"]
-
