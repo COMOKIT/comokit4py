@@ -56,14 +56,14 @@ if __name__ == '__main__':
 		if os.path.isdir(args.folder):
 			for fname in os.listdir(args.folder):
 				if fname.endswith('.xml'):
-					xmlList.append(args.folder + "/" + fname)
+					xmlList.append( os.path.abspath(args.folder + "/" + fname) )
 			if len(xmlList) == 0:
 				raise ValueError('The folder doesn\'t contain any XML file.')
 		else: 
 			raise ValueError('The folder doesn\'t exist.')
 	elif args.xml != None:
 		if os.path.isfile(args.xml) and args.xml.endswith('.xml'):
-			xmlList.append(args.xml)
+			xmlList.append( os.path.abspath(args.xml) )
 		else: 
 			raise ValueError('The XML file do not exist or is not an XML file.')
 	else:
