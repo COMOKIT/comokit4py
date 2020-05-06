@@ -137,6 +137,11 @@ if __name__ == '__main__':
 
 	expName, gamlFilePath, xmlFilePath = args.xml
 	
+	# Turn them all in absolute path
+	gamlFilePath = os.path.abspath(gamlFilePath)
+	xmlFilePath = os.path.abspath(xmlFilePath)
+	args.output = os.path.abspath(args.output)
+
 	# 1 _ Gather all parameters
 	# 
 	with open(gamlFilePath) as f:
