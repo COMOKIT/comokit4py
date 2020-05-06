@@ -20,7 +20,7 @@ deploy:
   name: "All-In-One Archive"
   body: "Prerelease of COMOKIT archived with GAMA Continuous, COMOKIT's default models and HPC scripts"
   overwrite: true
-  #tag_name: master-latest
+  tag_name: latest
   prerelease: true
   file: "./GAMA-COMOKIT-HPC.zip"
   skip_cleanup: true
