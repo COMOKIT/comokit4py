@@ -2,17 +2,19 @@ dist: bionic
 branches:
   only:
     - master
+before_script:
+  - GAMA_URL=$(curl -s https://api.github.com/repos/gama-platform/gama/releases/tags/continuous | grep  continuous/GAMA1.8_Continuous_Linux | cut -d ':' -f 2,3 | tr -d \")
 script:
-- curl -o gama.zip -fSL $(curl -s https://api.github.com/repos/gama-platform/gama/releases/tags/continuous | grep  continuous/GAMA1.8_Continuous_Linux | cut -d ':' -f 2,3 | tr -d \")
-- unzip gama.zip -d ./GAMA
-- chmod +x ./GAMA/headless/gama-headless.sh
-- mkdir ./COMOKIT-HPC
-- mv ./scripts ./COMOKIT-HPC
-- mv ./docker ./COMOKIT-HPC
-- git clone https://github.com/COMOKIT/COMOKIT-Model.git ./Model
-- mv ./Model/COMOKIT ./COMOKIT-Model
+  - curl -o gama.zip -fSL $GAMA_URL
+  - unzip gama.zip -d ./GAMA
+  - chmod +x ./GAMA/headless/gama-headless.sh
+  - mkdir ./COMOKIT-HPC
+  - mv ./scripts ./COMOKIT-HPC
+  - mv ./docker ./COMOKIT-HPC
+  - git clone https://github.com/COMOKIT/COMOKIT-Model.git ./Model
+  - mv ./Model/COMOKIT ./COMOKIT-Model
 after_success:
-- zip -r ./GAMA-COMOKIT-HPC.zip ./GAMA ./COMOKIT-Model ./COMOKIT-HPC
+  - zip -r ./GAMA-COMOKIT-HPC.zip ./GAMA ./COMOKIT-Model ./COMOKIT-HPC
 deploy:
   provider: releases
   api_key:
