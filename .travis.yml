@@ -1,7 +1,4 @@
 dist: bionic
-language: java
-jdk:
-- oraclejdk8
 script:
 - curl -o gama.zip -fSL $(curl -s https://api.github.com/repos/gama-platform/gama/releases/tags/continuous | grep  continuous/GAMA1.8_Continuous_Linux | cut -d ':' -f 2,3 | tr -d \")
 - unzip gama.zip -d ./GAMA
@@ -26,5 +23,3 @@ deploy:
   skip_cleanup: true
   prerelease: true
   overwrite: true
-  on:
-    tags: false
