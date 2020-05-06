@@ -91,3 +91,16 @@ $ Rscript aggregate.R ./Documents/batch_output ./Documents/batch_aggregated 5000
 
 # Build with
 - Python 3 (tested with 3.8.2) and R (3.6.3)
+
+## Authors
+
+* **Arthur Brugiere** - *HPC developer* - [RoiArthurB](https://github.com/RoiArthurB)
+
+* **Damien Philippon** - *Epidemiologist developer* - [DAM-Philippon](https://github.com/DAM-Philippon)
+
+See also the list of [contributors](https://github.com/orgs/COMOKIT/people) who participated in this project.
+
+## License
+
+The COMOKIT project is licensed under the GPL-3.0 License - see the [LICENSE.md](https://github.com/COMOKIT/COMOKIT-Model/blob/master/LICENSE) file for details.
+The scripts are licensed under the LGPL-3.0 License - see the [LICENSE.md](https://github.com/COMOKIT/COMOKIT-HPC/blob/master/LICENSE) file for details.
