@@ -4,19 +4,19 @@ MAINTAINER RoiArthurB <https://github.com/RoiArthurB>
 
 # Add COMOKIT framework
 RUN curl -o master.zip -fSL https://github.com/COMOKIT/COMOKIT-Model/archive/master.zip && \
-	unzip master.zip -d /usr/lib/gama/headless/comokit && \
+	unzip master.zip -d /comokit && \
 	rm master.zip && \
 	# Leave root project
-	mv /usr/lib/gama/headless/comokit/COMOKIT-Model-master/COMOKIT/* /usr/lib/gama/headless/comokit && \
-	rm -fr /usr/lib/gama/headless/comokit/COMOKIT-Model-master
+	mv /comokit/COMOKIT-Model-master/COMOKIT/* /comokit && \
+	rm -fr /comokit/COMOKIT-Model-master
 
 # Add HPC scripts
 RUN curl -o master.zip -fSL https://github.com/COMOKIT/COMOKIT-HPC/archive/master.zip && \
-	unzip master.zip -d /usr/lib/gama/headless/hpc && \
+	unzip master.zip -d /comokit/hpc && \
 	rm master.zip && \
 	# Leave root project
-	mv /usr/lib/gama/headless/hpc/COMOKIT-HPC-master/scripts/* /usr/lib/gama/headless/hpc && \
-	rm -fr /usr/lib/gama/headless/hpc/COMOKIT-HPC-master
+	mv /comokit/hpc/COMOKIT-HPC-master/scripts/* /comokit/hpc && \
+	rm -fr /comokit/hpc/COMOKIT-HPC-master
 
 # Docker env
 WORKDIR /usr/lib/gama/headless
