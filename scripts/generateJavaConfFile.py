@@ -82,7 +82,7 @@ if __name__ == '__main__':
 	# 3 _ Create SLURM Command(s)
 	#
 	print("=== Generate SLURM command")
-	print("srun --wckey=ird:gama -n " + str(args.core) + " --partition=cn -J COMOKIT --exclusive -N " + str(args.node) + " ----ntasks-per-node=" + str(args.core) + " --time 420 -o log.txt --comment COMOKIT --multi-prog gama-headless.conf &")
+	print("srun --wckey=ird:gama -n " + str(args.core) + " --partition=cn -J COMOKIT --exclusive -N " + str(args.node) + " --ntasks-per-node=" + str(args.core) + " --time 420 -o log.txt --comment COMOKIT --multi-prog gama-headless.conf &")
 
 	# 4 _ Done
 	#
