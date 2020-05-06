@@ -14,7 +14,7 @@
 ## Maintainer: RoiArthurB
 ##################################################
 
-import sys
+import sys, os
 import numpy
 import itertools 
 import xml.etree.ElementTree as ET
@@ -173,6 +173,11 @@ if __name__ == '__main__':
 	# 4 _ Generate XML
 	# 
 	print("=== Start generating XML file :\n(every dot will be a simulation with all the replications created)")
+
+	# Create output
+	os.makedirs( os.path.dirname(xmlFilePath), exist_ok=True)
+
+	# Create XML
 	root = ET.Element("Experiment_plan")
 	xmlNumber = 0
 	seed = -1
