@@ -35,9 +35,10 @@ if __name__ == '__main__':
 	parser.add_argument('-n', '--node', metavar='', help="Number of nodes to dispatch your exploration on", default=1, type=int)
 	parser.add_argument('-c', '--core', metavar='', help="Number of cores per node", default=-1, type=int)
 	#	GAMA Headless settings
-	parser.add_argument('-f', '--folder', metavar='', help="Absolute path to folder where your XML are stored (will gather EVERY! XML file)", type=str, required=False)
-	parser.add_argument('-x', '--xml', metavar="", help = 'Absolute path to your XML (/path/to/your/headlessExplo.xml)', type=str, required=False)
-	parser.add_argument('-g', '--gama', metavar="", help = 'Absolute path to GAMA headless script (/path/to/your/gama/headless/gama-headless.sh)', type=str, required=True)
+	parser.add_argument('-f', '--folder', metavar='', help="Path to folder where your XML are stored (will gather EVERY! XML file)", type=str, required=False)
+	parser.add_argument('-x', '--xml', metavar="", help = 'Path to your XML (/path/to/your/headlessExplo.xml)', type=str, required=False)
+	parser.add_argument('-g', '--gama', metavar="", help = 'Path to GAMA headless script (/path/to/your/gama/headless/gama-headless.sh)', type=str, required=True)
+	parser.add_argument('-F', '--outputFolder', metavar="", help='Path to folder where GAMA will write simulation\'s console output', type=str, default="./.gama-output")
 	#	Script settings
 	parser.add_argument('-o', '--output', metavar="", help='Path to your saved conf file (default: "./gama-headless.conf")', type=str, default="./gama-headless.conf")
 
@@ -74,7 +75,7 @@ if __name__ == '__main__':
 	file = open(args.output,"w") 
 
 	for i in range(len(xmlList)):
-		file.write( str(i) + " " + args.gama + " " + xmlList[i] + " /dev/null\n" )
+		file.write( str(i) + " " + os.path.abspath(args.gama) + " " + xmlList[i] + " " + os.path.abspath(args.outputFolder) + "\n" )
 	 
 	file.close() 
 
