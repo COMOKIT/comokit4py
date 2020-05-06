@@ -1,0 +1,30 @@
+dist: bionic
+language: java
+jdk:
+- oraclejdk8
+script:
+- curl -o gama.zip -fSL $(curl -s https://api.github.com/repos/gama-platform/gama/releases/tags/continuous | grep  continuous/GAMA1.8_Continuous_Linux | cut -d ':' -f 2,3 | tr -d \")
+- unzip gama.zip -d ./GAMA
+- chmod +x ./GAMA/headless/gama-headless.sh
+- mkdir ./COMOKIT-HPC
+- mv ./scripts ./COMOKIT-HPC
+- mv ./docker ./COMOKIT-HPC
+- git clone https://github.com/COMOKIT/COMOKIT-Model.git ./Model
+- mv ./Model/COMOKIT ./COMOKIT-Model
+after_success:
+- zip -r ./GAMA-COMOKIT-HPC.zip ./GAMA ./COMOKIT-Model ./COMOKIT-HPC
+deploy:
+  provider: releases
+  api_key:
+    secure: ntEKISQ3AC2jEG9wufCcjTKhaLhFTgThvOkOpKeo+KqFoVUPUzGmDnw5FNQr/RS4tFRCD5e4x2z1QIJktbRVmdR3qchVREwjoxb3lvFVL4oDEQpAhboeef5zTWYqriciKIJCfjeoOBQuNOh18EW7eOn9OcnsE33UL8DLhu2ocmuH/BN5SS+ZUK+EYuUUwRaEbTEXE/eY3tPHItz5bNDJ0+jDp2R7Y//czD/hDOBeUllyx7F4f37b7FWq23h8oqNGcnvezklIcZs0jtCjgTAFocfntRtp87+jl1q3GbUiH9wjg9mxzPQOlFbM4suxJxEO1UmipBcETwnUkR233ujDrwYbm68aAyaN/AwT92nROTEsGYPQNZT1tn+2Xfu4bvTNWRCIJgdymVmIzjoYCFYj6oXHxOGGpoBafPjqJAP93Nv1N3Wl4CYPI8iib8hDFMtRegdDwxG5lVzruV6KNpBoHbfCW/r7Gie2kQzdmH2DnjYNjFDx/8yIw07GVDn3olj1RtZLBBrio1cnv3OcQ3gTZQgFkjp/0CR0FLia5MD5vHTiKUxrS2Y/RmnmTYG6ydM4SqS+f0SB5ZcKrE/2OjssU41dir3HVjQaDK4BUgESd0gSyJ4vPGQcV4/4BSPRrs0ZHgR6UrIlIW0bqVIzBF/M8jEDlzHLyiBLtbX74oqXTj8=
+  file: "./GAMA-COMOKIT-HPC.zip"
+  name: "All-In-One Archive"
+  body: "Prerelease of COMOKIT archived with GAMA Continuous, COMOKIT's default models and HPC scripts"
+  on:
+    repo: COMOKIT/COMOKIT-HPC
+    tags: false
+  skip_cleanup: true
+  prerelease: true
+  overwrite: true
+  on:
+    tags: false
