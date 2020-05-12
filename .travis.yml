@@ -15,6 +15,17 @@ script:
   - mv ./Model/COMOKIT ./COMOKIT-Model
 after_success:
   - zip -r ./GAMA-COMOKIT-HPC.zip ./GAMA ./COMOKIT-Model ./COMOKIT-HPC
+
+
+before_deploy:
+  # Remove latest release
+  - LATEST_COMOKIT_HPC_URL=$(node -pe 'JSON.parse(process.argv[1]).url' "$(curl -s  https://api.github.com/repos/COMOKIT/COMOKIT-HPC/releases/tags/latest)")
+  - "curl -v -H \"Authorization: token ${GITHUB_API_KEY}\" -X DELETE $LATEST_COMOKIT_HPC_URL"
+  # Update tag
+  - git remote add master https://${GITHUB_API_KEY}@github.com/COMOKIT/COMOKIT-HPC.git
+  - git fetch master --tags
+  - git tag -f latest
+  - git push master --tags -f
 deploy:
   provider: releases
   name: "All-In-One Archive"
@@ -28,5 +39,4 @@ deploy:
     repo: COMOKIT/COMOKIT-HPC
     branch: master
     tags: false
-  api_key:
-    secure: ntEKISQ3AC2jEG9wufCcjTKhaLhFTgThvOkOpKeo+KqFoVUPUzGmDnw5FNQr/RS4tFRCD5e4x2z1QIJktbRVmdR3qchVREwjoxb3lvFVL4oDEQpAhboeef5zTWYqriciKIJCfjeoOBQuNOh18EW7eOn9OcnsE33UL8DLhu2ocmuH/BN5SS+ZUK+EYuUUwRaEbTEXE/eY3tPHItz5bNDJ0+jDp2R7Y//czD/hDOBeUllyx7F4f37b7FWq23h8oqNGcnvezklIcZs0jtCjgTAFocfntRtp87+jl1q3GbUiH9wjg9mxzPQOlFbM4suxJxEO1UmipBcETwnUkR233ujDrwYbm68aAyaN/AwT92nROTEsGYPQNZT1tn+2Xfu4bvTNWRCIJgdymVmIzjoYCFYj6oXHxOGGpoBafPjqJAP93Nv1N3Wl4CYPI8iib8hDFMtRegdDwxG5lVzruV6KNpBoHbfCW/r7Gie2kQzdmH2DnjYNjFDx/8yIw07GVDn3olj1RtZLBBrio1cnv3OcQ3gTZQgFkjp/0CR0FLia5MD5vHTiKUxrS2Y/RmnmTYG6ydM4SqS+f0SB5ZcKrE/2OjssU41dir3HVjQaDK4BUgESd0gSyJ4vPGQcV4/4BSPRrs0ZHgR6UrIlIW0bqVIzBF/M8jEDlzHLyiBLtbX74oqXTj8=
+  api_key: $GITHUB_API_KEY
