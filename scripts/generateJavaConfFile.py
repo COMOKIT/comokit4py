@@ -30,19 +30,17 @@ if __name__ == '__main__':
 
 	# 0 _ Get/Set parameters
 	# 
-	parser = argparse.ArgumentParser()
+	parser = argparse.ArgumentParser(usage='$ python3 %(prog)s [options]')
 	#	SLURM settings
 	parser.add_argument('-n', '--node', metavar='', help="Number of nodes to dispatch your exploration on", default=1, type=int)
 	parser.add_argument('-c', '--core', metavar='', help="Number of cores per node", default=-1, type=int)
 	#	GAMA Headless settings
 	parser.add_argument('-f', '--folder', metavar='', help="Path to folder where your XML are stored (will gather EVERY! XML file)", type=str, required=False)
 	parser.add_argument('-x', '--xml', metavar="", help = 'Path to your XML (/path/to/your/headlessExplo.xml)', type=str, required=False)
-	parser.add_argument('-g', '--gama', metavar="", help = 'Path to GAMA headless script (/path/to/your/gama/headless/gama-headless.sh)', type=str, required=True)
+	parser.add_argument('-g', '--gama', metavar="", help = 'Path to GAMA headless script (/path/to/your/gama/headless/gama-headless.sh)', type=str, required=False, default="../../GAMA/headless/gama-headless.sh")
 	parser.add_argument('-F', '--outputFolder', metavar="", help='Path to folder where GAMA will write simulation\'s console output', type=str, default="./.gama-output")
 	#	Script settings
 	parser.add_argument('-o', '--output', metavar="", help='Path to your saved conf file (default: "./gama-headless.conf")', type=str, default="./gama-headless.conf")
-
-	#parser.add_argument('-xml', metavar=("<experiment name>", "/path/to/file.gaml", "/path/to/file.xml"), nargs = 3, help = 'Classical xml arguments', required=False)
 	args = parser.parse_args()
 
 	# 1 _ Setup environment to be sure to launch
