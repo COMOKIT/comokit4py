@@ -11,6 +11,7 @@ load_matrix_from_array_ages <- function(mat,id_category,arr,step){
   mat[6,step] <- quantile(arr[id_category,,step],probs=0.95)
   mat[7,step] <- quantile(arr[id_category,,step],probs=0.025)
   mat[8,step] <- quantile(arr[id_category,,step],probs=0.975)
+  mat[9,step] <- sd(arr[id_category,,step])
   return(mat)
 }
 
@@ -72,18 +73,30 @@ read_folder <- function(path_input, path_output, age_categories,building_types,n
       }
     }
   }
+  number_rows <- 9
+  
+  mat_total_incidence <- matrix(0,nrow=number_rows,ncol=nb_steps)
+  mat_total_hospitalisation <- matrix(0,nrow=number_rows,ncol=nb_steps)
+  mat_total_ICU <- matrix(0,nrow=number_rows,ncol=nb_steps)
+  mat_total_susceptible <- matrix(0,nrow=number_rows,ncol=nb_steps)
+  mat_total_latent <- matrix(0,nrow=number_rows,ncol=nb_steps)
+  mat_total_presymptomatic <- matrix(0,nrow=number_rows,ncol=nb_steps)
+  mat_total_asymptomatic <- matrix(0,nrow=number_rows,ncol=nb_steps)
+  mat_total_symptomatic <- matrix(0,nrow=number_rows,ncol=nb_steps)
+  mat_total_recovered <- matrix(0,nrow=number_rows,ncol=nb_steps)
+  mat_total_dead <- matrix(0,nrow=number_rows,ncol=nb_steps)
   
   for(an_age_category in age_categories){
-    mat_incidence <- matrix(0,nrow=8,ncol=nb_steps)
-    mat_hospitalisation <- matrix(0,nrow=8,ncol=nb_steps)
-    mat_ICU <- matrix(0,nrow=8,ncol=nb_steps)
-    mat_susceptible <- matrix(0,nrow=8,ncol=nb_steps)
-    mat_latent <- matrix(0,nrow=8,ncol=nb_steps)
-    mat_presymptomatic <- matrix(0,nrow=8,ncol=nb_steps)
-    mat_asymptomatic <- matrix(0,nrow=8,ncol=nb_steps)
-    mat_symptomatic <- matrix(0,nrow=8,ncol=nb_steps)
-    mat_recovered <- matrix(0,nrow=8,ncol=nb_steps)
-    mat_dead <- matrix(0,nrow=8,ncol=nb_steps)
+    mat_incidence <- matrix(0,nrow=number_rows,ncol=nb_steps)
+    mat_hospitalisation <- matrix(0,nrow=number_rows,ncol=nb_steps)
+    mat_ICU <- matrix(0,nrow=number_rows,ncol=nb_steps)
+    mat_susceptible <- matrix(0,nrow=number_rows,ncol=nb_steps)
+    mat_latent <- matrix(0,nrow=number_rows,ncol=nb_steps)
+    mat_presymptomatic <- matrix(0,nrow=number_rows,ncol=nb_steps)
+    mat_asymptomatic <- matrix(0,nrow=number_rows,ncol=nb_steps)
+    mat_symptomatic <- matrix(0,nrow=number_rows,ncol=nb_steps)
+    mat_recovered <- matrix(0,nrow=number_rows,ncol=nb_steps)
+    mat_dead <- matrix(0,nrow=number_rows,ncol=nb_steps)
     id_age_category <- which(age_categories==an_age_category)
     for(a_step in 1:nb_steps){
       mat_incidence <- load_matrix_from_array_ages(mat_incidence,id_age_category,array_incidence_ages,a_step)
@@ -96,6 +109,7 @@ read_folder <- function(path_input, path_output, age_categories,building_types,n
       mat_symptomatic <- load_matrix_from_array_ages(mat_symptomatic,id_age_category,array_symptomatic_ages,a_step)
       mat_recovered <- load_matrix_from_array_ages(mat_recovered,id_age_category,array_recovered_ages,a_step)
       mat_dead <- load_matrix_from_array_ages(mat_dead,id_age_category,array_dead_ages,a_step)
+      
     }
     
     write.csv(mat_incidence,file.path(path_output,paste("Incidence_",an_age_category,".csv",sep="")))
@@ -111,7 +125,7 @@ read_folder <- function(path_input, path_output, age_categories,building_types,n
   }
   
   for(a_building_type in building_types){
-    mat_incidence_building <- matrix(0,nrow=8,ncol=nb_steps)
+    mat_incidence_building <- matrix(0,nrow=number_rows,ncol=nb_steps)
     id_building_type <- which(building_types==a_building_type)
     for(a_step in 1:nb_steps){
       mat_incidence_building <- load_matrix_from_array_ages(mat_incidence_building,id_building_type,array_building,a_step)
