@@ -123,3 +123,24 @@ if __name__ == '__main__':
 		print("\tError while saving file")
 	finally:
 		print("\tSaved !")
+
+	# 4 _ Create gama headless launching script
+	#
+	print("=== Generate " + args.output + "/launch_pack_8.sh file")
+
+	sbatchGamaScript = ("#!/bin/bash\n"
+		"\n"
+		"for i in {0.." + str(args.core - 1) + "}\n"
+		"do\n"
+		"\tid_mask=$(( $1 * " + str(args.core) + " + $i ))\n"
+		"\tif [ ! -f  " + xmlPath + "${id_mask}.xml ]; then echo \"le fichier mask-${id_mask}.xml est absent (queue de distrib?)\"; exit 2; fi\n")
+	sbatchGamaScript += "\t" + os.path.abspath(args.gama) + " " + xmlPath + "${id_mask}.xml " + os.path.abspath(args.outputFolder) +"\ndone"
+
+	try:
+		file = open(args.output + "/launch_pack_8.sh","w")
+		file.write( "0-" + str(int(args.nodes * args.core / args.cpuPerTask) - 1 ) + " ./launch_pack_8.sh %t" )
+		file.close()
+	except:
+		print("\tError while saving file")
+	finally:
+		print("\tSaved !")
