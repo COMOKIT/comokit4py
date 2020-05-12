@@ -106,10 +106,22 @@ if __name__ == '__main__':
 			"if test -n ${1} ; then cd ${1} ; fi\n"
 			"srun --multi-prog vague.cnf\n")
 
-
 	try:
 		file = open(args.output + "/sbatch_array.sh","w")
 		file.write( sbatchScript )
+		file.close()
+	except:
+		print("\tError while saving file")
+	finally:
+		print("\tSaved !")
+
+	# 3 _ Create SBatch second script
+	#
+	print("=== Generate " + args.output + "/vague.cnf file")
+
+	try:
+		file = open(args.output + "/vague.cnf","w")
+		file.write( "0-" + str(int(args.nodes * args.core / args.cpuPerTask) - 1 ) + " ./launch_pack_8.sh %t" )
 		file.close()
 	except:
 		print("\tError while saving file")
