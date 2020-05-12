@@ -100,7 +100,7 @@ if __name__ == '__main__':
 			"\n"
 			"# Change to submission directory\n"
 			"if test -n ${1} ; then cd ${1} ; fi\n"
-			"srun --multi-prog vague.cnf\n")
+			"srun --multi-prog " + os.path.abspath(args.output) + "/vague.cnf\n")
 
 	try:
 		file = open(args.output + "/sbatch_array.sh","w")
@@ -117,7 +117,7 @@ if __name__ == '__main__':
 
 	try:
 		file = open(args.output + "/vague.cnf","w")
-		file.write( "0-" + str(int(args.nodes * args.core / args.cpuPerTask) - 1 ) + " ./launch_pack_8.sh %t" )
+		file.write( "0-" + str(int(args.nodes * args.core / args.cpuPerTask) - 1 ) + " " + os.path.abspath(args.output) + "/launch_pack_8.sh %t" )
 		file.close()
 	except:
 		print("\tError while saving file")
