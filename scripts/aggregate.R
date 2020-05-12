@@ -14,6 +14,19 @@ load_matrix_from_array_ages <- function(mat,id_category,arr,step){
   mat[9,step] <- sd(arr[id_category,,step])
   return(mat)
 }
+load_matrix_from_array_total <- function(mat,arr,step){
+  
+  mat[1,step] <- mean(arr[,step])
+  mat[2,step] <- median(arr[,step])
+  mat[3,step] <- min(arr[,step])
+  mat[4,step] <- max(arr[,step])
+  mat[5,step] <- quantile(arr[,step],probs=0.05)
+  mat[6,step] <- quantile(arr[,step],probs=0.95)
+  mat[7,step] <- quantile(arr[,step],probs=0.025)
+  mat[8,step] <- quantile(arr[,step],probs=0.975)
+  mat[9,step] <- sd(arr[,step])
+  return(mat)
+}
 
 read_folder <- function(path_input, path_output, age_categories,building_types,nb_steps){
   files <- list.files(path_input,all.files = F,full.names = T,recursive = F, pattern = "*_building.csv")
@@ -30,6 +43,19 @@ read_folder <- function(path_input, path_output, age_categories,building_types,n
   array_symptomatic_ages <- array(0,dim=c(length(age_categories),nb_simulation,nb_steps))
   array_recovered_ages <- array(0,dim=c(length(age_categories),nb_simulation,nb_steps))
   array_dead_ages <- array(0,dim=c(length(age_categories),nb_simulation,nb_steps))
+  
+  
+  array_total_incidence <- array(0,dim=c(nb_simulation,nb_steps))
+  array_total_hospitalisation_ages <- array(0,dim=c(nb_simulation,nb_steps))
+  array_total_ICU_ages <- array(0,dim=c(nb_simulation,nb_steps))
+  array_total_susceptible_ages <- array(0,dim=c(nb_simulation,nb_steps))
+  array_total_latent_ages <- array(0,dim=c(nb_simulation,nb_steps))
+  array_total_asymptomatic_ages <- array(0,dim=c(nb_simulation,nb_steps))
+  array_total_presymptomatic_ages <- array(0,dim=c(nb_simulation,nb_steps))
+  array_total_symptomatic_ages <- array(0,dim=c(nb_simulation,nb_steps))
+  array_total_recovered_ages <- array(0,dim=c(nb_simulation,nb_steps))
+  array_total_dead_ages <- array(0,dim=c(nb_simulation,nb_steps))
+  
   array_building <- array(0,dim=c(length(building_types),nb_simulation,nb_steps))
   
   files <- list.files(path_input,all.files = F,full.names = T,recursive = F)
@@ -70,6 +96,19 @@ read_folder <- function(path_input, path_output, age_categories,building_types,n
         array_symptomatic_ages[age_category,id_simulation,1:max_nb_row] <- tmp_df[1:max_nb_row,8]
         array_recovered_ages[age_category,id_simulation,1:max_nb_row] <- tmp_df[1:max_nb_row,9]
         array_dead_ages[age_category,id_simulation,1:max_nb_row] <- tmp_df[1:max_nb_row,10]
+        
+        
+        array_total_incidence[id_simulation, 1:max_nb_row] <- array_total_incidence[id_simulation, 1:max_nb_row] +tmp_df[1:max_nb_row,1]
+        array_total_hospitalisation_ages[id_simulation, 1:max_nb_row] <- array_total_hospitalisation_ages[id_simulation, 1:max_nb_row] +tmp_df[1:max_nb_row,2]
+        array_total_ICU_ages[id_simulation, 1:max_nb_row] <- array_total_ICU_ages[id_simulation, 1:max_nb_row] +tmp_df[1:max_nb_row,3]
+        array_total_susceptible_ages[id_simulation, 1:max_nb_row] <- array_total_susceptible_ages[id_simulation, 1:max_nb_row] +tmp_df[1:max_nb_row,4]
+        array_total_latent_ages[id_simulation, 1:max_nb_row] <- array_total_latent_ages[id_simulation, 1:max_nb_row] +tmp_df[1:max_nb_row,5]
+        array_total_asymptomatic_ages[id_simulation, 1:max_nb_row] <- array_total_asymptomatic_ages[id_simulation, 1:max_nb_row] +tmp_df[1:max_nb_row,6]
+        array_total_presymptomatic_ages[id_simulation, 1:max_nb_row] <- array_total_presymptomatic_ages[id_simulation, 1:max_nb_row] +tmp_df[1:max_nb_row,7]
+        array_total_symptomatic_ages[id_simulation, 1:max_nb_row] <- array_total_symptomatic_ages[id_simulation, 1:max_nb_row] +tmp_df[1:max_nb_row,8]
+        array_total_recovered_ages[id_simulation, 1:max_nb_row] <- array_total_recovered_ages[id_simulation, 1:max_nb_row] +tmp_df[1:max_nb_row,9]
+        array_total_dead_ages[id_simulation, 1:max_nb_row] <- array_total_dead_ages[id_simulation, 1:max_nb_row] +tmp_df[1:max_nb_row,10]
+        
       }
     }
   }
@@ -85,6 +124,28 @@ read_folder <- function(path_input, path_output, age_categories,building_types,n
   mat_total_symptomatic <- matrix(0,nrow=number_rows,ncol=nb_steps)
   mat_total_recovered <- matrix(0,nrow=number_rows,ncol=nb_steps)
   mat_total_dead <- matrix(0,nrow=number_rows,ncol=nb_steps)
+  for(a_step in 1:nb_steps){
+    mat_total_incidence <- load_matrix_from_array_total(mat_total_incidence,array_total_incidence,a_step)
+    mat_total_hospitalisation <- load_matrix_from_array_total(mat_total_hospitalisation,array_total_hospitalisation_ages,a_step)
+    mat_total_ICU <- load_matrix_from_array_total(mat_total_ICU,array_total_ICU_ages,a_step)
+    mat_total_susceptible <- load_matrix_from_array_total(mat_total_susceptible,array_total_susceptible_ages,a_step)
+    mat_total_latent <- load_matrix_from_array_total(mat_total_latent,array_total_latent_ages,a_step)
+    mat_total_presymptomatic <- load_matrix_from_array_total(mat_total_presymptomatic,array_total_presymptomatic_ages,a_step)
+    mat_total_asymptomatic <- load_matrix_from_array_total(mat_total_asymptomatic,array_total_asymptomatic_ages,a_step)
+    mat_total_symptomatic <- load_matrix_from_array_total(mat_total_symptomatic,array_total_symptomatic_ages,a_step)
+    mat_total_recovered <- load_matrix_from_array_total(mat_total_recovered,array_total_recovered_ages,a_step)
+    mat_total_dead <- load_matrix_from_array_total(mat_total_dead,array_total_dead_ages,a_step)
+  }
+  write.csv(mat_total_incidence,file.path(path_output,paste("Incidence_Total.csv",sep="")))
+  write.csv(mat_total_hospitalisation,file.path(path_output,paste("Hospitalisation_Total.csv",sep="")))
+  write.csv(mat_total_ICU,file.path(path_output,paste("ICU_Total.csv",sep="")))
+  write.csv(mat_total_susceptible,file.path(path_output,paste("Susceptible_Total.csv",sep="")))
+  write.csv(mat_total_latent,file.path(path_output,paste("Latent_Total.csv",sep="")))
+  write.csv(mat_total_presymptomatic,file.path(path_output,paste("Presymptomatic_Total.csv",sep="")))
+  write.csv(mat_total_asymptomatic,file.path(path_output,paste("Asymptomatic_Total.csv",sep="")))
+  write.csv(mat_total_symptomatic,file.path(path_output,paste("Symptomatic_Total.csv",sep="")))
+  write.csv(mat_total_recovered,file.path(path_output,paste("Recovered_Total.csv",sep="")))
+  write.csv(mat_total_dead,file.path(path_output,paste("Dead_Total.csv",sep="")))
   
   for(an_age_category in age_categories){
     mat_incidence <- matrix(0,nrow=number_rows,ncol=nb_steps)
@@ -98,6 +159,8 @@ read_folder <- function(path_input, path_output, age_categories,building_types,n
     mat_recovered <- matrix(0,nrow=number_rows,ncol=nb_steps)
     mat_dead <- matrix(0,nrow=number_rows,ncol=nb_steps)
     id_age_category <- which(age_categories==an_age_category)
+    
+    
     for(a_step in 1:nb_steps){
       mat_incidence <- load_matrix_from_array_ages(mat_incidence,id_age_category,array_incidence_ages,a_step)
       mat_hospitalisation <- load_matrix_from_array_ages(mat_hospitalisation,id_age_category,array_hospitalisation_ages,a_step)
@@ -109,7 +172,6 @@ read_folder <- function(path_input, path_output, age_categories,building_types,n
       mat_symptomatic <- load_matrix_from_array_ages(mat_symptomatic,id_age_category,array_symptomatic_ages,a_step)
       mat_recovered <- load_matrix_from_array_ages(mat_recovered,id_age_category,array_recovered_ages,a_step)
       mat_dead <- load_matrix_from_array_ages(mat_dead,id_age_category,array_dead_ages,a_step)
-      
     }
     
     write.csv(mat_incidence,file.path(path_output,paste("Incidence_",an_age_category,".csv",sep="")))
