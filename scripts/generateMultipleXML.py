@@ -4,13 +4,13 @@
 ## Python script to generate XML to launch batch exploration of COMOKIT
 ## To use it you should write it like so :
 #
-## $ python3 generateMultipleXML.py experimentName /path/to/file.gaml /path/to/export.xml
+## $ python3 generateMultipleXML.py -xml experimentName /path/to/file.gaml /path/to/export.xml
 #
 ##################################################
 ## Author: RoiArthurB
-## Copyright: Copyright 2020, COMOKIT, COMO-TK
+## Copyright: Copyright 2020, COMOKIT, COMOKIT-HPC
 ## Licence: LGPL 3.0
-## Version: 0.0.1
+## Version: 1.3.0
 ## Maintainer: RoiArthurB
 ##################################################
 

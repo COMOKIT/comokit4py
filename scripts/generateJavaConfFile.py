@@ -4,13 +4,13 @@
 ## Python script to generate .conf to launch batch exploration of COMOKIT on an SLURM HPC
 ## To use it you should write it like so :
 #
-## $ python3 generateJavaConfFile.py numberOfLine /path/to/file.xml /path/to/output.conf (optional)/path/to/gama.jar (optional)/path/to/batchOutputFolder
+## $ python3 generateJavaConfFile.py -h
 #
 ##################################################
 ## Author: RoiArthurB
-## Copyright: Copyright 2020, COMOKIT, COMO-TK
+## Copyright: Copyright 2020, COMOKIT, COMOKIT-HPC
 ## Licence: LGPL 3.0
-## Version: 0.0.1
+## Version: 1.0.0
 ## Maintainer: RoiArthurB
 ##################################################
 
