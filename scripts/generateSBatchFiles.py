@@ -138,7 +138,7 @@ if __name__ == '__main__':
 
 	try:
 		file = open(args.output + "/launch_pack_8.sh","w")
-		file.write( "0-" + str(int(args.nodes * args.core / args.cpuPerTask) - 1 ) + " ./launch_pack_8.sh %t" )
+		file.write( sbatchGamaScript )
 		file.close()
 	except:
 		print("\tError while saving file")
