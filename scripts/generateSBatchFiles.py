@@ -57,7 +57,7 @@ if __name__ == '__main__':
 
 	# Create output folder 
 	if not os.path.exists(args.output):
-    	os.makedirs(args.output)
+		os.makedirs(args.output)
 
 	# Gather XML in a list
 	if args.folder != None:
@@ -79,27 +79,39 @@ if __name__ == '__main__':
 
 	# 2 _ Create SBatch first script
 	#
-	"""
-	#!/bin/bash
-	#-------------------------------------------------------------------------------
-	#
-	# Batch options for SLURM (Simple Linux Utility for Resource Management)
-	# =======================
-	#
-	#SBATCH --array=0-26%6         #A lancement de 27 soumission slurm avec au maximum 6 soumission actives ( soit 96 noeuds si 16 noeuds par soumission)
-	#SBATCH --nodes=16              #B allocation de 16 noeuds par soumission
-	#SBATCH --cpus-per-task=1      #C on fixe le java sur un coeur. on pourrait tester avec 2 mais apres
-	#SBATCH --ntasks=576            #D  nombre de tache slurm (nombre d'instannce java) = B * 36 ( nombre de couer par noeud) / C            
-	#SBATCH --ntasks-per-node=36   #E nombre de cpu par noeud / C
-	#SBATCH --exclusive
-	#SBATCH --time=1:00:00
-	#SBATCH --partition=cn
-	#SBATCH --job-name=COMOKIT
-	#SBATCH --wckey=IRD:GAMA
-	#
-	#-------------------------------------------------------------------------------
+	print("=== Generate " + args.output + "/sbatch_array.sh file")
+	
+	sbatchScript = ("#!/bin/bash\n"
+		"#-------------------------------------------------------------------------------\n"
+		"#\n"
+		"# Batch options for SLURM (Simple Linux Utility for Resource Management)\n"
+		"# =======================\n"
+		"#\n"
+		"#SBATCH --array=0-" + str(args.submission -1) + "%" + str(args.maxSubmission) + "\n"
+		"#SBATCH --nodes=" + str(args.nodes) + "\n"
+		"#SBATCH --cpus-per-task=" + str(args.cpuPerTask) + "\n"
+		"#SBATCH --ntasks=" + str(int(args.nodes * args.core / args.cpuPerTask)) + "\n"
+		"#SBATCH --ntasks-per-node=" + str(int(args.core / args.cpuPerTask)) + "\n"
+		"#SBATCH --time=" + str(args.time) + ":00:00\n"
+		"#SBATCH --job-name=COMOKIT\n")
+	if (args.EDF):
+		sbatchScript += ("#SBATCH --exclusive\n"
+				"#SBATCH --partition=cn\n"
+				"#SBATCH --wckey=IRD:GAMA\n")
+		
+	sbatchScript += ("#\n"
+			"#-------------------------------------------------------------------------------\n"
+			"\n"
+			"# Change to submission directory\n"
+			"if test -n ${1} ; then cd ${1} ; fi\n"
+			"srun --multi-prog vague.cnf\n")
 
-	# Change to submission directory
-	if test -n "$SLURM_SUBMIT_DIR" ; then cd $SLURM_SUBMIT_DIR ; fi
-	srun --multi-prog vague.cnf
-	"""
+
+	try:
+		file = open(args.output + "/sbatch_array.sh","w")
+		file.write( sbatchScript )
+		file.close()
+	except:
+		print("\tError while saving file")
+	finally:
+		print("\tSaved !")
