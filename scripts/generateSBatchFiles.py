@@ -20,7 +20,7 @@ import argparse
 #	VARIABLES
 #
 
-xmlList = []
+xmlPath = ""
 
 #
 #	MAIN
@@ -39,8 +39,7 @@ if __name__ == '__main__':
 	parser.add_argument('-c', '--core', metavar='', help="Number of cores per node", default=1, type=int)
 	parser.add_argument('-t', '--time', metavar='', help="Time (in hour) for your job", default=1, type=int)
 	#	GAMA Headless settings
-	parser.add_argument('-f', '--folder', metavar='', help="Path to folder where your XML are stored (will gather EVERY! XML file)", type=str, required=False)
-	parser.add_argument('-x', '--xml', metavar="", help = 'Path to your XML (/path/to/your/headlessExplo.xml)', type=str, required=False)
+	parser.add_argument('-f', '--folder', metavar='', help="Path to folder where your XML are stored (will gather EVERY! XML file)", type=str, required=True)
 	parser.add_argument('-g', '--gama', metavar="", help = 'Path to GAMA headless script (/path/to/your/gama/headless/gama-headless.sh)', type=str, required=False, default="../../GAMA/headless/gama-headless.sh")
 	parser.add_argument('-F', '--outputFolder', metavar="", help='Path to folder where GAMA will write simulation\'s console output (default: "/tmp/.gama-output")', type=str, default="/tmp/.gama-output")
 	#	Script settings
@@ -62,18 +61,15 @@ if __name__ == '__main__':
 	# Gather XML in a list
 	if args.folder != None:
 		if os.path.isdir(args.folder):
-			for fname in os.listdir(args.folder)[::-1]:
+			for fname in os.listdir(args.folder)[:1]:
 				if fname.endswith('.xml'):
-					xmlList.append( os.path.abspath(args.folder + "/" + fname) )
-			if len(xmlList) == 0:
+					# Get pattern of xml file before the index element
+					xmlPath = os.path.abspath(args.folder + "/" + fname).rsplit("-", 1)[0] + "-"
+					break;
+			if xmlPath == "":
 				raise ValueError('The folder doesn\'t contain any XML file.')
 		else: 
 			raise ValueError('The folder doesn\'t exist.')
-	elif args.xml != None:
-		if os.path.isfile(args.xml) and args.xml.endswith('.xml'):
-			xmlList.append( os.path.abspath(args.xml) )
-		else: 
-			raise ValueError('The XML file do not exist or is not an XML file.')
 	else:
 		raise ValueError('You should specify a folder with XML (w/ `-f`) or an XML (w/ `-x`) in your command.\nTry to launch the script with `-h` for full help options.')
 
