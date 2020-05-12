@@ -194,7 +194,7 @@ if __name__ == '__main__':
 			resultSubFolder = ""
 			
 			simu = ET.SubElement(root, "Simulation", {
-				"id"		: str( len(list(root.iter("Simulation"))) ),
+				"id"		: str( seed ),
 				"seed"		: str( seed ),
 				"experiment": expName,
 				"finalStep"	: str(args.final),
@@ -222,7 +222,7 @@ if __name__ == '__main__':
 			# Set batch_output Path
 			ET.SubElement(parameters, "Parameter", {
 				"type"	: "STRING",
-				"value" : args.output + "/" + resultSubFolder[:-1],
+				"value" : args.output + "/" + resultSubFolder[:-1] + "/",
 				"var"	: "result_folder"
 				})
 			ET.SubElement(simu, "Outputs")
