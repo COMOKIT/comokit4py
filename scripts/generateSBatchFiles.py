@@ -31,8 +31,8 @@ if __name__ == '__main__':
 	#	GAMA Headless settings
 	parser.add_argument('-f', '--folder', metavar='', help="Path to folder where your XML are stored (will gather EVERY! XML file)", type=str, required=False)
 	parser.add_argument('-x', '--xml', metavar="", help = 'Path to your XML (/path/to/your/headlessExplo.xml)', type=str, required=False)
-	parser.add_argument('-g', '--gama', metavar="", help = 'Path to GAMA headless script (/path/to/your/gama/headless/gama-headless.sh)', type=str, required=True)
-	parser.add_argument('-F', '--outputFolder', metavar="", help='Path to folder where GAMA will write simulation\'s console output', type=str, default="/tmp/.gama-output")
+	parser.add_argument('-g', '--gama', metavar="", help = 'Path to GAMA headless script (/path/to/your/gama/headless/gama-headless.sh)', type=str, required=True, default="../../GAMA/headless/gama-headless.sh")
+	parser.add_argument('-F', '--outputFolder', metavar="", help='Path to folder where GAMA will write simulation\'s console output (default: "/tmp/.gama-output")', type=str, default="/tmp/.gama-output")
 	#	Script settings
 	parser.add_argument('-o', '--output', metavar="", help='Path to your saved conf file (default: "./gama-headless.conf")', type=str, default="./gama-headless.conf")
 
@@ -61,3 +61,30 @@ if __name__ == '__main__':
 			raise ValueError('The XML file do not exist or is not an XML file.')
 	else:
 		raise ValueError('You should specify a folder with XML (w/ `-f`) or an XML (w/ `-x`) in your command.\nTry to launch the script with `-h` for full help options.')
+
+	# 2 _ Create SBatch first script
+	#
+	"""
+	#!/bin/bash
+	#-------------------------------------------------------------------------------
+	#
+	# Batch options for SLURM (Simple Linux Utility for Resource Management)
+	# =======================
+	#
+	#SBATCH --array=0-26%6         #A lancement de 27 soumission slurm avec au maximum 6 soumission actives ( soit 96 noeuds si 16 noeuds par soumission)
+	#SBATCH --nodes=16              #B allocation de 16 noeuds par soumission
+	#SBATCH --cpus-per-task=1      #C on fixe le java sur un coeur. on pourrait tester avec 2 mais apres
+	#SBATCH --ntasks=576            #D  nombre de tache slurm (nombre d'instannce java) = B * 36 ( nombre de couer par noeud) / C            
+	#SBATCH --ntasks-per-node=36   #E nombre de cpu par noeud / C
+	#SBATCH --exclusive
+	#SBATCH --time=1:00:00
+	#SBATCH --partition=cn
+	#SBATCH --job-name=COMOKIT
+	#SBATCH --wckey=IRD:GAMA
+	#
+	#-------------------------------------------------------------------------------
+
+	# Change to submission directory
+	if test -n "$SLURM_SUBMIT_DIR" ; then cd $SLURM_SUBMIT_DIR ; fi
+	srun --multi-prog vague.cnf
+	"""
