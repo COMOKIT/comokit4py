@@ -17,6 +17,12 @@ import os
 import argparse
 
 #
+#	VARIABLES
+#
+
+xmlList = []
+
+#
 #	MAIN
 #
 if __name__ == '__main__':
@@ -48,6 +54,10 @@ if __name__ == '__main__':
 	print("=== Prepare everything")
 	# Make gama executable
 	os.chmod(args.gama, 0o665)
+
+	# Create output folder 
+	if not os.path.exists(args.output):
+    	os.makedirs(args.output)
 
 	# Gather XML in a list
 	if args.folder != None:
