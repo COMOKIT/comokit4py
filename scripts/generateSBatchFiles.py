@@ -23,22 +23,23 @@ if __name__ == '__main__':
 
 	# 0 _ Get/Set parameters
 	# 
-	parser = argparse.ArgumentParser()
+	parser = argparse.ArgumentParser(usage='$ python3 %(prog)s [options]')
 
 	#	SBATCH settings
 	parser.add_argument('-s', '--submission', metavar='', help="Total of submission on SLURM", default=1, type=int)
-	parser.add_argument('-S', '--maxSubmission', metavar='', help="Max number of active submission on SLURM", default=1, type=int)
-	parser.add_argument('-n', '--node', metavar='', help="Number of nodes to dispatch your exploration on", default=1, type=int)
+	parser.add_argument('-S', '--maxSubmission', metavar='', default=1, type=int, help="Max number of active submission on SLURM")
+	parser.add_argument('-n', '--nodes', metavar='', help="Number of nodes to dispatch your exploration on", default=1, type=int)
 	parser.add_argument('-T', '--cpuPerTask', metavar='', help="Number of core allocated to a single task", default=1, type=int)
-	parser.add_argument('-c', '--core', metavar='', help="Number of cores per node", default=-1, type=int)
+	parser.add_argument('-c', '--core', metavar='', help="Number of cores per node", default=1, type=int)
+	parser.add_argument('-t', '--time', metavar='', help="Time (in hour) for your job", default=1, type=int)
 	#	GAMA Headless settings
 	parser.add_argument('-f', '--folder', metavar='', help="Path to folder where your XML are stored (will gather EVERY! XML file)", type=str, required=False)
 	parser.add_argument('-x', '--xml', metavar="", help = 'Path to your XML (/path/to/your/headlessExplo.xml)', type=str, required=False)
-	parser.add_argument('-g', '--gama', metavar="", help = 'Path to GAMA headless script (/path/to/your/gama/headless/gama-headless.sh)', type=str, required=True, default="../../GAMA/headless/gama-headless.sh")
+	parser.add_argument('-g', '--gama', metavar="", help = 'Path to GAMA headless script (/path/to/your/gama/headless/gama-headless.sh)', type=str, required=False, default="../../GAMA/headless/gama-headless.sh")
 	parser.add_argument('-F', '--outputFolder', metavar="", help='Path to folder where GAMA will write simulation\'s console output (default: "/tmp/.gama-output")', type=str, default="/tmp/.gama-output")
 	#	Script settings
 	parser.add_argument('-o', '--output', metavar="", help='Path to folder where save every needed sbatch files (default: "./sbatchUtilities")', type=str, default="./sbatchUtilities")
-	parser.add_argument('--EDF', metavar="", help='Will add extra parameters for EDF collaboration', type=bool, default=False)
+	parser.add_argument('--EDF', action='store_true', help='Will add extra parameters for EDF collaboration')
 
 	args = parser.parse_args()
 
