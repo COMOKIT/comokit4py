@@ -130,11 +130,9 @@ if __name__ == '__main__':
 
 	sbatchGamaScript = ("#!/bin/bash\n"
 		"\n"
-		"for i in {0.." + str(args.core - 1) + "}\n"
-		"do\n"
-		"\tid_mask=$(( $1 * " + str(args.core) + " + $i ))\n"
-		"\tif [ ! -f  " + xmlPath + "${id_mask}.xml ]; then echo \"le fichier mask-${id_mask}.xml est absent (queue de distrib?)\"; exit 2; fi\n")
-	sbatchGamaScript += "\t" + os.path.abspath(args.gama) + " " + xmlPath + "${id_mask}.xml " + os.path.abspath(args.outputFolder) +"\ndone"
+		"id_mask=$(( $SLURM_ARRAY_TASK_ID * " + str(int(args.nodes * args.core / args.cpuPerTask)) + " + $1 ))\n"
+		"if [ ! -f  " + xmlPath + "${id_mask}.xml ]; then echo \"le fichier mask-${id_mask}.xml est absent (queue de distrib?)\"; exit 2; fi\n")
+	sbatchGamaScript += os.path.abspath(args.gama) + " " + xmlPath + "${id_mask}.xml " + os.path.abspath(args.outputFolder)
 
 	try:
 		file = open(args.output + "/launch_pack_8.sh","w")
