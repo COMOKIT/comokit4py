@@ -15,7 +15,7 @@ RUN curl -o master.zip -fSL https://github.com/COMOKIT/COMOKIT-HPC/archive/maste
 	unzip master.zip -d /comokit/hpc && \
 	rm master.zip && \
 	# Leave root project
-	mv /comokit/hpc/COMOKIT-HPC-master/scripts/* /comokit/hpc && \
+	mv /comokit/hpc/COMOKIT-HPC-master/* /comokit/hpc && \
 	rm -fr /comokit/hpc/COMOKIT-HPC-master
 
 # Docker env
