@@ -53,7 +53,7 @@ if __name__ == '__main__':
 	#
 	print("=== Prepare everything")
 	# Make gama executable
-	os.chmod(args.gama, 0o665)
+	os.chmod(args.gama, 0o555)
 
 	# Create output folder 
 	if not os.path.exists(args.output):
