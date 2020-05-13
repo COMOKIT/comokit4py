@@ -45,6 +45,7 @@ if __name__ == '__main__':
 	#	Script settings
 	parser.add_argument('-o', '--output', metavar="", help='Path to folder where save every needed sbatch files (default: "./sbatchUtilities")', type=str, default="./sbatchUtilities")
 	parser.add_argument('--EDF', action='store_true', help='Will add extra parameters for EDF collaboration')
+	parser.add_argument('-A', action='store_true', help='Will turn every path in absolute path')
 
 	args = parser.parse_args()
 
@@ -58,13 +59,19 @@ if __name__ == '__main__':
 	if not os.path.exists(args.output):
 		os.makedirs(args.output)
 
+	# Set absolute path or not
+	if args.A:
+		args.output = os.path.abspath(args.output)
+		args.gama = os.path.abspath(args.gama)
+		args.outputFolder = os.path.abspath(args.outputFolder)
+
 	# Gather XML in a list
 	if args.folder != None:
 		if os.path.isdir(args.folder):
 			for fname in os.listdir(args.folder)[:1]:
 				if fname.endswith('.xml'):
 					# Get pattern of xml file before the index element
-					xmlPath = os.path.abspath(args.folder + "/" + fname).rsplit("-", 1)[0] + "-"
+					xmlPath = (os.path.abspath(args.folder + "/" + fname).rsplit("-", 1)[0] + "-") if args.A else ((args.folder + "/" + fname).rsplit("-", 1)[0] + "-")
 					break;
 			if xmlPath == "":
 				raise ValueError('The folder doesn\'t contain any XML file.')
@@ -100,7 +107,7 @@ if __name__ == '__main__':
 			"\n"
 			"# Change to submission directory\n"
 			"if test -n ${1} ; then cd ${1} ; fi\n"
-			"srun --multi-prog " + os.path.abspath(args.output) + "/vague.cnf\n")
+			"srun --multi-prog " +  args.output + "/vague.cnf\n")
 
 	try:
 		file = open(args.output + "/sbatch_array.sh","w")
@@ -117,7 +124,7 @@ if __name__ == '__main__':
 
 	try:
 		file = open(args.output + "/vague.cnf","w")
-		file.write( "0-" + str(int(args.nodes * args.core / args.cpuPerTask) - 1 ) + " " + os.path.abspath(args.output) + "/launch_pack_8.sh %t" )
+		file.write( "0-" + str(int(args.nodes * args.core / args.cpuPerTask) - 1 ) + " " + args.output + "/launch_pack_8.sh %t" )
 		file.close()
 	except:
 		print("\tError while saving file")
@@ -132,7 +139,7 @@ if __name__ == '__main__':
 		"\n"
 		"id_mask=$(( $SLURM_ARRAY_TASK_ID * " + str(int(args.nodes * args.core / args.cpuPerTask)) + " + $1 ))\n"
 		"if [ ! -f  " + xmlPath + "${id_mask}.xml ]; then echo \"le fichier mask-${id_mask}.xml est absent (queue de distrib?)\"; exit 2; fi\n")
-	sbatchGamaScript += os.path.abspath(args.gama) + " " + xmlPath + "${id_mask}.xml " + os.path.abspath(args.outputFolder)
+	sbatchGamaScript += args.gama + " " + xmlPath + "${id_mask}.xml " + args.outputFolder
 
 	try:
 		file = open(args.output + "/launch_pack_8.sh","w")
