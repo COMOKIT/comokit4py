@@ -9,8 +9,9 @@ script:
   - unzip gama.zip -d ./GAMA
   - chmod +x ./GAMA/headless/gama-headless.sh
   - mkdir ./COMOKIT-HPC
-  - mv ./scripts ./COMOKIT-HPC
-  - mv ./docker ./COMOKIT-HPC
+  - mv ./pre-processing ./COMOKIT-HPC
+  - mv ./post-processing ./COMOKIT-HPC
+  
   - git clone https://github.com/COMOKIT/COMOKIT-Model.git ./Model
   - mv ./Model/COMOKIT ./COMOKIT-Model
 after_success:
