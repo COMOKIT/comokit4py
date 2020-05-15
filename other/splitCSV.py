@@ -58,8 +58,23 @@ for f in onlyfiles:
 				firstLine = False
 				continue
 
-			if int(row.split(",")[0]) < oldFirstCol:
-				fWithMultipleCSV.append(f)
+			firstCol = int(row.split(",")[0])
+
+			if firstCol < oldFirstCol:
+				fWithMultipleCSV.append( f )
+
+			oldFirstCol = firstCol
+
+print("Duplicate detected in them, will split them and delete them all *flexed biceps*")
+print(fWithMultipleCSV)
+
+# Divide CSVs
+for f in fWithMultipleCSV:
+	with open( os.path.join(args.folder, f), "r" ) as file:
+		oldFirstCol = 0
+		firstLine = True
+		writeNewFile = False
+		newFileName = newFileWithUniqueId( f )
 
 		rows = file.readlines()
 		for row in rows:
@@ -72,7 +87,18 @@ for f in onlyfiles:
 			firstCol = row.split(",")[0]
 
 			if int(firstCol) < oldFirstCol:
-				print("Merde !")
-				print(f)
+				newFileName = newFileWithUniqueId( f )
+				print("Writing new file :")
+				print(newFileName)
+				outF = open(newFileName, "a")
+				outF.write(textFirstLine)
+				outF.close()
+
+			outF = open(newFileName, "a")
+			outF.write(row)
+			outF.close()
+			row.strip().replace(row, "")
 			
 			oldFirstCol = int(firstCol)
+
+	os.remove( os.path.join(args.folder, f) )
