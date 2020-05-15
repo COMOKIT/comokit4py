@@ -195,7 +195,7 @@ if __name__ == '__main__':
 			resultSubFolder = ""
 			
 			simu = ET.SubElement(root, "Simulation", {
-				"id"		: str( seed ),
+				"id"		: str( seed - args.seed ),
 				"seed"		: str( seed ),
 				"experiment": expName,
 				"until"		: str(args.until),
