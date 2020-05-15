@@ -139,7 +139,7 @@ if __name__ == '__main__':
 		"\n"
 		"id_mask=$(( $SLURM_ARRAY_TASK_ID * " + str(int(args.nodes * args.core / args.cpuPerTask)) + " + $1 ))\n"
 		"if [ ! -f  " + xmlPath + "${id_mask}.xml ]; then echo \"le fichier mask-${id_mask}.xml est absent (queue de distrib?)\"; exit 2; fi\n")
-	sbatchGamaScript += args.gama + " " + xmlPath + "${id_mask}.xml " + args.outputFolder
+	sbatchGamaScript += args.gama + " -hpc 1 " + xmlPath + "${id_mask}.xml " + args.outputFolder
 
 	try:
 		file = open(args.output + "/launch_pack_8.sh","w")
