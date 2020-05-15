@@ -187,10 +187,10 @@ if __name__ == '__main__':
 	root = ET.Element("Experiment_plan")
 	xmlNumber = 0
 	seed = -1
-	# Every dot in the explorable universe
-	for k in range(len(allParamValues)):
-		# Number of replication for every simulation
-		for i in range(args.replication):
+	# Number of replication for every simulation
+	for i in range(args.replication):
+		# Every dot in the explorable universe
+		for k in range(len(allParamValues)):
 			seed = seed +1
 			resultSubFolder = ""
 			
