@@ -133,6 +133,7 @@ if __name__ == '__main__':
 	parser.add_argument('-f', '--final', metavar='INT', help="Final step for simulations", default=-1, type=int)
 	parser.add_argument('-o', '--output', metavar='STR', help="Path to folder where save output CSV", default="../../batch_output", type=str)
 	parser.add_argument('-u', '--until', metavar='STR', help="Stop condition for the simulations", default="world.sim_stop()", type=str)
+	parser.add_argument('-S', '--seed', metavar='INT', help="Starting value for seeding simulation", default=0, type=int)	
 	parser.add_argument('-xml', metavar=("<experiment name>", "/path/to/file.gaml", "/path/to/file.xml"), nargs = 3, help = 'Classical xml arguments', required=True)
 	args = parser.parse_args()
 
@@ -186,12 +187,11 @@ if __name__ == '__main__':
 	# Create XML
 	root = ET.Element("Experiment_plan")
 	xmlNumber = 0
-	seed = -1
+	seed = args.seed
 	# Number of replication for every simulation
 	for i in range(args.replication):
 		# Every dot in the explorable universe
 		for k in range(len(allParamValues)):
-			seed = seed +1
 			resultSubFolder = ""
 			
 			simu = ET.SubElement(root, "Simulation", {
@@ -237,6 +237,9 @@ if __name__ == '__main__':
 				
 				root = ET.Element("Experiment_plan");
 				xmlNumber = xmlNumber + 1
+
+			# Prepare for next loop
+			seed = seed +1
 
 		sys.stdout.write('.')
 		sys.stdout.flush()
