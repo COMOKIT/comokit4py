@@ -43,11 +43,24 @@ args = parser.parse_args()
 
 onlyfiles = [f for f in os.listdir(args.folder) if os.path.isfile(os.path.join(args.folder, f))]
 
+fWithMultipleCSV = []
+
+# List all CSV with multiple ones
 for f in onlyfiles:
-	oldFirstCol = 0
-	firstLine = True
-	textFirstLine = ""
-	with open(f) as file:
+	with open( os.path.join(args.folder, f), "r" ) as file:
+		oldFirstCol = 0
+		firstLine = True
+
+		rows = file.readlines()
+		for row in rows:
+
+			if firstLine:
+				firstLine = False
+				continue
+
+			if int(row.split(",")[0]) < oldFirstCol:
+				fWithMultipleCSV.append(f)
+
 		rows = file.readlines()
 		for row in rows:
 
