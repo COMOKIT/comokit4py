@@ -132,6 +132,7 @@ if __name__ == '__main__':
 	parser.add_argument('-s', '--split', metavar='INT', help="Split XML file every S replications", default=-1, type=int)
 	parser.add_argument('-f', '--final', metavar='INT', help="Final step for simulations", default=-1, type=int)
 	parser.add_argument('-o', '--output', metavar='STR', help="Path to folder where save output CSV", default="../../batch_output", type=str)
+	parser.add_argument('-u', '--until', metavar='STR', help="Stop condition for the simulations", default="world.sim_stop()", type=str)
 	parser.add_argument('-xml', metavar=("<experiment name>", "/path/to/file.gaml", "/path/to/file.xml"), nargs = 3, help = 'Classical xml arguments', required=True)
 	args = parser.parse_args()
 
@@ -197,6 +198,7 @@ if __name__ == '__main__':
 				"id"		: str( seed ),
 				"seed"		: str( seed ),
 				"experiment": expName,
+				"until"		: str(args.until),
 				"sourcePath": gamlFilePath
 				})
 			if args.final != -1:
