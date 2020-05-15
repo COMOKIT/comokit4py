@@ -128,9 +128,9 @@ if __name__ == '__main__':
 	# 0 _ Get/Set parameters
 	# 
 	parser = argparse.ArgumentParser()
-	parser.add_argument('-r', '--replication', metavar='INT', help="Number of replication for each paramater space", default=1000, type=int)
+	parser.add_argument('-r', '--replication', metavar='INT', help="Number of replication for each paramater space", default=1, type=int)
 	parser.add_argument('-s', '--split', metavar='INT', help="Split XML file every S replications", default=-1, type=int)
-	parser.add_argument('-f', '--final', metavar='INT', help="Final step for simulations", default=5000, type=int)
+	parser.add_argument('-f', '--final', metavar='INT', help="Final step for simulations", default=-1, type=int)
 	parser.add_argument('-o', '--output', metavar='STR', help="Path to folder where save output CSV", default="../../batch_output", type=str)
 	parser.add_argument('-xml', metavar=("<experiment name>", "/path/to/file.gaml", "/path/to/file.xml"), nargs = 3, help = 'Classical xml arguments', required=True)
 	args = parser.parse_args()
@@ -197,9 +197,11 @@ if __name__ == '__main__':
 				"id"		: str( seed ),
 				"seed"		: str( seed ),
 				"experiment": expName,
-				"finalStep"	: str(args.final),
 				"sourcePath": gamlFilePath
 				})
+			if args.final != -1:
+				simu.set("finalStep", str(args.final))
+
 			parameters = ET.SubElement(simu, "Parameters")
 			# Set values for every parameters in the experiment
 			for j in range(len(parametersList)):
