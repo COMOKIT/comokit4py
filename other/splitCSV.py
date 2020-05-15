@@ -17,6 +17,23 @@
 import os
 import argparse
 
+
+def newFileWithUniqueId( fileName ):
+	newId = 0
+
+	# Extract file name schema
+	nFileName = os.path.join( args.folder, "batchDetailed-" + str(newId) + "_" + fileName.split("_")[1] )
+
+	# Search un-use file name
+	while os.path.exists( nFileName ):
+		newId = newId + 1
+		nFileName = os.path.join( args.folder, "batchDetailed-" + str(newId) + "_" + fileName.split("_")[1] )
+
+	return nFileName
+
+
+textFirstLine = ""
+
 # 0 _ Get/Set parameters
 # 
 parser = argparse.ArgumentParser(usage='$ python3 %(prog)s [options]')
