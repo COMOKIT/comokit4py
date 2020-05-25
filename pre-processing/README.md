@@ -20,7 +20,7 @@ pip3 install -r /path/to/COMOKIT-HPC/pre-processing/requirements.txt
 
 # How to use :
 
-## Genere XML
+## Generate XML
 
 ```
 $ python3 generateMultipleXML.py -h
