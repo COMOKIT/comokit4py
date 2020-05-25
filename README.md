@@ -38,6 +38,9 @@ Here's the structure of the repository :
 - `/post-processing/`
   - Scripts to gather and exploit data extracted from the exploration
   - Mostly R scripts
+- `/tools/`
+  - Several small scripts to fix some commun problems with the project/headless usage
+  - The doc will only be in the header of the file
 
 <!-- CONTRIBUTING -->
 ## Contributing
