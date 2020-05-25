@@ -1,6 +1,23 @@
 # COMOKIT-HPC - Pre-Processing
 ToolKit to launch COMOKIT on a HPC (primary SLURM job scheduler x COMOKIT OpenJDK8)
 
+# Prerequite
+
+## Python
+
+You need python 3
+
+```
+$ python3 -V
+Python 3.8.2
+```
+
+And several modules that you can easily install that way 
+
+```
+pip3 install -r /path/to/COMOKIT-HPC/pre-processing/requirements.txt
+```
+
 # How to use :
 
 ## Genere XML
