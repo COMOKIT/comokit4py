@@ -7,15 +7,17 @@ ToolKit to launch COMOKIT on a HPC (primary SLURM job scheduler x COMOKIT OpenJD
 
 ```
 $ python3 generateMultipleXML.py -h
-usage: generateMultipleXML.py [options] -xml <experiment name> /path/to/file.gaml /path/to/file.xml
+usage: $ python3 generateMultipleXML.py [options] -f INT -xml <experiment name> /path/to/file.gaml /path/to/file.xml
 
 optional arguments:
   -h, --help            show this help message and exit
   -r INT, --replication INT
-                        Number of replication for each paramater space
-  -s INT, --split INT   Split XML file every S replications
+                        Number of replication for each paramater space (default: 1)
+  -s INT, --split INT   Split XML file every S replications (default: 1)
+  -o STR, --output STR  Path to folder where save output CSV (default: "../../batch_output")
+  -u STR, --until STR   Stop condition for the simulations (default: "world.sim_stop()"
+  -S INT, --seed INT    Starting value for seeding simulation (default: 0)
   -f INT, --final INT   Final step for simulations
-  -o STR, --output STR  Path to folder where save output CSV
   -xml <experiment name> /path/to/file.gaml /path/to/file.xml
                         Classical xml arguments
 ```
