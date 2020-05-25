@@ -30,15 +30,15 @@ You will find many useful ressources to run [COMOKIT](http://comokit.org) in hea
 
 Here's the structure of the repository :
 
-- `/docker/`
+- [`/docker/`](https://github.com/COMOKIT/COMOKIT-HPC/tree/master/docker)
   - Carry the COMOKIT docker image (downloadable [here](https://hub.docker.com/r/comokit/comokit))
-- `/pre-processing/`
+- [`/pre-processing/`](https://github.com/COMOKIT/COMOKIT-HPC/tree/master/pre-processing)
   - Scripts to prepare exploring models with [GAMA-Headless](https://gama-platform.github.io/wiki/Headless) and execution with [SLURM](https://slurm.schedmd.com/) Workload Manager
   - Mostly Python 3 scripts
-- `/post-processing/`
+- [`/post-processing/`](https://github.com/COMOKIT/COMOKIT-HPC/tree/master/post-processing)
   - Scripts to gather and exploit data extracted from the exploration
   - Mostly R scripts
-- `/tools/`
+- [`/tools/`](https://github.com/COMOKIT/COMOKIT-HPC/tree/master/tools)
   - Several small scripts to fix some commun problems with the project/headless usage
   - The doc will only be in the header of the file
 
