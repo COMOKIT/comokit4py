@@ -57,6 +57,7 @@ def extract_ExperimentLine( line ):
 	if result["varName"] == "force_parameters":
 		result = None
 	else:
+		# Normal line
 		result["name"] = line.split("\"")[1]
 		result["value_inital"] = removeEndLine( line.split("init:")[1] )
 
@@ -118,8 +119,6 @@ def extractParametersAttributes( parameterLine ):
 
 	return result
 
-
-
 #
 #	MAIN
 #
@@ -152,8 +151,6 @@ if __name__ == '__main__':
 				temp = extractParametersAttributes( l.strip()  )
 				if temp is not None:
 					parametersList.append( extractParametersAttributes( l.strip()  ) )
-			#if expName in l:
-
 
 	print("Total number of parameters detected : " + str(len(parametersList)))
 
@@ -231,6 +228,7 @@ if __name__ == '__main__':
 				})
 			ET.SubElement(simu, "Outputs")
 
+			# Write and flush XML root if have to split
 			if( len(list(root)) >= args.split and args.split != -1):
 				tree = ET.ElementTree(root)
 				tree.write(xmlFilePath[:-4]+"-"+str(xmlNumber)+".xml")
@@ -241,10 +239,12 @@ if __name__ == '__main__':
 			# Prepare for next loop
 			seed = seed +1
 
+		# Verbose to see the script running
 		sys.stdout.write('.')
 		sys.stdout.flush()
 
 	print("\n=== Start saving XML file")
+	# File write of the (last?) XML file
 	tree = ET.ElementTree(root)
 	if xmlNumber == 0:
 		tree.write(xmlFilePath)
