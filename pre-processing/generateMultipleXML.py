@@ -53,6 +53,7 @@ def extract_ExperimentLine( line ):
 		"value_min": "0",
 		"value_max": "",
 		"value_step": "1",
+		"value_among": "",
 		"varName": ""
 	}
 
@@ -73,9 +74,12 @@ def extract_ExperimentLine( line ):
 			result["type"] = "BOOLEAN"
 
 		else:
-			result["value_min"] = removeEndLine( line.split("min:")[1] )
-			result["value_max"] = removeEndLine( line.split("max:")[1] )
-			result["value_step"] = removeEndLine( line.split("step:")[1] )
+			if "among" not in line: 
+				result["value_min"] = removeEndLine( line.split("min:")[1] )
+				result["value_max"] = removeEndLine( line.split("max:")[1] )
+				result["value_step"] = removeEndLine( line.split("step:")[1] )
+			else:
+				result["value_among"] = removeEndLine( line.split("among:")[1] )
 			
 			if '.' in result["value_inital"]: 
 				result["type"] = "FLOAT"
