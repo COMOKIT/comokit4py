@@ -32,7 +32,12 @@ parametersList = []
 
 def removeEndLine (splittedLine):
 	try:
-		result = splittedLine.split(";")[0].split(":")[0].split(" ")[-2]
+		result = splittedLine.split(";")[0].split(":")[0]
+
+		# Among parsing => Keep array form
+		if "[" not in result:
+			result = result.split(" ")[-2]
+		
 		if result == "":
 			raise
 	except:
