@@ -86,29 +86,6 @@ def extract_ExperimentLine( line ):
 
 	return result
 
-def extract_VariableLine( line ):
-	result = {
-		"name" : "",
-		"type": "INT",
-		"value_inital": "",
-		"value_min": "0",
-		"value_max": "",
-		"value_step": "1",
-		"varName": ""
-	}
-
-	result["name"] = result["varName"] = removeEndLine( line.split(" ")[1] )
-	result["type"] = line.split(" ")[0].capitalize()
-	result["value_inital"] = removeEndLine( line.split("<-")[1] )
-	if result["type"] == "BOOLEAN":
-		result["value_max"] = "1"
-	else:
-		result["value_min"] = removeEndLine( line.split("min:")[1] )
-		result["value_max"] = removeEndLine( line.split("max:")[1] )
-		result["value_step"] = removeEndLine( line.split("step:")[1] )
-	
-	return result
-
 def extractParametersAttributes( parameterLine ):
 	stringExtractor = parameterLine[0:2]
 	result = None
