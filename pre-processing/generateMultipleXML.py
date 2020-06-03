@@ -180,6 +180,7 @@ if __name__ == '__main__':
 
 	# Create XML
 	root = ET.Element("Experiment_plan")
+	new_allParamValues = []
 	xmlNumber = 0
 	seed = args.seed
 	# Number of replication for every simulation
@@ -201,8 +202,6 @@ if __name__ == '__main__':
 			parameters = ET.SubElement(simu, "Parameters")
 			# Set values for every parameters in the experiment
 			for j in range(len(parametersList)):
-				
-				resultSubFolder += parametersList[j]["varName"] + "_" + str(allParamValues[k][j]) + "-"
 
 				# Set exploration point
 				canWriteParameter = False
@@ -221,20 +220,41 @@ if __name__ == '__main__':
 						"value" : str(allParamValues[k][j]),
 						"var"	: parametersList[j]["varName"]
 						})
-					
-			# Set simulation id for csv name
-			ET.SubElement(parameters, "Parameter", {
-				"type"	: "INT",
-				"value" : str( seed ),
-				"var"	: "idSimulation"
-				})
+				
+					resultSubFolder += parametersList[j]["varName"] + "_" + str(allParamValues[k][j]) + "-"
+
 			# Set batch_output Path
 			ET.SubElement(parameters, "Parameter", {
 				"type"	: "STRING",
 				"value" : args.output + "/" + resultSubFolder[:-1] + "/",
 				"var"	: "result_folder"
 				})
-			ET.SubElement(simu, "Outputs")
+
+			# On first round, prevent duplicated simulation (caused by condition)
+			# + create new universe space list (without these duplication)
+			if i == 0:
+				duplicate = False
+
+				for sim in reversed(root[:-1]):
+					if ET.tostring(parameters, encoding='unicode').replace("</Parameters>", "") in ET.tostring(sim, encoding='unicode') :
+						duplicate = True
+						break
+
+				if not duplicate:
+					# Create cleared parameter list
+					new_allParamValues.append(allParamValues[k])
+
+					# Set simulation id for csv name
+					ET.SubElement(parameters, "Parameter", {
+						"type"	: "INT",
+						"value" : str( seed ),
+						"var"	: "idSimulation"
+						})
+					ET.SubElement(simu, "Outputs")
+
+				else:
+					# Remove duplicated element from XML
+					root.remove(root[-1])
 
 			# Write and flush XML root if have to split
 			if( len(list(root)) >= args.split and args.split != -1):
@@ -250,6 +270,12 @@ if __name__ == '__main__':
 		# Verbose to see the script running
 		sys.stdout.write('.')
 		sys.stdout.flush()
+
+		# Reset universe space list without duplicated simulations
+		if i == 0 and len(new_allParamValues) > 0:
+			allParamValues = new_allParamValues
+
+	print("\nNote : Real total number of simulation is " + str(len(allParamValues) * args.replication))
 
 	print("\n=== Start saving XML file")
 	# File write of the (last?) XML file
