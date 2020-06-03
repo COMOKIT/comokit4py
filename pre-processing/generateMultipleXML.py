@@ -157,7 +157,7 @@ if __name__ == '__main__':
 			t.extend(parameter["value_among"].replace("[", "").replace("]", "").replace(" ", "").split(","))
 		else:
 			for i in numpy.arange(float(parameter["value_min"]), float(parameter["value_max"]) + float(parameter["value_step"]), float(parameter["value_step"])):
-				t.append(i)
+				t.append( round(i, len(parameter["value_step"])) )
 		allParamValues.append( t )
 
 	# 3 _ Calculate all the possible universe
