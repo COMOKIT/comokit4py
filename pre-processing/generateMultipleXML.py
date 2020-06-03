@@ -59,13 +59,13 @@ def extract_ExperimentLine( line ):
 	else:
 		# Normal line
 		result["name"] = line.split("\"")[1]
-		result["value_inital"] = removeEndLine( line.split("init:")[1] )
+		result["value_inital"] = removeEndLine( line.split("init:")[1] ).replace(" ", "")
 
-		if isinstance(result["value_inital"], bool):
+		if (result["value_inital"] == "true") or (result["value_inital"] == "false"):
 			result["value_min"] = "0"
 			result["value_max"] = "1"
 			result["value_step"] = "1"
-			result["type"] = "BOOL"
+			result["type"] = "BOOLEAN"
 
 		else:
 			result["value_min"] = removeEndLine( line.split("min:")[1] )
@@ -91,7 +91,7 @@ def extract_VariableLine( line ):
 	result["name"] = result["varName"] = removeEndLine( line.split(" ")[1] )
 	result["type"] = line.split(" ")[0].capitalize()
 	result["value_inital"] = removeEndLine( line.split("<-")[1] )
-	if result["type"] == "BOOL":
+	if result["type"] == "BOOLEAN":
 		result["value_max"] = "1"
 	else:
 		result["value_min"] = removeEndLine( line.split("min:")[1] )
@@ -160,6 +160,9 @@ if __name__ == '__main__':
 	for parameter in parametersList:
 		t = []
 		for i in numpy.arange(float(parameter["value_min"]), float(parameter["value_max"]) + float(parameter["value_step"]), float(parameter["value_step"])):
+			# BOOLEAN variables
+			if parameter["type"] == "BOOLEAN":
+				i = 'true' if i == 0.0 else 'false' 
 			t.append(i)
 		allParamValues.append( t )
 
