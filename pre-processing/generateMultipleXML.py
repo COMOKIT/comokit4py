@@ -54,7 +54,8 @@ def extract_ExperimentLine( line ):
 		"value_max": "",
 		"value_step": "1",
 		"value_among": "",
-		"varName": ""
+		"varName": "",
+		"condition": False
 	}
 
 	result["varName"] = removeEndLine( line.split("var:")[1] )
@@ -83,6 +84,10 @@ def extract_ExperimentLine( line ):
 			
 			if '.' in result["value_inital"]: 
 				result["type"] = "FLOAT"
+
+		# Check if condition apply
+		if "if:" in line:
+			result["condition"] = line.split("if:")[1][2:-1] 
 
 	return result
 
@@ -200,12 +205,23 @@ if __name__ == '__main__':
 				resultSubFolder += parametersList[j]["varName"] + "_" + str(allParamValues[k][j]) + "-"
 
 				# Set exploration point
-				ET.SubElement(parameters, "Parameter", {
-					"name"	: parametersList[j]["name"],
-					"type"	: parametersList[j]["type"],
-					"value" : str(allParamValues[k][j]),
-					"var"	: parametersList[j]["varName"]
-					})
+				canWriteParameter = False
+				if parametersList[j]["condition"] == False:
+					canWriteParameter = True
+				else:
+					condition = parametersList[j]["condition"].split(",")
+					for p in parameters:
+						if p.get("var") == condition[0] and p.get("value") == condition[1]:
+							canWriteParameter = True
+
+				if canWriteParameter:
+					ET.SubElement(parameters, "Parameter", {
+						"name"	: parametersList[j]["name"],
+						"type"	: parametersList[j]["type"],
+						"value" : str(allParamValues[k][j]),
+						"var"	: parametersList[j]["varName"]
+						})
+					
 			# Set simulation id for csv name
 			ET.SubElement(parameters, "Parameter", {
 				"type"	: "INT",
