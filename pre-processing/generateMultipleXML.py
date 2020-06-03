@@ -171,6 +171,8 @@ if __name__ == '__main__':
 		# BOOLEAN variables
 		if parameter["type"] == "BOOLEAN":
 			t.extend(["true", "false"])
+		elif parameter["value_among"] != "":
+			t.extend(parameter["value_among"].replace("[", "").replace("]", "").replace(" ", "").split(","))
 		else:
 			for i in numpy.arange(float(parameter["value_min"]), float(parameter["value_max"]) + float(parameter["value_step"]), float(parameter["value_step"])):
 				t.append(i)
