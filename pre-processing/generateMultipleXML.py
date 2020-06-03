@@ -174,7 +174,7 @@ if __name__ == '__main__':
 
 	# 3.1 _ Inform for whole parameters
 	print("\tReplications : " + str(args.replication))
-	print("\tNumber of exp in file : " + str(args.split))
+	print("\tNumber of exp in file : " + (str(args.split) if args.split != -1 else 'All') )
 	print("\tFinal step : " + str(args.final))
 
 	# 4 _ Generate XML
