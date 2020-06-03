@@ -159,11 +159,12 @@ if __name__ == '__main__':
 	allParamValues = []
 	for parameter in parametersList:
 		t = []
-		for i in numpy.arange(float(parameter["value_min"]), float(parameter["value_max"]) + float(parameter["value_step"]), float(parameter["value_step"])):
-			# BOOLEAN variables
-			if parameter["type"] == "BOOLEAN":
-				i = 'true' if i == 0.0 else 'false' 
-			t.append(i)
+		# BOOLEAN variables
+		if parameter["type"] == "BOOLEAN":
+			t.extend(["true", "false"])
+		else:
+			for i in numpy.arange(float(parameter["value_min"]), float(parameter["value_max"]) + float(parameter["value_step"]), float(parameter["value_step"])):
+				t.append(i)
 		allParamValues.append( t )
 
 	# 3 _ Calculate all the possible universe
