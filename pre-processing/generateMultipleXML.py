@@ -181,6 +181,7 @@ if __name__ == '__main__':
 	# Create XML
 	root = ET.Element("Experiment_plan")
 	new_allParamValues = []
+	hasCondition = False
 	xmlNumber = 0
 	seed = args.seed
 	# Number of replication for every simulation
@@ -211,7 +212,7 @@ if __name__ == '__main__':
 					condition = parametersList[j]["condition"].split(",")
 					for p in parameters:
 						if p.get("var") == condition[0] and p.get("value") == condition[1]:
-							canWriteParameter = True
+							canWriteParameter = hasCondition = True
 
 				if canWriteParameter:
 					ET.SubElement(parameters, "Parameter", {
@@ -232,7 +233,7 @@ if __name__ == '__main__':
 
 			# On first round, prevent duplicated simulation (caused by condition)
 			# + create new universe space list (without these duplication)
-			if i == 0:
+			if i == 0 and hasCondition:
 				duplicate = False
 
 				for sim in reversed(root[:-1]):
@@ -272,7 +273,7 @@ if __name__ == '__main__':
 		sys.stdout.flush()
 
 		# Reset universe space list without duplicated simulations
-		if i == 0 and len(new_allParamValues) > 0:
+		if i == 0 and len(new_allParamValues) > 0 and hasCondition:
 			allParamValues = new_allParamValues
 
 	print("\nNote : Real total number of simulation is " + str(len(allParamValues) * args.replication))
