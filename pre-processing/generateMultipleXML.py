@@ -289,6 +289,6 @@ if __name__ == '__main__':
 	tree = ET.ElementTree(root)
 	if xmlNumber == 0:
 		tree.write(xmlFilePath)
-	else:
+	elif len(root) > 0:
 		tree.write(xmlFilePath[:-4]+"-"+str(xmlNumber)+".xml")
 	print("\n=== Done ;)")
