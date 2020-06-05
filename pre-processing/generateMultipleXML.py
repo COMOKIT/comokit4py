@@ -110,6 +110,12 @@ def extractParametersAttributes( parameterLine ):
 
 	return result
 
+def autoIndexSelector( argsFName ):
+	path, tail = os.path.split( argsFName )
+
+	return len([f for f in os.listdir(path) 
+		if (tail[:-4] in f) and os.path.isfile(os.path.join(path, f))])
+
 #
 #	MAIN
 #
@@ -182,7 +188,7 @@ if __name__ == '__main__':
 	root = ET.Element("Experiment_plan")
 	new_allParamValues = []
 	hasCondition = False
-	xmlNumber = 0
+	xmlNumber = autoIndexSelector( xmlFilePath )
 	seed = args.seed
 	# Number of replication for every simulation
 	for i in range(args.replication):
