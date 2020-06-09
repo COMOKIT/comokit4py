@@ -239,29 +239,28 @@ if __name__ == '__main__':
 
 			# On first round, prevent duplicated simulation (caused by condition)
 			# + create new universe space list (without these duplication)
+			duplicate = False
 			if i == 0 and hasCondition:
-				duplicate = False
 
 				for sim in reversed(root[:-1]):
 					if ET.tostring(parameters, encoding='unicode').replace("</Parameters>", "") in ET.tostring(sim, encoding='unicode') :
 						duplicate = True
 						break
 
-				if not duplicate:
-					# Create cleared parameter list
-					new_allParamValues.append(allParamValues[k])
+			if duplicate:
+				# Remove duplicated element from XML
+				root.remove(root[-1])
+			else:
+				# Create cleared parameter list
+				new_allParamValues.append(allParamValues[k])
 
-					# Set simulation id for csv name
-					ET.SubElement(parameters, "Parameter", {
-						"type"	: "INT",
-						"value" : str( seed ),
-						"var"	: "idSimulation"
-						})
-					ET.SubElement(simu, "Outputs")
-
-				else:
-					# Remove duplicated element from XML
-					root.remove(root[-1])
+				# Set simulation id for csv name
+				ET.SubElement(parameters, "Parameter", {
+					"type"	: "INT",
+					"value" : str( seed ),
+					"var"	: "idSimulation"
+					})
+				ET.SubElement(simu, "Outputs")
 
 			# Write and flush XML root if have to split
 			if( len(list(root)) >= args.split and args.split != -1):
