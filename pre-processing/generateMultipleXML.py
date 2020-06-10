@@ -251,20 +251,20 @@ if __name__ == '__main__':
 						duplicate = True
 						break
 
-			if duplicate:
-				# Remove duplicated element from XML
-				root.remove(root[-1])
-			else:
-				# Create cleared parameter list
-				new_allParamValues.append(allParamValues[k])
+				if duplicate:
+					# Remove duplicated element from XML
+					root.remove(root[-1])
+				else:
+					# Create cleared parameter list
+					new_allParamValues.append(allParamValues[k])
 
-				# Set simulation id for csv name
-				ET.SubElement(parameters, "Parameter", {
-					"type"	: "INT",
-					"value" : str( seed ),
-					"var"	: "idSimulation"
-					})
-				ET.SubElement(simu, "Outputs")
+			# Set simulation id for csv name
+			ET.SubElement(parameters, "Parameter", {
+				"type"	: "INT",
+				"value" : str( seed ),
+				"var"	: "idSimulation"
+				})
+			ET.SubElement(simu, "Outputs")
 
 			# Write and flush XML root if have to split
 			if( len(list(root)) >= args.split and args.split != -1):
