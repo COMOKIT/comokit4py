@@ -113,6 +113,7 @@ if __name__ == '__main__':
 		file = open(args.output + "/sbatch_array.sh","w")
 		file.write( sbatchScript )
 		file.close()
+		os.chmod(args.output + "/sbatch_array.sh", 0o775)
 	except:
 		print("\tError while saving file")
 	finally:
@@ -145,6 +146,7 @@ if __name__ == '__main__':
 		file = open(args.output + "/launch_pack_8.sh","w")
 		file.write( sbatchGamaScript )
 		file.close()
+		os.chmod(args.output + "/launch_pack_8.sh", 0o775)
 	except:
 		print("\tError while saving file")
 	finally:
