@@ -41,7 +41,7 @@ if __name__ == '__main__':
 	#	GAMA Headless settings
 	parser.add_argument('-f', '--folder', metavar='', help="Path to folder where your XML are stored (will gather EVERY! XML file)", type=str, required=True)
 	parser.add_argument('-g', '--gama', metavar="", help = 'Path to GAMA headless script (/path/to/your/gama/headless/gama-headless.sh)', type=str, required=False, default="../../GAMA/headless/gama-headless.sh")
-	parser.add_argument('-F', '--outputFolder', metavar="", help='Path to folder where GAMA will write simulation\'s console output (default: "/tmp/.gama-output")', type=str, default="/tmp/.gama-output")
+	parser.add_argument('-F', '--outputFolder', metavar="", help='Path to folder where GAMA will write simulation\'s console output (default: "./sbatchUtilities/tmp/.gama-output")', type=str, default="./sbatchUtilities/tmp/.gama-output")
 	#	Script settings
 	parser.add_argument('-o', '--output', metavar="", help='Path to folder where save every needed sbatch files (default: "./sbatchUtilities")', type=str, default="./sbatchUtilities")
 	parser.add_argument('--EDF', action='store_true', help='Will add extra parameters for EDF collaboration')
@@ -139,7 +139,7 @@ if __name__ == '__main__':
 		"\n"
 		"id_mask=$(( $SLURM_ARRAY_TASK_ID * " + str(int(args.nodes * args.core / args.cpuPerTask)) + " + $1 ))\n"
 		"if [ ! -f  " + xmlPath + "${id_mask}.xml ]; then echo \"le fichier mask-${id_mask}.xml est absent (queue de distrib?)\"; exit 2; fi\n")
-	sbatchGamaScript += args.gama + " -hpc 1 " + xmlPath + "${id_mask}.xml " + args.outputFolder
+	sbatchGamaScript += args.gama + " -hpc 1 " + xmlPath + "${id_mask}.xml " + args.outputFolder+"${id_mask}"
 
 	try:
 		file = open(args.output + "/launch_pack_8.sh","w")
