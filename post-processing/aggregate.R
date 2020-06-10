@@ -33,12 +33,10 @@ do_folder <- function(path_folder, path_output, nb_steps){
     files <- list.files(aSubfolder, pattern="*.csv", full.names = TRUE, include.dirs = F, recursive = F)
     for(aFile in files){
       file_info <- get_file_info(aFile)
-      print(file_info)
       if((file_info[1] %in% v_simulations) == FALSE){
         v_simulations <- c(v_simulations,file_info[1])
       }
       tmp_df <- read.csv(aFile, stringsAsFactors = F)
-      print(ncol(tmp_df))
       max_steps <- min(nrow(tmp_df),nb_steps)
       if(file_info[2]==BUILDINGS){
         if(length(building_names)==0){
