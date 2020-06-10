@@ -24,7 +24,7 @@ do_folder <- function(path_folder, path_output, nb_steps){
   
   #One subfolder is expected to contain the results of all simulations from a same experiment
   for(aSubfolder in subfolders){
-    dir.create(gsub(path_folder,path_output,aSubfolder,fixed = T),showWarnings = F)
+    dir.create(gsub(path_folder,path_output,aSubfolder,fixed = T),showWarnings = F, recursive = T)
     nb_simulations <- length(list.files(aSubfolder,pattern="*building.csv",include.dirs = F,recursive = F))
     array_individuals <- array(0,dim=c(INDIVIDUAL_VARIABLES,nb_simulations,length(INDIVIDUAL_AGE_CATEGORIES),nb_steps))
     array_buildings <- array(0,dim=c(BUILDING_TYPES,nb_simulations,nb_steps))
