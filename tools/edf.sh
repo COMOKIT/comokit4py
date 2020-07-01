@@ -21,24 +21,24 @@
 ###
 function generateXML {
 	echo "%%% Generating XML for experiment $1"
-	python3 $( dirname "${BASH_SOURCE[0]}" )/../pre-processing/generateMultipleXML.py -r 1 -s 8 -f 5000 -xml $1 $( dirname "${BASH_SOURCE[0]}" )/../../COMOKIT/Experiments/"$2" $( dirname "${BASH_SOURCE[0]}" )/../../XML/mask.xml
+	python3 "$( dirname "${BASH_SOURCE[0]}" )"/../pre-processing/generateMultipleXML.py -r 1 -s 8 -f 5000 -xml $1 "$( dirname "${BASH_SOURCE[0]}" )"/../../COMOKIT/Experiments/"$2" "$( dirname "${BASH_SOURCE[0]}" )"/../../XML/mask.xml
 }
 
 #
 #	Same as generateXML but with 1 simulation per XML file
 ###
 function generateXML_bigSimulation {
-	python3 $( dirname "${BASH_SOURCE[0]}" )/../pre-processing/generateMultipleXML.py -r 1000 -s 1 -f 5000 -xml $1 $( dirname "${BASH_SOURCE[0]}" )/../../COMOKIT/Experiments/"$2" $( dirname "${BASH_SOURCE[0]}" )/../../XML/mask.xml
+	python3 "$( dirname "${BASH_SOURCE[0]}" )"/../pre-processing/generateMultipleXML.py -r 1000 -s 1 -f 5000 -xml $1 "$( dirname "${BASH_SOURCE[0]}" )"/../../COMOKIT/Experiments/"$2" "$( dirname "${BASH_SOURCE[0]}" )"/../../XML/mask.xml
 }
 
 #
 #	generateSBatch <no parameter>
 ###
 function generateSBatch {
-	echo "%%% Total of XML : $(ls -l $( dirname "${BASH_SOURCE[0]}" )/../../XML | wc -l)"
+	echo "%%% Total of XML : $(ls -l "$( dirname "${BASH_SOURCE[0]}" )"/../../XML | wc -l)"
 	echo ""
 	echo "%%% Generate SBatch scripts"
-	python3 $( dirname "${BASH_SOURCE[0]}" )/../pre-processing/generateSBatchFiles.py -g $( dirname "${BASH_SOURCE[0]}" )/../../GAMA/headless/gama-headless.sh -f $( dirname "${BASH_SOURCE[0]}" )/../../XML -s 27 -S 6 -n 16 -T 1 -c 36 --EDF -A
+	python3 "$( dirname "${BASH_SOURCE[0]}" )"/../pre-processing/generateSBatchFiles.py -g "$( dirname "${BASH_SOURCE[0]}" )"/../../GAMA/headless/gama-headless.sh -f "$( dirname "${BASH_SOURCE[0]}" )"/../../XML -s 27 -S 6 -n 16 -T 1 -c 36 --EDF -A
 }
 
 #
@@ -46,10 +46,10 @@ function generateSBatch {
 #
 if [ ! -d "$( dirname "${BASH_SOURCE[0]}" )/../../XML" ]; then
 	echo "%%% Creating XML folder"
-	mkdir $( dirname "${BASH_SOURCE[0]}" )/../../XML
+	mkdir "$( dirname "${BASH_SOURCE[0]}" )"/../../XML
 else
 	echo "%%% Cleaning XML folder"
-	rm -fr $( dirname "${BASH_SOURCE[0]}" )/../../XML/*
+	rm -fr "$( dirname "${BASH_SOURCE[0]}" )"/../../XML/*
 fi
 	
 case "$1" in
