@@ -13,6 +13,11 @@
 ##################################################
 
 #
+#	Args
+declare -i reps
+declare -i cyclend
+
+#
 #	Generative commands
 #
 
@@ -21,8 +26,6 @@
 ###
 function generateXML {
 	echo "%%% Generating XML for experiment $1"
-	reps=${3:-1000}
-	cyclend=${4:-5000}
 	python3 "$( dirname "${BASH_SOURCE[0]}" )"/../pre-processing/generateMultipleXML.py -r "$reps" -s 8 -f "$cyclend$ -xml $1 "$( dirname "${BASH_SOURCE[0]}" )"/../../COMOKIT/Experiments/"$2" "$( dirname "${BASH_SOURCE[0]}" )"/../../XML/mask.xml
 }
 
@@ -58,12 +61,16 @@ fi
 	
 case "$1" in
 "1")	# Damien sensibility
+	reps=${2:-1000}
+	cyclend=${3:-5000}
 	generateXML HeadlessComparison Sensitivity\ Analysis/Comparison\ With\ and\ Without\ Environmental\ Transmission.gaml
-    generateXML ContactRateHumanHeadless Sensitivity\ Analysis/Sensitivity\ Analysis.gaml
+    	generateXML ContactRateHumanHeadless Sensitivity\ Analysis/Sensitivity\ Analysis.gaml
  
     generateSBatch
     ;;
 "2")	# Kevin Camps explorations
+	reps=${2:-100}
+	cyclend=${3:-8000}
 	generateXML_bigSimulation HeadlessContactTracing ../../COMOKIT-Camps/models/Experiments/ContactTracing.gaml
 	generateXML_bigSimulation HeadlessNoPolicy ../../COMOKIT-Camps/models/Experiments/No\ Containment.gaml
 	generateXML_bigSimulation HeadlessReducingContactHeadlessReducingContact ../../COMOKIT-Camps/models/Experiments/ReducingContact.gaml
