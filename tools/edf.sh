@@ -13,6 +13,12 @@
 ##################################################
 
 #
+#	Arguments
+#
+reps=${2:-1}
+cyclend=${3:-5000}
+
+#
 #	Generative commands
 #
 
@@ -21,14 +27,14 @@
 ###
 function generateXML {
 	echo "%%% Generating XML for experiment $1"
-	python3 "$( dirname "${BASH_SOURCE[0]}" )"/../pre-processing/generateMultipleXML.py -r 1 -s 8 -f 5000 -xml $1 "$( dirname "${BASH_SOURCE[0]}" )"/../../COMOKIT/Experiments/"$2" "$( dirname "${BASH_SOURCE[0]}" )"/../../XML/mask.xml
+	python3 "$( dirname "${BASH_SOURCE[0]}" )"/../pre-processing/generateMultipleXML.py -r "$reps" -s 8 -f "$cyclend$ -xml $1 "$( dirname "${BASH_SOURCE[0]}" )"/../../COMOKIT/Experiments/"$2" "$( dirname "${BASH_SOURCE[0]}" )"/../../XML/mask.xml
 }
 
 #
 #	Same as generateXML but with 1 simulation per XML file
 ###
 function generateXML_bigSimulation {
-	python3 "$( dirname "${BASH_SOURCE[0]}" )"/../pre-processing/generateMultipleXML.py -r 1000 -s 1 -f 5000 -xml $1 "$( dirname "${BASH_SOURCE[0]}" )"/../../COMOKIT/Experiments/"$2" "$( dirname "${BASH_SOURCE[0]}" )"/../../XML/mask.xml
+	python3 "$( dirname "${BASH_SOURCE[0]}" )"/../pre-processing/generateMultipleXML.py -r "$reps" -s 1 -f "$cyclend$ -xml $1 "$( dirname "${BASH_SOURCE[0]}" )"/../../COMOKIT/Experiments/"$2" "$( dirname "${BASH_SOURCE[0]}" )"/../../XML/mask.xml
 }
 
 #
