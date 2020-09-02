@@ -71,7 +71,7 @@ case "$1" in
 	cyclend=${3:-8000}
 	generateXML_bigSimulation HeadlessContactTracing ../../COMOKIT-Camps/models/Experiments/ContactTracing.gaml
 	generateXML_bigSimulation HeadlessNoPolicy ../../COMOKIT-Camps/models/Experiments/No\ Containment.gaml
-	generateXML_bigSimulation HeadlessReducingContactHeadlessReducingContact ../../COMOKIT-Camps/models/Experiments/ReducingContact.gaml
+	generateXML_bigSimulation HeadlessReducingContact ../../COMOKIT-Camps/models/Experiments/ReducingContact.gaml
 	generateXML_bigSimulation HeadlessReducingAndContactTracing ../../COMOKIT-Camps/models/Experiments/ReducingContactAndTracing.gaml
 
     generateSBatch
