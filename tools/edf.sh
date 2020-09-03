@@ -32,7 +32,7 @@ function generateXML {
 #
 #	Same as generateXML but with 1 simulation per XML file
 ###
-function generateXML_bigSimulation {
+function generateXMLBigSimulation {
 	python3 "$( dirname "${BASH_SOURCE[0]}" )"/../pre-processing/generateMultipleXML.py -r "$reps" -s 1 -f "$cyclend$ -xml $1 "$( dirname "${BASH_SOURCE[0]}" )"/../../COMOKIT/Experiments/"$2" "$( dirname "${BASH_SOURCE[0]}" )"/../../XML/mask.xml
 }
 
@@ -69,10 +69,10 @@ case "$1" in
 "2")	# Kevin Camps explorations
 	reps=${2:-100}
 	cyclend=${3:-8000}
-	generateXML_bigSimulation HeadlessContactTracing ../../COMOKIT-Camps/models/Experiments/ContactTracing.gaml
-	generateXML_bigSimulation HeadlessNoPolicy ../../COMOKIT-Camps/models/Experiments/No\ Containment.gaml
-	generateXML_bigSimulation HeadlessReducingContact ../../COMOKIT-Camps/models/Experiments/ReducingContact.gaml
-	generateXML_bigSimulation HeadlessReducingAndContactTracing ../../COMOKIT-Camps/models/Experiments/ReducingContactAndTracing.gaml
+	generateXMLBigSimulation HeadlessContactTracing ../../COMOKIT-Camps/models/Experiments/ContactTracing.gaml
+	generateXMLBigSimulation HeadlessNoPolicy ../../COMOKIT-Camps/models/Experiments/No\ Containment.gaml
+	generateXMLBigSimulation HeadlessReducingContact ../../COMOKIT-Camps/models/Experiments/ReducingContact.gaml
+	generateXMLBigSimulation HeadlessReducingAndContactTracing ../../COMOKIT-Camps/models/Experiments/ReducingContactAndTracing.gaml
 
     generateSBatch
     ;;
