@@ -38,6 +38,7 @@ if __name__ == '__main__':
 	parser.add_argument('-T', '--cpuPerTask', metavar='', help="Number of core allocated to a single task", default=1, type=int)
 	parser.add_argument('-c', '--core', metavar='', help="Number of cores per node", default=1, type=int)
 	parser.add_argument('-t', '--time', metavar='', help="Time (in hour) for your job", default=1, type=int)
+	parser.add_argument('-d', '--delay', metavar='', help="Delay in between launching headless (ex. 2s, 3m, 4h, 5d)", required=False)
 	#	GAMA Headless settings
 	parser.add_argument('-f', '--folder', metavar='', help="Path to folder where your XML are stored (will gather EVERY! XML file)", type=str, required=True)
 	parser.add_argument('-g', '--gama', metavar="", help = 'Path to GAMA headless script (/path/to/your/gama/headless/gama-headless.sh)', type=str, required=False, default="../../GAMA/headless/gama-headless.sh")
@@ -141,6 +142,9 @@ if __name__ == '__main__':
 		"id_mask=$(( $SLURM_ARRAY_TASK_ID * " + str(int(args.nodes * args.core / args.cpuPerTask)) + " + $1 ))\n"
 		"if [ ! -f  " + xmlPath + "${id_mask}.xml ]; then echo \"le fichier mask-${id_mask}.xml est absent (queue de distrib?)\"; exit 2; fi\n")
 	sbatchGamaScript += args.gama + " -hpc 1 " + xmlPath + "${id_mask}.xml " + args.outputFolder+"${id_mask}"
+
+	if args.delay != None:
+		sbatchGamaScript += "\nsleep "+args.delay
 
 	try:
 		file = open(args.output + "/launch_pack_8.sh","w")
