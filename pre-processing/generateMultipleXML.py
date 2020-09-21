@@ -202,11 +202,12 @@ if __name__ == '__main__':
 				"id"		: str( seed - args.seed ),
 				"seed"		: str( seed ),
 				"experiment": expName,
-				"until"		: str(args.until),
 				"sourcePath": gamlFilePath
 				})
 			if args.final != -1:
 				simu.set("finalStep", str(args.final))
+			if args.until != "":
+				simu.set("until", str(args.until))
 
 			parameters = ET.SubElement(simu, "Parameters")
 			# Set values for every parameters in the experiment
