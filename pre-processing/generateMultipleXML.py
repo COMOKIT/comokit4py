@@ -69,9 +69,7 @@ def extract_ExperimentLine( line ):
 		result["value_inital"] = removeEndLine( line.split("init:")[1] ).replace(" ", "")
 
 		if (result["value_inital"] == "true") or (result["value_inital"] == "false"):
-			result["value_min"] = "0"
-			result["value_max"] = "1"
-			result["value_step"] = "1"
+			result["value_among"] = result["value_inital"]
 			result["type"] = "BOOLEAN"
 
 		else:
@@ -162,7 +160,7 @@ if __name__ == '__main__':
 		t = []
 		# BOOLEAN variables
 		if parameter["type"] == "BOOLEAN":
-			t.extend(["true", "false"])
+			t.extend(parameter["value_among"].split(" ")) #["true", "false"])
 		elif parameter["value_among"] != "":
 			t.extend(parameter["value_among"].replace("[", "").replace("]", "").replace(" ", "").split(","))
 		else:
