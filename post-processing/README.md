@@ -44,8 +44,54 @@ with "" being buildings without any type.
 $ Rscript aggregate.R ./Documents/batch_output ./Documents/batch_aggregated 5000
 ```
 
+## Genere COMOKIT Graph
+
+```
+$ python3 comokit2png.py -h
+usage: $ python3 comokit2png.py [options]
+
+optional arguments:
+  -h, --help           show this help message and exit
+
+  -i , --inputFolder   Path to folder where are saved all the COMOKIT CSV files from explorations (default: "./batch_output")
+  -o , --outputImg     Where to save output graph (default: "./out" =generate=> "./out[GeneratedNumber].png")
+  -r , --replication   Number of replication per value set (default: 1)
+
+  -t , --title         Graph title (default: "Sickness")
+  -v, --variance       Enable variance curve (may crap the output index)
+  
+  -q, --quiet          Disable verbose mode
+```
+
+**Example**
+```
+$ python3 comokit2graph.py -r 15
+[0.0, 2.0, 0.1, 0.3114321219064982, 0.09698996655518395, 2.0, 2.0]
+0 / 5000
+[0.0, 5.0, 0.36, 0.8160595427158027, 0.6659531772575251, 7.2, 0.06666666666666667]
+500 / 5000
+[0.0, 50.0, 2.4033333333333333, 6.174225383466471, 38.12105908584169, 48.06666666666667, 0.06666666666666667]
+1000 / 5000
+[0.0, 233.0, 15.096666666666666, 36.65568787698126, 1343.6394537346712, 301.93333333333334, 0.13333333333333333]
+1500 / 5000
+[0.0, 638.0, 60.04333333333334, 114.65274657217783, 13145.252296544035, 1200.8666666666666, 0.8]
+2000 / 5000
+[0.0, 804.0, 139.60666666666665, 198.2191077346631, 39290.814671125976, 2792.133333333333, 1.6]
+2500 / 5000
+[0.0, 849.0, 215.83666666666667, 244.98891515887945, 60019.56855072464, 4316.733333333334, 1.0666666666666667]
+3000 / 5000
+[0.0, 859.0, 266.7966666666667, 267.4147167941258, 71510.63075808251, 5335.933333333333, 0.7333333333333333]
+3500 / 5000
+[0.0, 860.0, 289.8566666666667, 276.09304110518843, 76227.36734671127, 5797.133333333333, 0.6]
+4000 / 5000
+[0.0, 864.0, 298.0966666666667, 279.12549889970444, 77911.04413600892, 5961.933333333333, 0.2]
+4500 / 5000
+Output image saved as : ./out3.png
+```
+
 # Build with
-- R (3.6.3)
+- [R](https://www.r-project.org/) (tested with 3.6.3)
+- [Python 3](https://www.python.org/downloads/) (tested with 3.8.2) 
 
 ## Authors
 

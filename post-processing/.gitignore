@@ -1,0 +1,7 @@
+# Tests
+batch_output
+*.png
+
+# Jupyter Notebook
+.ipynb_checkpoints
+*.ipynb
