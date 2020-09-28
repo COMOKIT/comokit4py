@@ -1,3 +1,19 @@
+#!/usr/bin/python3
+
+##################################################
+## Python script to generate PNG graphs from COMOKIT exploration
+## To use it you should write it like so :
+#
+## $ python3 comokit2png.py [-h]
+#
+##################################################
+## Author: RoiArthurB
+## Copyright: Copyright 2020, COMOKIT, COMOKIT-HPC
+## Licence: LGPL 3.0
+## Version: 1.0.0
+## Maintainer: RoiArthurB
+##################################################
+
 from os import listdir
 from os.path import isfile, join
 import argparse
@@ -101,4 +117,4 @@ imgName = args.outputImg + str(len([f for f in listdir("./") if isfile(join("./"
 plt.savefig(imgName, bbox_inches='tight')
 
 if not args.quiet:
-	print("Output image saved as : "+imgName)
+    print("Output image saved as : "+imgName)
