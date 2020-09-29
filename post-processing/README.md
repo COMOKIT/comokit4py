@@ -89,7 +89,7 @@ $ python3 comokit2graph.py -r 15
 Output image saved as : ./out.png
 ```
 
-![comokit2png example](https://github.com/COMOKIT/COMOKIT-HPC/tree/master/.github/comokit2png.png)
+![comokit2png example](https://raw.githubusercontent.com/COMOKIT/COMOKIT-HPC/master/.github/comokit2png.png)
 
 # Build with
 - [R](https://www.r-project.org/) (tested with 3.6.3)
