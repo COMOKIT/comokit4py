@@ -86,8 +86,10 @@ $ python3 comokit2graph.py -r 15
 4000 / 5000
 [0.0, 864.0, 298.0966666666667, 279.12549889970444, 77911.04413600892, 5961.933333333333, 0.2]
 4500 / 5000
-Output image saved as : ./out3.png
+Output image saved as : ./out.png
 ```
+
+![comokit2png example](https://github.com/COMOKIT/COMOKIT-HPC/tree/master/.github/comokit2png.png)
 
 # Build with
 - [R](https://www.r-project.org/) (tested with 3.6.3)
