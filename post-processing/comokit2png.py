@@ -74,14 +74,20 @@ for row in range(len(CSVs[0])):
         float(CSVs_sick.max()), 
         float(CSVs_sick.mean()),
         float(CSVs_sick.std()),
-        float(CSVs_sick.var()),
+        -1,
         # Incidence
         float(CSVs_sick.sum() / nbrSim),
         float((CSVs_sick.sum() - prevSum) / nbrSim)
     ])
     
+    # Save actual sum for next loop
     prevSum = CSVs_sick.sum()
-        
+    
+    # Compute variance only if needed
+    # -> Save performances
+    if args.variance:
+        outputSick[-1][4] = float(CSVs_sick.var())
+
     if (row % 500) == 0 and not args.quiet:
         print(outputSick[-1])
         print(str(row)+" / "+str(len(CSVs[0])))
@@ -101,13 +107,13 @@ fig.suptitle( args.title )
 
 # Set curves
 ax.fill_between(df_tmp.index, df_tmp["Min"], df_tmp["Max"], color='b', alpha=0.2, label = "Min/Max")
-for name in col_name[2:3]:
+for name in col_name[2:4]:
     ax.plot(df_tmp.index, df_tmp[name], label = name)
 
 if args.variance:
     ax.plot(df_tmp.index, df_tmp["Variance"], label = "variance")
 
-ax.bar(df_tmp.index, df_tmp["Incidence"], label = "Incidence")
+ax.bar(df_tmp.index, df_tmp["Incidence"], color="r", label = "Incidence")
 
 # Place legend
 plt.legend(loc="upper left", title="Legend", frameon=True)
