@@ -18,6 +18,8 @@ from os import listdir
 from os.path import isfile, join
 import argparse
 
+import multiprocessing
+
 import pandas as pd
 import matplotlib.pyplot as plt
 
@@ -36,11 +38,14 @@ parser.add_argument('-v', '--variance', action='store_true', help='Enable varian
 
 # Other
 parser.add_argument('-q', '--quiet', action='store_true', help='Disable verbose mode')
+parser.add_argument('-c', '--cores', metavar='', help="Number of core to use (default: max number of cores)", default=multiprocessing.cpu_count(), type=int)
+parser.add_argument('-s', '--stepTo', metavar='', help="Change step displayed in the graph (default: 24 -> day)", default=24, type=int)
+
 
 args = parser.parse_args()
 
 
-# 1 _ Processing
+# 1 _ Gathering COMOKIT datasets
 # 
 
 # Get all CSV files
@@ -53,6 +58,10 @@ for csv_file in onlyfiles:
     df = pd.read_csv(join(batch_path, csv_file), header=None).iloc[1:].reset_index(drop=True)
     CSVs.append(df)
 
+
+# 2.1 _ Prepare variables/functions for processing
+# 
+
 # Aggregation + Data processing
 outputSick = []
 outputAsymp = []
@@ -60,7 +69,6 @@ outputSymp = []
 prevSum = 0
 nbrSim = args.replication
 index_graph = 0
-simStep = 24
 
 def processPerHour(index, graph):
     # Set/Clear for new line
@@ -70,39 +78,14 @@ def processPerHour(index, graph):
 
     # Per file
     for csv in CSVs:
-        for hour in range(simStep):            
-            if len(csv[5]) > (index + hour):# and len(csv[6]) > (index + hour) and len(csv[7]) > (index + hour):
+        for hour in range(args.stepTo):            
+            if len(csv[5]) > (index + hour):
                 # ['total_incidence', 'need_hosp', 'need_icu', 'susceptible', 'latent', 'asymptomatic', 'presymptomatic', 'symptomatic', 'recovered', 'dead']
                 # [     0                   1           2           3             4         5               6                   7             8         9   ]
                 # Gather line data in every file
-                #CSVs_sick = CSVs_sick.append([int(csv[0][index])])
                 CSVs_asymptomatic = CSVs_asymptomatic.append([int(csv[5][index + hour])])
                 CSVs_symptomatic = CSVs_symptomatic.append([int(csv[6][index + hour])])
                 CSVs_symptomatic = CSVs_symptomatic.append([int(csv[7][index + hour])])
-            #else:
-            #    print("[Exception] len(csv[5]) " + str(len(csv[5])) + " > ("+str(index)+" + "+str(hour)+")")
-            #    print("[Exception] len(csv[6]) " + str(len(csv[6])) + " > ("+str(index)+" + "+str(hour)+")")
-            #    print("[Exception] len(csv[7]) " + str(len(csv[7])) + " > ("+str(index)+" + "+str(hour)+")")
-
-    ## Process and write data
-    #outputSick.append([
-    #    float(CSVs_sick.min()),
-    #    float(CSVs_sick.max()), 
-    #    float(CSVs_sick.mean()),
-    #    float(CSVs_sick.std()),
-    #    -1,
-    #    # Incidence
-    #    float(CSVs_sick.sum() / nbrSim),
-    #    float((CSVs_sick.sum() - prevSum) / nbrSim)
-    #])
-    #
-    ## Save actual sum for next loop
-    #prevSum = CSVs_sick.sum()
-    #
-    ## Compute variance only if needed
-    ## -> Save performances
-    #if args.variance:
-    #    outputSick[-1][4] = float(CSVs_sick.var())
     
     # Process asymptomatic
     # [min, max, mean]
@@ -123,49 +106,35 @@ def processPerHour(index, graph):
         (symptoMean + symptoVariance),
         symptoMean
         ])
-
-    # command process follow
-    #if (index % 500) == 0 and not args.quiet:
-    #    print(outputAsymp[graph])
-    #    print(str(index)+" / "+str(len(CSVs[0])))
-    # !def processPerHour
+# !def processPerHour
 
 def splitPerProcess(mini, maxi, index_graph):
-    for row in range(mini, maxi, simStep):
+    for row in range(mini, maxi, args.stepTo):
         if row > len(CSVs[0]):
             continue
 
         processPerHour(row, index_graph)
 
         index_graph += 1
-    # !def splitPerProcess
 
-# Per row
-import multiprocessing
+    # Verbose
+    if not args.quiet:
+        print("End thread processing lines ["+str(mini)+","+str(maxi)+"[")
+# !def splitPerProcess
+
+
+# 2.2 _ Launch processing
+# 
 
 threads = []
 print("Start thread processing...")
-#for row in range(0,len(CSVs[0]),simStep):  # ~ 49m 50s 
-#
-#    if row > len(CSVs[0]):
-#        continue
-#
-#    processPerHour(row, index_graph)
-#    #x = threading.Thread(target=processPerHour, args=(row, index_graph,))
-#    ##x = multiprocessing.Process(target=processPerHour, args=(row, index_graph,))
-#    #threads.append(x)
-#    #x.start()
-#
-#    index_graph += 1
-
-cores = 8
 # Create a thread per core
-for split in range(cores):
+for split in range(args.cores):
 
-    step = int(len(CSVs[0]) / cores)
+    step = int(len(CSVs[0]) / args.cores)
     mini = int(step * split)
 
-    x = multiprocessing.Process(target=splitPerProcess, args=(mini, (mini + step -1), int(mini / simStep) ) )
+    x = multiprocessing.Process(target=splitPerProcess, args=(mini, (mini + step -1), int(mini / args.stepTo) ) )
     threads.append(x)
     x.start()
 
@@ -173,17 +142,17 @@ for split in range(cores):
 for index, thread in enumerate(threads):
     thread.join()
 
+
+# 3 _ Generating image
+# 
+
 print("Creating plot...")
 # Turn result in user-friendly DataFrame
-col_name = ["Min", "Max", "Mean"]#, "Standard deviation", "Variance", "Incidence cumul", "Incidence"]
-#df_tmp = pd.DataFrame(outputSick, columns=col_name)
+col_name = ["Min", "Max", "Mean"]
+
 time = pd.date_range('1/1/2000', periods=len(CSVs), freq='1h')
 df_tmp = pd.DataFrame(outputAsymp, columns=col_name)
 df_tmp1 = pd.DataFrame(outputSymp, columns=col_name)
-
-
-# 2 _ Generating image
-# 
 
 # Initialise the figure and axes.
 fig, ax = plt.subplots(1, 2, sharey=True)
@@ -192,22 +161,12 @@ fig.suptitle( args.title )
 
 # Set curves
 ax[0].fill_between(df_tmp1.index, df_tmp["Min"], df_tmp["Max"], color='b', alpha=0.2, label = "Min/Max")
-ax[0].plot(df_tmp1.index, df_tmp["Mean"], label = "Mean")#(df_tmp1.index, df_tmp["Mean"], label = "Mean")
+ax[0].plot(df_tmp1.index, df_tmp["Mean"], label = "Mean")
 ax[0].legend(loc="upper left", title="Asymp", frameon=True)
 
 ax[1].fill_between(df_tmp1.index, df_tmp1["Min"], df_tmp1["Max"], color='r', alpha=0.2, label = "Min/Max")
 ax[1].plot(df_tmp1.index, df_tmp1["Mean"], label = "Mean", color='r')
 ax[1].legend(loc="upper left", title="Symp", frameon=True)
-#for name in col_name[2:4]:
-#    ax.plot(df_tmp.index, df_tmp[name], label = name)
-#
-#if args.variance:
-#    ax.plot(df_tmp.index, df_tmp["Variance"], label = "variance")
-#
-#ax.bar(df_tmp.index, df_tmp["Incidence"], color="r", label = "Incidence")
-
-# Place legend
-#plt.legend(loc="upper left", title="Legend", frameon=True)
 
 # Save output graph
 imgName = args.outputImg + str(len([f for f in listdir("./") if isfile(join("./", f)) and ("out" in f)])) + '.png'
