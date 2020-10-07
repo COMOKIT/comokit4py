@@ -60,6 +60,7 @@ outputSymp = []
 prevSum = 0
 nbrSim = args.replication
 index_graph = 0
+simStep = 24
 
 def processPerHour(index, graph):
     # Set/Clear for new line
@@ -69,14 +70,19 @@ def processPerHour(index, graph):
 
     # Per file
     for csv in CSVs:
-        for hour in range(24):
-            # ['total_incidence', 'need_hosp', 'need_icu', 'susceptible', 'latent', 'asymptomatic', 'presymptomatic', 'symptomatic', 'recovered', 'dead']
-            # [     0                   1           2           3             4         5               6                   7             8         9   ]
-            # Gather line data in every file
-            #CSVs_sick = CSVs_sick.append([int(csv[0][index])])
-            CSVs_asymptomatic = CSVs_asymptomatic.append([int(csv[5][index + hour])])
-            CSVs_symptomatic = CSVs_symptomatic.append([int(csv[6][index + hour])])
-            CSVs_symptomatic = CSVs_symptomatic.append([int(csv[7][index + hour])])
+        for hour in range(simStep):            
+            if len(csv[5]) > (index + hour):# and len(csv[6]) > (index + hour) and len(csv[7]) > (index + hour):
+                # ['total_incidence', 'need_hosp', 'need_icu', 'susceptible', 'latent', 'asymptomatic', 'presymptomatic', 'symptomatic', 'recovered', 'dead']
+                # [     0                   1           2           3             4         5               6                   7             8         9   ]
+                # Gather line data in every file
+                #CSVs_sick = CSVs_sick.append([int(csv[0][index])])
+                CSVs_asymptomatic = CSVs_asymptomatic.append([int(csv[5][index + hour])])
+                CSVs_symptomatic = CSVs_symptomatic.append([int(csv[6][index + hour])])
+                CSVs_symptomatic = CSVs_symptomatic.append([int(csv[7][index + hour])])
+            #else:
+            #    print("[Exception] len(csv[5]) " + str(len(csv[5])) + " > ("+str(index)+" + "+str(hour)+")")
+            #    print("[Exception] len(csv[6]) " + str(len(csv[6])) + " > ("+str(index)+" + "+str(hour)+")")
+            #    print("[Exception] len(csv[7]) " + str(len(csv[7])) + " > ("+str(index)+" + "+str(hour)+")")
 
     ## Process and write data
     #outputSick.append([
@@ -117,19 +123,57 @@ def processPerHour(index, graph):
         (symptoMean + symptoVariance),
         symptoMean
         ])
+
+    # command process follow
+    #if (index % 500) == 0 and not args.quiet:
+    #    print(outputAsymp[graph])
+    #    print(str(index)+" / "+str(len(CSVs[0])))
     # !def processPerHour
 
+def splitPerProcess(mini, maxi, index_graph):
+    for row in range(mini, maxi, simStep):
+        if row > len(CSVs[0]):
+            continue
+
+        processPerHour(row, index_graph)
+
+        index_graph += 1
+    # !def splitPerProcess
+
 # Per row
-for row in range(0,len(CSVs[0]),24):
-    
-    processPerHour(row, index_graph)
+import multiprocessing
 
-    index_graph += 1
+threads = []
+print("Start thread processing...")
+#for row in range(0,len(CSVs[0]),simStep):  # ~ 49m 50s 
+#
+#    if row > len(CSVs[0]):
+#        continue
+#
+#    processPerHour(row, index_graph)
+#    #x = threading.Thread(target=processPerHour, args=(row, index_graph,))
+#    ##x = multiprocessing.Process(target=processPerHour, args=(row, index_graph,))
+#    #threads.append(x)
+#    #x.start()
+#
+#    index_graph += 1
 
-    if (row % 500) == 0 and not args.quiet:
-        print(outputAsymp[-1])
-        print(str(row)+" / "+str(len(CSVs[0])))
+cores = 8
+# Create a thread per core
+for split in range(cores):
 
+    step = int(len(CSVs[0]) / cores)
+    mini = int(step * split)
+
+    x = multiprocessing.Process(target=splitPerProcess, args=(mini, (mini + step -1), int(mini / simStep) ) )
+    threads.append(x)
+    x.start()
+
+# Wait all thread to terminate
+for index, thread in enumerate(threads):
+    thread.join()
+
+print("Creating plot...")
 # Turn result in user-friendly DataFrame
 col_name = ["Min", "Max", "Mean"]#, "Standard deviation", "Variance", "Incidence cumul", "Incidence"]
 #df_tmp = pd.DataFrame(outputSick, columns=col_name)
