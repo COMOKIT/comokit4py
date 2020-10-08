@@ -52,41 +52,36 @@ usage: $ python3 comokit2png.py [options]
 
 optional arguments:
   -h, --help           show this help message and exit
-
-  -i , --inputFolder   Path to folder where are saved all the COMOKIT CSV files from explorations (default: "./batch_output")
-  -o , --outputImg     Where to save output graph (default: "./out" =generate=> "./out[GeneratedNumber].png")
+  -i , --inputFolder   Path to folder where are saved all the COMOKIT CSV files from explorations
+                       (default: "./batch_output")
+  -o , --outputImg     Where to save output graph (default: "./out" =generate=>
+                       "./out[GeneratedNumber].png")
   -r , --replication   Number of replication per value set (default: 1)
-
   -t , --title         Graph title (default: "Sickness")
   -v, --variance       Enable variance curve (may crap the output index)
-  
   -q, --quiet          Disable verbose mode
+  -c , --cores         Number of core to use (default: max number of cores)
+  -s , --stepTo        Change step displayed in the graph (default: 24 -> day)
 ```
 
 **Example**
 ```
-$ python3 comokit2graph.py -r 15
-[0.0, 2.0, 0.1, 0.3114321219064982, 0.09698996655518395, 2.0, 2.0]
-0 / 5000
-[0.0, 5.0, 0.36, 0.8160595427158027, 0.6659531772575251, 7.2, 0.06666666666666667]
-500 / 5000
-[0.0, 50.0, 2.4033333333333333, 6.174225383466471, 38.12105908584169, 48.06666666666667, 0.06666666666666667]
-1000 / 5000
-[0.0, 233.0, 15.096666666666666, 36.65568787698126, 1343.6394537346712, 301.93333333333334, 0.13333333333333333]
-1500 / 5000
-[0.0, 638.0, 60.04333333333334, 114.65274657217783, 13145.252296544035, 1200.8666666666666, 0.8]
-2000 / 5000
-[0.0, 804.0, 139.60666666666665, 198.2191077346631, 39290.814671125976, 2792.133333333333, 1.6]
-2500 / 5000
-[0.0, 849.0, 215.83666666666667, 244.98891515887945, 60019.56855072464, 4316.733333333334, 1.0666666666666667]
-3000 / 5000
-[0.0, 859.0, 266.7966666666667, 267.4147167941258, 71510.63075808251, 5335.933333333333, 0.7333333333333333]
-3500 / 5000
-[0.0, 860.0, 289.8566666666667, 276.09304110518843, 76227.36734671127, 5797.133333333333, 0.6]
-4000 / 5000
-[0.0, 864.0, 298.0966666666667, 279.12549889970444, 77911.04413600892, 5961.933333333333, 0.2]
-4500 / 5000
+$ python3 comokit2png.py -r 15                                           
+Start thread processing...      
+End thread processing lines [1250,1874] with end index 78
+End thread processing lines [3750,4374] with end index 182
+End thread processing lines [4375,4999] with end index 208
+End thread processing lines [3125,3749] with end index 156
+End thread processing lines [625,1249] with end index 52
+End thread processing lines [1875,2499] with end index 104
+End thread processing lines [2500,3124] with end index 130
+End thread processing lines [0,624] with end index 26
+Quick view of some processed data :
+[[0.0, 5.173473400326364, 1.8029166666666667], [0.0, 4.993635954093533, 1.7294444444444443], [0.0, 4.754431153532447, 1.6365277777777778], [0.0, 4.471400583146602, 1.5452777777777778], [0.0, 4.129035519792004, 1.4243055555555555], [0.0, 3.889033404286446, 1.3491666666666666], [0.0, 3.7386966700294524, 1.2872222222222223], [0.0, 3.6189690016329825, 1.2236111111111112], [0.0, 3.4333828245277527, 1.15625], [0.0, 3.209235681672384, 1.0702777777777779]]
+Processed 220 days
+Creating plot...
 Output image saved as : ./out.png
+
 ```
 
 ![comokit2png example](https://raw.githubusercontent.com/COMOKIT/COMOKIT-HPC/master/.github/comokit2png.png)
