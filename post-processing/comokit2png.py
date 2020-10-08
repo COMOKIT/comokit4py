@@ -170,8 +170,8 @@ for i in range(len(output_df)):
     ax[i].legend(loc="upper left", title=output_name[i], frameon=True)
 
 # Set axes legends
-plt.setp(ax[-1], xlabel='Days')
-plt.setp(ax[:], ylabel='Number of person')
+plt.setp(ax[:], xlabel='Days')
+plt.setp(ax[0], ylabel='Number of person')
 
 # Save output graph
 imgName = args.outputImg + str(len([f for f in listdir("./") if isfile(join("./", f)) and ("out" in f)])) + '.png'
