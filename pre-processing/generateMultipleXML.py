@@ -227,7 +227,7 @@ if __name__ == '__main__':
 					ET.SubElement(parameters, "Parameter", {
 						"name"	: parametersList[j]["name"],
 						"type"	: parametersList[j]["type"],
-						"value" : str(allParamValues[k][j]),
+						"value" : str(int(allParamValues[k][j])) if parametersList[j]["type"] == "INT" else str(allParamValues[k][j]),
 						"var"	: parametersList[j]["varName"]
 						})
 				
