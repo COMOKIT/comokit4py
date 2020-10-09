@@ -35,6 +35,7 @@ parser.add_argument('-r', '--replication', metavar='', help="Number of replicati
 # PNG
 parser.add_argument('-t', '--title', metavar="", help='Graph title (default: "Sickness")', type=str, default="Sickness")
 parser.add_argument('-v', '--variance', action='store_true', help='Enable variance curve (may crap the output index)')
+#parser.add_argument('-p', '--plotRow', metavar="", help='Number of line to display graphs (default: 1)', type=int, default=1)
 
 # Other
 parser.add_argument('-q', '--quiet', action='store_true', help='Disable verbose mode')
