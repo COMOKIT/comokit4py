@@ -102,6 +102,10 @@ def processPerHour(index, graph, outputs):
 # !def processPerHour
 
 def splitPerProcess(mini, maxi, index_graph, outputs):
+    # Verbose
+    if not args.quiet:
+        print("Start thread processing lines ["+str(mini)+","+str(maxi)+"] with start index " + str(index_graph))
+
     for row in range(mini, maxi, args.stepTo):
         if row > len(CSVs[0]):
             continue
@@ -161,15 +165,22 @@ for i in range(len(output)):
     output_df.append( pd.DataFrame(list(output[i]), columns=col_name) )
 
 # Initialise the figure and axes.
-fig, ax = plt.subplots(1, len(output_df), figsize=(10,3), sharey=True)
+fig, ax = plt.subplots(nrows=2, ncols=int(len(output_df)-2), figsize=(10,3), sharey='row')
 
 fig.suptitle( args.title )
 
 # Set curves
-for i in range(len(output_df)):
-    ax[i].fill_between(output_df[i].index, output_df[i]["Min"], output_df[i]["Max"], color=output_color[i], alpha=0.2, label = "Min/Max")
-    ax[i].plot(output_df[i].index, output_df[i]["Mean"], color=output_color[i], label = "Mean")
-    ax[i].legend(loc="upper left", title=output_name[i], frameon=True)
+for i in range(len(output_df)-2): # Detailed
+    ax[0][i].fill_between(output_df[i].index, output_df[i]["Min"], output_df[i]["Max"], color=output_color[i], alpha=0.2, label = "Min/Max")
+    ax[0][i].plot(output_df[i].index, output_df[i]["Mean"], color=output_color[i], label = "Mean")
+    ax[0][i].legend(loc="upper left", title=output_name[i], frameon=True)
+
+j = 0
+for i in range(len(output_df)-2,len(output_df)): # Global
+    ax[1][j].fill_between(output_df[i].index, output_df[i]["Min"], output_df[i]["Max"], color=output_color[i], alpha=0.2, label = "Min/Max")
+    ax[1][j].plot(output_df[i].index, output_df[i]["Mean"], color=output_color[i], label = "Mean")
+    ax[1][j].legend(loc="upper left", title=output_name[i], frameon=True)
+    j += 1
 
 # Set axes legends
 plt.setp(ax[:], xlabel='Days')
