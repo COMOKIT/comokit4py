@@ -48,7 +48,7 @@ args = parser.parse_args()
 
 # Get all CSV files
 batch_path = args.inputFolder
-onlyfiles = [f for f in listdir(batch_path) if isfile(join(batch_path, f)) and not ("building.csv" in f)]
+onlyfiles = [f for f in listdir(batch_path) if isfile(join(batch_path, f)) and ("batchDetailed-" in f)and not ("building.csv" in f)]
 
 # Gather all CSV data for post processing
 CSVs = []
