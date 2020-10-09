@@ -60,8 +60,8 @@ for csv_file in onlyfiles:
 # 2.1 _ Prepare variables/functions for processing
 # 
 
-output_name  = ["Asymptomatic", "Symptomatic", "Recovered", "Death"]
-output_color = ["blue", "red", "green", "black"]
+output_name  = ["Asymptomatic", "Symptomatic", "Need hospital", "Need ICU", "Death", "Susceptible", "Recovered"]
+output_color = ["b", "r", "g", "y", "m", "k", "c", "g"]
 
 # Aggregation + Data processing
 def processPerHour(index, graph, outputs):
@@ -76,15 +76,16 @@ def processPerHour(index, graph, outputs):
             # Gather data per col/row
             if len(csv[5]) > (index + hour): # Check if row exist
                 # Gather line data in every file
-                #CSVs_sick = CSVs_sick.append([int(csv[0][index])])                         # total_incidence
-                # need_hosp
-                # need_icu
-                # susceptible
+                #CSVs_sick = CSVs_sick.append([int(csv[0][index])])                   # total_incidence
+                output_CSVs[2] = output_CSVs[2].append([int(csv[1][index + hour])])   # need_hosp
+                output_CSVs[3] = output_CSVs[3].append([int(csv[2][index + hour])])   # need_icu
+                output_CSVs[5] = output_CSVs[5].append([int(csv[3][index + hour])])   # susceptible
+                # latent
                 output_CSVs[0] = output_CSVs[0].append([int(csv[5][index + hour])])   # asymptomatic
                 output_CSVs[1] = output_CSVs[1].append([int(csv[6][index + hour])])   # presymptomatic
                 output_CSVs[1] = output_CSVs[1].append([int(csv[7][index + hour])])   # symptomatic
-                output_CSVs[2] = output_CSVs[2].append([int(csv[8][index + hour])])   # recovered
-                output_CSVs[3] = output_CSVs[3].append([int(csv[9][index + hour])])   # dead
+                output_CSVs[6] = output_CSVs[6].append([int(csv[8][index + hour])])   # recovered
+                output_CSVs[4] = output_CSVs[4].append([int(csv[9][index + hour])])   # dead
     
     # Process data
     for i in range(len(output_name)):
@@ -142,7 +143,7 @@ for index, thread in enumerate(threads):
 
 if not args.quiet:
     print("Quick view of some processed data :")
-    print(output[0][620:630])
+    print(output[0][:3])
     print("Processed " + str(len(output)) + " days")
 
 # 3 _ Generating image
