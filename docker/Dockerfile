@@ -12,10 +12,10 @@ RUN curl -o master.zip -fSLq https://github.com/COMOKIT/COMOKIT-Model/archive/ma
 	rm master.zip && \
 	# Leave root project
 	mv /comokit/COMOKIT-Model-master/COMOKIT/* /comokit && \
-	rm -fr /comokit/COMOKIT-Model-master
-
-# Add HPC scripts
-RUN curl -o master.zip -fSLq https://github.com/COMOKIT/COMOKIT-HPC/archive/master.zip && \
+	mv /comokit/COMOKIT-Model-master/COMOKIT/.project /comokit/.project && \
+	rm -fr /comokit/COMOKIT-Model-master && \
+	# Add HPC scripts
+	curl -o master.zip -fSLq https://github.com/COMOKIT/COMOKIT-HPC/archive/master.zip && \
 	unzip master.zip -d /comokit/hpc && \
 	rm master.zip && \
 	# Leave root project
