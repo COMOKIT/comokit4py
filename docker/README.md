@@ -29,7 +29,7 @@ Launching an hpc script (here `generateMultipleXML.py` for example)
 
 ```shell
 # You have to change the "entrypoint"
-docker run --rm --entrypoint=/comokit/hpc/generateMultipleXML.py comokit/comokit:latest -xml "Headless" /usr/lib/gama/headless/comokit/Experiments/Physical\ Interventions/Significance\ of\ Wearing\ Masks.gaml /tmp/headless/mask.xml -r 100 -s 36 -f 10
+docker run --rm --entrypoint=/comokit/hpc/pre-processing/generateMultipleXML.py comokit/comokit:latest -xml ContactRateHumanHeadless /comokit/Experiments/Sensitivity\ Analysis/Sensitivity\ Analysis.gaml /tmp/headless/mask.xml -r 100 -s 36 -f 10
 ```
 
 If you want full explaination of script commands, see [script's README here](https://github.com/COMOKIT/COMOKIT-HPC/tree/master/scripts)
