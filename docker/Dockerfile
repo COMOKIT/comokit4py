@@ -2,6 +2,9 @@ FROM gamaplatform/gama:continuous
 
 MAINTAINER RoiArthurB <https://github.com/RoiArthurB>
 
+# Add cURL command in docker
+RUN apk add --no-cache curl
+
 # Add COMOKIT framework
 RUN curl -o master.zip -fSL https://github.com/COMOKIT/COMOKIT-Model/archive/master.zip && \
 	unzip master.zip -d /comokit && \
