@@ -3,20 +3,31 @@ branches:
   only:
     - master
 before_script:
-  #- GAMA_URL=$(curl -s https://api.github.com/repos/gama-platform/gama/releases/tags/continuous | grep  continuous/GAMA1.8_Continuous_Linux | cut -d ':' -f 2,3 | tr -d \")
+  - GAMA_Continuous_URL=$(curl -s https://api.github.com/repos/gama-platform/gama/releases/tags/continuous | grep  continuous/GAMA1.8_Continuous_Linux | cut -d ':' -f 2,3 | tr -d \")
+  - echo $GAMA_Continuous_URL
   - GAMA_URL=https://github.com/gama-platform/gama/releases/download/1.8.1/GAMA_1.8.1_Linux.zip
 script:
-  - curl -o gama.zip -fSL $GAMA_URL
-  - unzip gama.zip -d ./GAMA
-  - chmod +x ./GAMA/headless/gama-headless.sh
+  # Prepare COMOKIT
   - mkdir ./COMOKIT-HPC
   - mv ./pre-processing ./COMOKIT-HPC
   - mv ./post-processing ./COMOKIT-HPC
-  
+
   - git clone https://github.com/COMOKIT/COMOKIT-Model.git ./Model
   - mv ./Model/COMOKIT ./COMOKIT-Model
+
+  # Stable 1.8.1
+  - curl -o gama.zip -fSL $GAMA_URL
+  - unzip gama.zip -d ./GAMA
+  - chmod +x ./GAMA/headless/gama-headless.sh
+  # Continuous 1.8.1
+  - rm gama.zip
+  - curl -o gama.zip -fSL $GAMA_Continuous_URL
+  - unzip gama.zip -d ./GAMA_Continuous
+  - chmod +x ./GAMA_Continuous/headless/gama-headless.sh
 after_success:
   - zip -r ./GAMA-COMOKIT-HPC.zip ./GAMA ./COMOKIT-Model ./COMOKIT-HPC
+  - rm -fr ./GAMA && mv ./GAMA{_Continuous,}
+  - zip -r ./GAMA_Continuous-COMOKIT-HPC.zip ./GAMA ./COMOKIT-Model ./COMOKIT-HPC
 
 
 before_deploy:
@@ -36,7 +47,9 @@ deploy:
   overwrite: true
   tag_name: latest
   prerelease: true
-  file: "./GAMA-COMOKIT-HPC.zip"
+  file: 
+    - "./GAMA-COMOKIT-HPC.zip"
+    - "./GAMA_Continuous-COMOKIT-HPC.zip"
   skip_cleanup: true
   on:
     repo: COMOKIT/COMOKIT-HPC
