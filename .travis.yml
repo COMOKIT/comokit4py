@@ -19,11 +19,13 @@ script:
   - curl -o gama.zip -fSL $GAMA_URL
   - unzip gama.zip -d ./GAMA
   - chmod +x ./GAMA/headless/gama-headless.sh
+  - echo "osgi.locking=none" >> ./GAMA/configuration/config.ini # Disable Eclipse's workspace locking
   # Continuous 1.8.1
   - rm gama.zip
   - curl -o gama.zip -fSL $GAMA_Continuous_URL
   - unzip gama.zip -d ./GAMA_Continuous
   - chmod +x ./GAMA_Continuous/headless/gama-headless.sh
+  - echo "osgi.locking=none" >> ./GAMA_Continuous/configuration/config.ini # Disable Eclipse's workspace locking
 after_success:
   - zip -r ./GAMA-COMOKIT-HPC.zip ./GAMA ./COMOKIT-Model ./COMOKIT-HPC
   - rm -fr ./GAMA && mv ./GAMA{_Continuous,}
