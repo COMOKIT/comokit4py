@@ -34,11 +34,12 @@ parser.add_argument('-r', '--replication', metavar='', help="Number of replicati
 
 # PNG
 parser.add_argument('-t', '--title', metavar="", help='Graph title (default: "Sickness")', type=str, default="Sickness")
-parser.add_argument('-v', '--variance', action='store_true', help='Enable variance curve (may crap the output index)')
+parser.add_argument('-V', '--variance', action='store_true', help='Enable variance curve (may crap the output index)')
 #parser.add_argument('-p', '--plotRow', metavar="", help='Number of line to display graphs (default: 1)', type=int, default=1)
 
 # Other
 parser.add_argument('-q', '--quiet', action='store_true', help='Disable verbose mode')
+parser.add_argument('-v', '--verbose', action='store_true', help='Enable extra verbose')
 parser.add_argument('-c', '--cores', metavar='', help="Number of core to use (default: max number of cores)", default=multiprocessing.cpu_count(), type=int)
 parser.add_argument('-s', '--stepTo', metavar='', help="Change step displayed in the graph (default: 24 -> day)", default=24, type=int)
 
@@ -99,12 +100,15 @@ def processPerHour(index, graph, outputs):
             (mean + variance),
             mean
             ]
+
+    if args.verbose:
+        print("[" + multiprocessing.current_process().name + "] Finished gathering and processing CSVs' row " + str(index))
 # !def processPerHour
 
 def splitPerProcess(mini, maxi, index_graph, outputs):
     # Verbose
     if not args.quiet:
-        print("Start thread processing lines ["+str(mini)+","+str(maxi)+"] with start index " + str(index_graph))
+        print("[" + multiprocessing.current_process().name + "] Start thread processing lines ["+str(mini)+","+str(maxi)+"] with dictionnary index " + str(index_graph))
 
     for row in range(mini, maxi, args.stepTo):
         if row > len(CSVs[0]):
@@ -117,7 +121,7 @@ def splitPerProcess(mini, maxi, index_graph, outputs):
 
     # Verbose
     if not args.quiet:
-        print("End thread processing lines ["+str(mini)+","+str(maxi)+"] with end index " + str(index_graph))
+        print("[" + multiprocessing.current_process().name + "] End thread processing lines ["+str(mini)+","+str(maxi)+"] with end index " + str(index_graph))
 # !def splitPerProcess
 
 
