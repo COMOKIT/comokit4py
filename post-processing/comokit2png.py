@@ -30,6 +30,7 @@ parser = argparse.ArgumentParser(usage='$ python3 %(prog)s [options]')
 # Files
 parser.add_argument('-i', '--inputFolder', metavar="", help='Path to folder where are saved all the COMOKIT CSV files from explorations (default: "./batch_output")', type=str, default="./batch_output")
 parser.add_argument('-o', '--outputImg', metavar="", help='Where to save output graph (default: "./out" =generate=> "./out[GeneratedNumber].png")', type=str, default="./out")
+parser.add_argument('-e', '--experimentName', metavar="", help='Name of the experiment (if you have several in a same folder)', type=str, default="")
 parser.add_argument('-r', '--replication', metavar='', help="Number of replication per value set (default: 1)", default=1, type=int)
 
 # PNG
@@ -50,7 +51,10 @@ args = parser.parse_args()
 
 # Get all CSV files
 batch_path = args.inputFolder
-onlyfiles = [f for f in listdir(batch_path) if isfile(join(batch_path, f)) and ("batchDetailed-" in f)and not ("building.csv" in f)]
+onlyfiles = [f for f in listdir(batch_path) if isfile(join(batch_path, f)) and ("batchDetailed-" + args.experimentName in f)and not ("building.csv" in f)]
+
+if args.verbose:
+    print("Gathering " + str(len(onlyfiles)) + " CSV files")
 
 # Gather all CSV data for post processing
 CSVs = []
