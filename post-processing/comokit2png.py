@@ -46,6 +46,10 @@ parser.add_argument('-s', '--stepTo', metavar='', help="Change step displayed in
 
 args = parser.parse_args()
 
+
+if args.verbose:
+    print("\n=== Starting script ===")
+
 # 1 _ Gathering COMOKIT datasets
 # 
 
@@ -61,7 +65,6 @@ CSVs = []
 for csv_file in onlyfiles:        
     df = pd.read_csv(join(batch_path, csv_file), header=None).iloc[1:].reset_index(drop=True)
     CSVs.append(df)
-
 
 # 2.1 _ Prepare variables/functions for processing
 # 
@@ -139,6 +142,8 @@ output = [manager.list(range( int(lenCSVs/args.stepTo) )) for i in range(len(out
 
 if not args.quiet:
     print("Start thread processing...")
+    if args.verbose:
+        print("= Using " + str(args.cores) + " cores on " + str(multiprocessing.cpu_count()) + " availables")    
 # Create a thread per core
 for split in range(args.cores):
 
