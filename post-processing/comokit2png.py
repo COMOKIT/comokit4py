@@ -76,7 +76,6 @@ output_color = ["b", "r", "g", "y", "m", "k", "c", "g"]
 def processPerHour(index, graph, outputs):
     prevSum = 0
     # Set/Clear for new line
-    CSVs_sick = pd.DataFrame()
     output_CSVs = [pd.DataFrame() for i in range(len(output_name))]
 
     # Per file
@@ -85,7 +84,7 @@ def processPerHour(index, graph, outputs):
             # Gather data per col/row
             if len(csv[5]) > (index + hour): # Check if row exist
                 # Gather line data in every file
-                #CSVs_sick = CSVs_sick.append([int(csv[0][index])])                   # total_incidence
+                #output_CSVs[x] = output_CSVs[x].append([int(csv[0][index + hour])])   # total_incidence
                 output_CSVs[2] = output_CSVs[2].append([int(csv[1][index + hour])])   # need_hosp
                 output_CSVs[3] = output_CSVs[3].append([int(csv[2][index + hour])])   # need_icu
                 output_CSVs[5] = output_CSVs[5].append([int(csv[3][index + hour])])   # susceptible
@@ -122,8 +121,10 @@ def splitPerProcess(mini, maxi, index_graph, outputs):
         processPerHour(row, index_graph, outputs)
 
         if args.verbose:
-            iteration = ((maxi - mini) % args.stepTo)
-            print("[" + multiprocessing.current_process().name + "]\tFinished gathering and processing CSVs' row " + str(row) + " - (" + str(((maxi - row) % args.stepTo) - iteration) + "/" + str(iteration) + ")")
+            iteration = ((maxi - mini) / args.stepTo)
+            print("[" + multiprocessing.current_process().name + "]\tFinished gathering and processing CSVs' row " + str(row) + " - (" + str(round(iteration - ((maxi - row) / args.stepTo), 0) + 1) + "/" + str(round(iteration, 0)) + " iteration)")
+            if multiprocessing.current_process().name == "Process-2":
+                print("\tProcessed " + str(len(CSVs) * args.stepTo) + " lines over " + str(len(output_name)) + " cols ( == " + str((len(CSVs) * args.stepTo)*len(output_name)) + " cells)")
 
         index_graph += 1
 
