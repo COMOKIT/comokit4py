@@ -107,15 +107,12 @@ def processPerHour(index, graph, outputs):
             (mean + variance),
             mean
             ]
-
-    if args.verbose:
-        print("[" + multiprocessing.current_process().name + "] Finished gathering and processing CSVs' row " + str(index))
 # !def processPerHour
 
 def splitPerProcess(mini, maxi, index_graph, outputs):
     # Verbose
     if not args.quiet:
-        print("[" + multiprocessing.current_process().name + "] Start thread processing lines ["+str(mini)+","+str(maxi)+"] with dictionnary index " + str(index_graph))
+        print("[" + multiprocessing.current_process().name + "]\tStart thread processing lines ["+str(mini)+","+str(maxi)+"] with dictionnary index " + str(index_graph))
 
     for row in range(mini, maxi, args.stepTo):
         if row > len(CSVs[0]):
@@ -124,11 +121,16 @@ def splitPerProcess(mini, maxi, index_graph, outputs):
         # Process a row
         processPerHour(row, index_graph, outputs)
 
+        if args.verbose:
+            iteration = ((maxi - mini) % args.stepTo)
+            print("[" + multiprocessing.current_process().name + "]\tFinished gathering and processing CSVs' row " + str(row) + " - (" + str(((maxi - row) % args.stepTo) - iteration) + "/" + str(iteration) + ")")
+
         index_graph += 1
+
 
     # Verbose
     if not args.quiet:
-        print("[" + multiprocessing.current_process().name + "] End thread processing lines ["+str(mini)+","+str(maxi)+"] with end index " + str(index_graph))
+        print("[" + multiprocessing.current_process().name + "]\tEnd thread processing lines ["+str(mini)+","+str(maxi)+"] with end index " + str(index_graph))
 # !def splitPerProcess
 
 
