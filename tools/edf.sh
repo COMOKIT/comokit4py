@@ -76,6 +76,15 @@ case "$1" in
 
     generateSBatch
     ;;
+"3")	# Azure explorations
+	reps=${2:-50}
+	cyclend=${3:-7200}
+	generateXML Azure_headless_nopolicy ../../Azure/models/Experiments/Azure\ Baseline.gaml
+	generateXML Azure_headless_frenchpolicy ../../Azure/models/Experiments/French\ Scenario.gaml
+	generateXML Azure_headless_spatialpolicy ../../Azure/models/Experiments/Spatial\ Containement.gaml
+
+    generateSBatch
+    ;;
 *)
     echo "=== ERROR ==="
     echo "You should precise which exploration ID you want to generate"
