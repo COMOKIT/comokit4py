@@ -36,6 +36,7 @@ parser.add_argument('-r', '--replication', metavar='', help="Number of replicati
 # PNG
 parser.add_argument('-t', '--title', metavar="", help='Graph title (default: "Sickness")', type=str, default="Sickness")
 parser.add_argument('-V', '--variance', action='store_true', help='Enable variance curve (may crap the output index)')
+parser.add_argument('--csv', action='store_true', help='Save output as CSV file')
 #parser.add_argument('-p', '--plotRow', metavar="", help='Number of line to display graphs (default: 1)', type=int, default=1)
 
 # Other
@@ -162,10 +163,17 @@ for split in range(args.cores):
 for index, thread in enumerate(threads):
     thread.join()
 
-if not args.quiet:
+if args.verbose:
     print("Quick view of some processed data :")
     print(output[0][:3])
     print("Processed " + str(len(output)) + " days")
+
+# Save output CSV
+if args.csv:
+    csvName = args.outputImg + str(len([f for f in listdir("./") if isfile(join("./", f)) and (args.outputImg in f) and (".csv" in f)])) + '.csv'
+    pd.DataFrame(output).to_csv(csvName)
+    if not args.quiet:
+        print("CSV file saved as : " + csvName)
 
 # 3 _ Generating image
 # 
@@ -203,7 +211,7 @@ plt.setp(ax[:], xlabel='Days')
 plt.setp(ax[0], ylabel='Number of person')
 
 # Save output graph
-imgName = args.outputImg + str(len([f for f in listdir("./") if isfile(join("./", f)) and ("out" in f)])) + '.png'
+imgName = args.outputImg + str(len([f for f in listdir("./") if isfile(join("./", f)) and (args.outputImg in f) and (".png" in f)])) + '.png'
 plt.savefig(imgName, bbox_inches='tight')
 
 if not args.quiet:
