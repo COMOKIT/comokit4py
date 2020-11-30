@@ -99,13 +99,13 @@ def processPerHour(index, graph, outputs):
     # Process data
     for i in range(len(output_name)):
         variance = float(output_CSVs[i].std())
-        mean = float(output_CSVs[i].mean())
+        meanReplication = float(output_CSVs[i].sum() / args.replication )
         
-        # [min, max, mean]
+        # [min, max, meanReplication]
         outputs[i][graph] = [
-            max(0.0, (mean - variance)),
-            (mean + variance),
-            mean
+            max(0.0, (meanReplication - variance)),
+            (meanReplication + variance),
+            meanReplication
             ]
 # !def processPerHour
 
