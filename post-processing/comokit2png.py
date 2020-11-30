@@ -16,7 +16,7 @@
 
 from os import listdir
 from os.path import isfile, join
-import argparse
+import argparse, math
 
 import multiprocessing
 
@@ -35,9 +35,9 @@ parser.add_argument('-r', '--replication', metavar='', help="Number of replicati
 
 # PNG
 parser.add_argument('-t', '--title', metavar="", help='Graph title (default: "Sickness")', type=str, default="Sickness")
-parser.add_argument('-V', '--variance', action='store_true', help='Enable variance curve (may crap the output index)')
+#parser.add_argument('-V', '--variance', action='store_true', help='Enable variance curve (may crap the output index)')
 parser.add_argument('--csv', action='store_true', help='Save output as CSV file')
-#parser.add_argument('-p', '--plotRow', metavar="", help='Number of line to display graphs (default: 1)', type=int, default=1)
+parser.add_argument('-p', '--plotRow', metavar="", help='Number of line to display graphs (default: 3)', type=int, default=3)
 
 # Other
 parser.add_argument('-q', '--quiet', action='store_true', help='Disable verbose mode')
@@ -63,7 +63,7 @@ if args.verbose:
 
 # Gather all CSV data for post processing
 CSVs = []
-for csv_file in onlyfiles:        
+for csv_file in onlyfiles:
     df = pd.read_csv(join(batch_path, csv_file), header=None).iloc[1:].reset_index(drop=True)
     CSVs.append(df)
 
@@ -89,7 +89,7 @@ def processPerHour(index, graph, outputs):
                 output_CSVs[2] = output_CSVs[2].append([int(csv[1][index + hour])])   # need_hosp
                 output_CSVs[3] = output_CSVs[3].append([int(csv[2][index + hour])])   # need_icu
                 output_CSVs[5] = output_CSVs[5].append([int(csv[3][index + hour])])   # susceptible
-                # latent
+                # csv[4] # latent
                 output_CSVs[0] = output_CSVs[0].append([int(csv[5][index + hour])])   # asymptomatic
                 output_CSVs[1] = output_CSVs[1].append([int(csv[6][index + hour])])   # presymptomatic
                 output_CSVs[1] = output_CSVs[1].append([int(csv[7][index + hour])])   # symptomatic
