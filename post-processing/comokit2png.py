@@ -34,7 +34,7 @@ parser.add_argument('-e', '--experimentName', metavar="", help='Name of the expe
 parser.add_argument('-r', '--replication', metavar='', help="Number of replication per value set (default: 1)", default=1, type=int)
 
 # PNG
-parser.add_argument('-t', '--title', metavar="", help='Graph title (default: "Sickness")', type=str, default="Sickness")
+parser.add_argument('-t', '--title', metavar="", help='Graph title (default: [disabled])', type=str, default="")
 #parser.add_argument('-V', '--variance', action='store_true', help='Enable variance curve (may crap the output index)')
 parser.add_argument('--csv', action='store_true', help='Save output as CSV file')
 parser.add_argument('-p', '--plotRow', metavar="", help='Number of line to display graphs (default: 3)', type=int, default=3)
@@ -70,8 +70,8 @@ for csv_file in onlyfiles:
 # 2.1 _ Prepare variables/functions for processing
 # 
 
-output_name  = ["Asymptomatic", "Symptomatic", "Need hospital", "Need ICU", "Death", "Susceptible", "Recovered"]
-output_color = ["b", "r", "g", "y", "m", "k", "c", "g"]
+output_name  = ["Susceptible", "Recovered", "Asymptomatic", "Symptomatic", "Need hospital", "Need ICU", "Death"]
+output_color = ["c", "g", "b", "r", "g", "y", "m", "k"]
 
 # Aggregation + Data processing
 def processPerHour(index, graph, outputs):
@@ -86,15 +86,15 @@ def processPerHour(index, graph, outputs):
             if len(csv[5]) > (index + hour): # Check if row exist
                 # Gather line data in every file
                 #output_CSVs[x] = output_CSVs[x].append([int(csv[0][index + hour])])   # total_incidence
-                output_CSVs[2] = output_CSVs[2].append([int(csv[1][index + hour])])   # need_hosp
-                output_CSVs[3] = output_CSVs[3].append([int(csv[2][index + hour])])   # need_icu
-                output_CSVs[5] = output_CSVs[5].append([int(csv[3][index + hour])])   # susceptible
+                output_CSVs[4] = output_CSVs[4].append([int(csv[1][index + hour])])   # need_hosp
+                output_CSVs[5] = output_CSVs[5].append([int(csv[2][index + hour])])   # need_icu
+                output_CSVs[0] = output_CSVs[0].append([int(csv[3][index + hour])])   # susceptible
                 # csv[4] # latent
-                output_CSVs[0] = output_CSVs[0].append([int(csv[5][index + hour])])   # asymptomatic
-                output_CSVs[1] = output_CSVs[1].append([int(csv[6][index + hour])])   # presymptomatic
-                output_CSVs[1] = output_CSVs[1].append([int(csv[7][index + hour])])   # symptomatic
-                output_CSVs[6] = output_CSVs[6].append([int(csv[8][index + hour])])   # recovered
-                output_CSVs[4] = output_CSVs[4].append([int(csv[9][index + hour])])   # dead
+                output_CSVs[2] = output_CSVs[2].append([int(csv[5][index + hour])])   # asymptomatic
+                output_CSVs[3] = output_CSVs[3].append([int(csv[6][index + hour])])   # presymptomatic
+                output_CSVs[3] = output_CSVs[3].append([int(csv[7][index + hour])])   # symptomatic
+                output_CSVs[1] = output_CSVs[1].append([int(csv[8][index + hour])])   # recovered
+                output_CSVs[6] = output_CSVs[6].append([int(csv[9][index + hour])])   # dead
     
     # Process data
     for i in range(len(output_name)):
@@ -123,7 +123,7 @@ def splitPerProcess(mini, maxi, index_graph, outputs):
 
         if args.verbose:
             iteration = ((maxi - mini) / args.stepTo)
-            print("[" + multiprocessing.current_process().name + "]\tFinished gathering and processing CSVs' row " + str(row) + " - (" + str(round(iteration - ((maxi - row) / args.stepTo), 0) + 1) + "/" + str(round(iteration, 0)) + " iteration)")
+            print("[" + multiprocessing.current_process().name + "]\tFinished gathering and processing CSVs' row " + str(row) + "\t(" + str(round(iteration - ((maxi - row) / args.stepTo), 0) + 1) + "/" + str(round(iteration, 0)+1) + " iteration)")
             if multiprocessing.current_process().name == "Process-2":
                 print("\tProcessed " + str(len(CSVs) * args.stepTo) + " lines over " + str(len(output_name)) + " cols ( == " + str((len(CSVs) * args.stepTo)*len(output_name)) + " cells)")
 
@@ -189,30 +189,36 @@ for i in range(len(output)):
     output_df.append( pd.DataFrame(list(output[i]), columns=col_name) )
 
 # Initialise the figure and axes.
-fig, ax = plt.subplots(nrows=2, ncols=int(len(output_df)-2), figsize=(10,3), sharey='row')
+numberRow=3 #args.plotRow
+numberCol=3 #math.ceil(len(output_df)/numberRow)
+fig, ax = plt.subplots(nrows=numberRow, ncols=numberCol, sharey='row',figsize=(10,10))
 
 fig.suptitle( args.title )
 
-# Set curves
-for i in range(len(output_df)-2): # Detailed
-    ax[0][i].fill_between(output_df[i].index, output_df[i]["Min"], output_df[i]["Max"], color=output_color[i], alpha=0.2, label = "Min/Max")
-    ax[0][i].plot(output_df[i].index, output_df[i]["Mean"], color=output_color[i], label = "Mean")
-    ax[0][i].legend(loc="upper left", title=output_name[i], frameon=True)
+outputIndex = 0
 
-j = 0
-for i in range(len(output_df)-2,len(output_df)): # Global
-    ax[1][j].fill_between(output_df[i].index, output_df[i]["Min"], output_df[i]["Max"], color=output_color[i], alpha=0.2, label = "Min/Max")
-    ax[1][j].plot(output_df[i].index, output_df[i]["Mean"], color=output_color[i], label = "Mean")
-    ax[1][j].legend(loc="upper left", title=output_name[i], frameon=True)
-    j += 1
+# Set curves
+for row in range(numberRow):
+    for i in range(numberCol):
+
+        if (row != numberCol-1 and i == 2) or (outputIndex + 1 > len(output_df)):
+            # Debug display
+            continue
+
+        ax[row][i].fill_between(output_df[outputIndex].index, output_df[outputIndex]["Min"], output_df[outputIndex]["Max"], color=output_color[outputIndex], alpha=0.2, label = "Min/Max")
+        ax[row][i].plot(output_df[outputIndex].index, output_df[outputIndex]["Mean"], color=output_color[outputIndex], label = "Mean")
+        ax[row][i].legend(loc="upper left", title=output_name[outputIndex], frameon=True)
+        
+        outputIndex += 1
 
 # Set axes legends
-plt.setp(ax[:], xlabel='Days')
-plt.setp(ax[0], ylabel='Number of person')
+plt.setp(ax[-1][:], xlabel='Days')
+plt.setp(ax[:][0], ylabel='Number of person')
 
 # Save output graph
 imgName = args.outputImg + str(len([f for f in listdir("./") if isfile(join("./", f)) and (args.outputImg in f) and (".png" in f)])) + '.png'
+plt.tight_layout()
 plt.savefig(imgName, bbox_inches='tight')
 
 if not args.quiet:
-    print("Output image saved as : "+imgName)
+    print("Output image saved as : " + imgName)
