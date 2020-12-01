@@ -22,6 +22,7 @@ import multiprocessing
 
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib.ticker as mtick
 
 # 0 _ Get/Set parameters
 # 
@@ -209,6 +210,8 @@ for row in range(numberRow):
         ax[row][i].fill_between(output_df[outputIndex].index, output_df[outputIndex]["Min"], output_df[outputIndex]["Max"], color=output_color[outputIndex], alpha=0.2, label = "Min/Max")
         ax[row][i].plot(output_df[outputIndex].index, output_df[outputIndex]["Mean"], color=output_color[outputIndex], label = "Mean")
         ax[row][i].legend(loc="upper left", title=output_name[outputIndex], frameon=True)
+
+        ax[row][i].yaxis.set_major_formatter(mtick.FormatStrFormatter('%.0e'))
         
         outputIndex += 1
 
