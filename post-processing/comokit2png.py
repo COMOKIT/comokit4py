@@ -97,10 +97,15 @@ def processPerHour(index, graph, outputs):
                 output_CSVs[1] = output_CSVs[1].append([int(csv[8][index + hour])])   # recovered
                 output_CSVs[6] = output_CSVs[6].append([int(csv[9][index + hour])])   # dead
     
+    combined_csv_output = pd.concat(output_CSVs)
+    combined_csv_output = combined_csv_output.groupby(combined_csv_output.index)
+    
     # Process data
     for i in range(len(output_name)):
-        variance = float(output_CSVs[i].std())
-        meanReplication = float(output_CSVs[i].sum() / args.replication )
+        #variance = float(output_CSVs[i].std())
+        variance = combined_csv_output.std().iloc[i]
+        #meanReplication = float(output_CSVs[i].sum() / args.replication )
+        meanReplication = combined_csv_output.mean().iloc[i]
         
         # [min, max, meanReplication]
         outputs[i][graph] = [
