@@ -203,6 +203,7 @@ for row in range(numberRow):
 
         if (row != numberCol-1 and i == 2) or (outputIndex + 1 > len(output_df)):
             # Debug display
+            ax[row][i].axis('off')
             continue
 
         ax[row][i].fill_between(output_df[outputIndex].index, output_df[outputIndex]["Min"], output_df[outputIndex]["Max"], color=output_color[outputIndex], alpha=0.2, label = "Min/Max")
@@ -213,7 +214,9 @@ for row in range(numberRow):
 
 # Set axes legends
 plt.setp(ax[-1][:], xlabel='Days')
-plt.setp(ax[:][0], ylabel='Number of person')
+# If no loop, only set to first line...
+for i in range(numberRow):
+    plt.setp(ax[i][0], ylabel='Number of person')
 
 # Save output graph
 imgName = args.outputImg + str(len([f for f in listdir("./") if isfile(join("./", f)) and (args.outputImg in f) and (".png" in f)])) + '.png'
