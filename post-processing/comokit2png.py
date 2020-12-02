@@ -66,10 +66,18 @@ if args.verbose:
     print("Gathering " + str(len(onlyfiles)) + " CSV files")
 
 # Gather all CSV data for post processing
-CSVs = []
+dictionaryCSVs = {}
 for csv_file in onlyfiles:
+    replicationIndex = csv_file.rsplit('_', 1)[0].rsplit("-", 1)[1]
     df = pd.read_csv(join(batch_path, csv_file), header=None).iloc[1:].reset_index(drop=True)
-    CSVs.append(df)
+    if replicationIndex in dictionaryCSVs:
+        dictionaryCSVs[replicationIndex] = pd.DataFrame( dictionaryCSVs[replicationIndex].values + df.values )
+    else:
+        dictionaryCSVs[replicationIndex] = df
+
+CSVs = []
+for key, value in dictionaryCSVs.items():
+    CSVs.append(value)
 
 # 2.1 _ Prepare variables/functions for processing
 # 
