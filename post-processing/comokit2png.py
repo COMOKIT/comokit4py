@@ -43,11 +43,14 @@ parser.add_argument('-p', '--plotRow', metavar="", help='Number of line to displ
 # Other
 parser.add_argument('-q', '--quiet', action='store_true', help='Disable verbose mode')
 parser.add_argument('-v', '--verbose', action='store_true', help='Enable extra verbose')
+parser.add_argument('-vv', '--extraVerbose', action='store_true', help='Enable even more extra verbose')
 parser.add_argument('-c', '--cores', metavar='', help="Number of core to use (default: max number of cores)", default=multiprocessing.cpu_count(), type=int)
 parser.add_argument('-s', '--stepTo', metavar='', help="Change step displayed in the graph (default: 24 -> day)", default=24, type=int)
 
 args = parser.parse_args()
 
+if args.extraVerbose:
+    args.verbose = True
 
 if args.verbose:
     print("\n=== Starting script ===")
@@ -102,12 +105,8 @@ def processPerHour(index, graph, outputs):
         variance = float(output_CSVs[i].std())
         meanReplication = float(output_CSVs[i].sum() / args.replication )
         
-        # [min, max, meanReplication]
-        outputs[i][graph] = [
-            max(0.0, (meanReplication - variance)),
-            (meanReplication + variance),
-            meanReplication
-            ]
+        if multiprocessing.current_process().name == "Process-2" and args.extraVerbose:
+            print("[Process-2 - " + str(output_name[i]) + "] Min : " + str(outputs[i][graph][0]) + " | Max : " + str(outputs[i][graph][1]) + " | Mean : "  + str(outputs[i][graph][2]))
 # !def processPerHour
 
 def splitPerProcess(mini, maxi, index_graph, outputs):
@@ -122,10 +121,10 @@ def splitPerProcess(mini, maxi, index_graph, outputs):
         # Process a row
         processPerHour(row, index_graph, outputs)
 
-        if args.verbose:
+        if args.verbose and multiprocessing.current_process().name == "Process-2":
             iteration = ((maxi - mini) / args.stepTo)
             print("[" + multiprocessing.current_process().name + "]\tFinished gathering and processing CSVs' row " + str(row) + "\t(" + str(round(iteration - ((maxi - row) / args.stepTo), 0) + 1) + "/" + str(round(iteration, 0)+1) + " iteration)")
-            if multiprocessing.current_process().name == "Process-2":
+            if row == 0:
                 print("\tProcessed " + str(len(CSVs) * args.stepTo) + " lines over " + str(len(output_name)) + " cols ( == " + str((len(CSVs) * args.stepTo)*len(output_name)) + " cells)")
 
         index_graph += 1
