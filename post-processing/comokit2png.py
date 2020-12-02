@@ -36,7 +36,7 @@ parser.add_argument('-r', '--replication', metavar='', help="Number of replicati
 
 # PNG
 parser.add_argument('-t', '--title', metavar="", help='Graph title (default: [disabled])', type=str, default="")
-#parser.add_argument('-V', '--variance', action='store_true', help='Enable variance curve (may crap the output index)')
+parser.add_argument('-V', '--variance', action='store_true', help='Process min/max with variance')
 parser.add_argument('--csv', action='store_true', help='Save output as CSV file')
 parser.add_argument('-p', '--plotRow', metavar="", help='Number of line to display graphs (default: 3)', type=int, default=3)
 
@@ -102,8 +102,23 @@ def processPerHour(index, graph, outputs):
     
     # Process data
     for i in range(len(output_name)):
-        variance = float(output_CSVs[i].std())
-        meanReplication = float(output_CSVs[i].sum() / args.replication )
+
+        if args.variance:
+            meanReplication = float(output_CSVs[i].sum() / args.replication )
+            variance = float(output_CSVs[i].std())
+            # [min, max, meanReplication]
+            outputs[i][graph] = [
+                max(0.0, (meanReplication - variance)),
+                (meanReplication + variance),
+                meanReplication
+                ]
+        else:
+            # [min, max, meanReplication]
+            outputs[i][graph] = [
+                int(output_CSVs[i].min()),
+                int(output_CSVs[i].max()),
+                float(output_CSVs[i].sum() / args.replication )
+                ]
         
         if multiprocessing.current_process().name == "Process-2" and args.extraVerbose:
             print("[Process-2 - " + str(output_name[i]) + "] Min : " + str(outputs[i][graph][0]) + " | Max : " + str(outputs[i][graph][1]) + " | Mean : "  + str(outputs[i][graph][2]))
