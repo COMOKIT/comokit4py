@@ -22,7 +22,6 @@ import multiprocessing
 
 import pandas as pd
 import matplotlib.pyplot as plt
-import matplotlib.ticker as mtick
 
 # 0 _ Get/Set parameters
 # 
@@ -38,7 +37,7 @@ parser.add_argument('-r', '--replication', metavar='', help="Number of replicati
 parser.add_argument('-t', '--title', metavar="", help='Graph title (default: [disabled])', type=str, default="")
 parser.add_argument('-V', '--variance', action='store_true', help='Process min/max with variance')
 parser.add_argument('--csv', action='store_true', help='Save output as CSV file')
-parser.add_argument('-p', '--plotRow', metavar="", help='Number of line to display graphs (default: 3)', type=int, default=3)
+#parser.add_argument('-p', '--plotRow', metavar="", help='Number of line to display graphs (default: 3)', type=int, default=3)
 
 # Other
 parser.add_argument('-q', '--quiet', action='store_true', help='Disable verbose mode')
@@ -136,7 +135,7 @@ def processPerHour(index, graph, outputs):
             # [min, max, meanReplication]
             outputs[i][graph] = [
                 max(0.0, (meanReplication - variance)),
-                (meanReplication + variance),
+                float(meanReplication + variance),
                 meanReplication
                 ]
         else:
