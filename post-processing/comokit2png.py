@@ -67,17 +67,35 @@ if args.verbose:
 
 # Gather all CSV data for post processing
 dictionaryCSVs = {}
+numberCSVs = {}
 for csv_file in onlyfiles:
-    replicationIndex = csv_file.rsplit('_', 1)[0].rsplit("-", 1)[1]
-    df = pd.read_csv(join(batch_path, csv_file), header=None).iloc[1:].reset_index(drop=True)
-    if replicationIndex in dictionaryCSVs:
-        dictionaryCSVs[replicationIndex] = pd.DataFrame( dictionaryCSVs[replicationIndex].values + df.values )
-    else:
-        dictionaryCSVs[replicationIndex] = df
 
+    replicationIndex = csv_file.rsplit('_', 1)[0].rsplit("-", 1)[1]
+
+    df = pd.read_csv(join(batch_path, csv_file), dtype="int").reset_index(drop=True)
+    if replicationIndex in dictionaryCSVs:
+        # Sum new CSV with previous gathered CSVs
+        dictionaryCSVs[replicationIndex] = dictionaryCSVs[replicationIndex].add(df.values)
+
+        # Update value
+        numberCSVs[replicationIndex] += 1
+
+        if args.extraVerbose:
+            print("Add extra CSV to index: " + str(replicationIndex) + " (total of " + str(numberCSVs[replicationIndex]) + " csv for this replication)")
+    else:
+        # Set new entry
+        dictionaryCSVs[replicationIndex] = df
+        numberCSVs[replicationIndex] = 1
+        if args.extraVerbose:
+            print("Create new replication entry - Index: " + str(replicationIndex))
+
+if args.verbose:
+    print("=== End gathering CSVs ===")
+
+# Convert dictionnary to simplier classical 2D array
 CSVs = []
 for key, value in dictionaryCSVs.items():
-    CSVs.append(value)
+    CSVs.append(value[:].values)
 
 # 2.1 _ Prepare variables/functions for processing
 # 
@@ -91,22 +109,23 @@ def processPerHour(index, graph, outputs):
     # Set/Clear for new line
     output_CSVs = [pd.DataFrame() for i in range(len(output_name))]
 
+    stepTo = args.stepTo
     # Per file
     for csv in CSVs:
         for hour in range(args.stepTo):
             # Gather data per col/row
-            if len(csv[5]) > (index + hour): # Check if row exist
+            if len(csv) > (index + hour): # Check if row exist
                 # Gather line data in every file
-                #output_CSVs[x] = output_CSVs[x].append([int(csv[0][index + hour])])   # total_incidence
-                output_CSVs[4] = output_CSVs[4].append([int(csv[1][index + hour])])   # need_hosp
-                output_CSVs[5] = output_CSVs[5].append([int(csv[2][index + hour])])   # need_icu
-                output_CSVs[0] = output_CSVs[0].append([int(csv[3][index + hour])])   # susceptible
+                #output_CSVs[x] = output_CSVs[x].append([int(csv[index + hour][0])])   # total_incidence
+                output_CSVs[4] = output_CSVs[4].append([int(csv[index + hour][1])])   # need_hosp
+                output_CSVs[5] = output_CSVs[5].append([int(csv[index + hour][2])])   # need_icu
+                output_CSVs[0] = output_CSVs[0].append([int(csv[index + hour][3])])   # susceptible
                 # csv[4] # latent
-                output_CSVs[2] = output_CSVs[2].append([int(csv[5][index + hour])])   # asymptomatic
-                output_CSVs[3] = output_CSVs[3].append([int(csv[6][index + hour])])   # presymptomatic
-                output_CSVs[3] = output_CSVs[3].append([int(csv[7][index + hour])])   # symptomatic
-                output_CSVs[1] = output_CSVs[1].append([int(csv[8][index + hour])])   # recovered
-                output_CSVs[6] = output_CSVs[6].append([int(csv[9][index + hour])])   # dead
+                output_CSVs[2] = output_CSVs[2].append([int(csv[index + hour][5])])   # asymptomatic
+                output_CSVs[3] = output_CSVs[3].append([int(csv[index + hour][6])])   # presymptomatic
+                output_CSVs[3] = output_CSVs[3].append([int(csv[index + hour][7])])   # symptomatic
+                output_CSVs[1] = output_CSVs[1].append([int(csv[index + hour][8])])   # recovered
+                output_CSVs[6] = output_CSVs[6].append([int(csv[index + hour][9])])   # dead
     
     # Process data
     for i in range(len(output_name)):
@@ -123,9 +142,9 @@ def processPerHour(index, graph, outputs):
         else:
             # [min, max, meanReplication]
             outputs[i][graph] = [
-                int(output_CSVs[i].min()),
-                int(output_CSVs[i].max()),
-                float(output_CSVs[i].sum() / args.replication )
+                float(output_CSVs[i].min() / args.stepTo),
+                float(output_CSVs[i].max() / args.stepTo),
+                float(output_CSVs[i].mean() / args.stepTo)
                 ]
         
         if multiprocessing.current_process().name == "Process-2" and args.extraVerbose:
@@ -146,9 +165,9 @@ def splitPerProcess(mini, maxi, index_graph, outputs):
 
         if args.verbose and multiprocessing.current_process().name == "Process-2":
             iteration = ((maxi - mini) / args.stepTo)
-            print("[" + multiprocessing.current_process().name + "]\tFinished gathering and processing CSVs' row " + str(row) + "\t(" + str(round(iteration - ((maxi - row) / args.stepTo), 0) + 1) + "/" + str(round(iteration, 0)+1) + " iteration)")
+            print("[" + multiprocessing.current_process().name + "]\tFinished gathering and processing CSVs' row " + str(row) + "\t(" + str(round(iteration - ((maxi - row) / args.stepTo), 0) + 1) + "/" + str(round(iteration, 0)+1) + " iteration)\n")
             if row == 0:
-                print("\tProcessed " + str(len(CSVs) * args.stepTo) + " lines over " + str(len(output_name)) + " cols ( == " + str((len(CSVs) * args.stepTo)*len(output_name)) + " cells)")
+                print("\tProcessed " + str(len(CSVs) * args.stepTo) + " lines over " + str(len(output_name)) + " cols ( == " + str((len(CSVs) * args.stepTo)*len(output_name)) + " cells)\n")
 
         index_graph += 1
 
@@ -232,8 +251,6 @@ for row in range(numberRow):
         ax[row][i].fill_between(output_df[outputIndex].index, output_df[outputIndex]["Min"], output_df[outputIndex]["Max"], color=output_color[outputIndex], alpha=0.2, label = "Min/Max")
         ax[row][i].plot(output_df[outputIndex].index, output_df[outputIndex]["Mean"], color=output_color[outputIndex], label = "Mean")
         ax[row][i].legend(loc="upper left", title=output_name[outputIndex], frameon=True)
-
-        ax[row][i].yaxis.set_major_formatter(mtick.FormatStrFormatter('%.0e'))
         
         outputIndex += 1
 
