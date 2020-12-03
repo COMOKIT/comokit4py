@@ -22,9 +22,10 @@ import multiprocessing
 
 import pandas as pd
 import matplotlib.pyplot as plt
+import statistics as stats
 
 # 0 _ Get/Set parameters
-# 
+#
 parser = argparse.ArgumentParser(usage='$ python3 %(prog)s [options]')
 
 # Files
@@ -55,7 +56,7 @@ if args.verbose:
     print("\n=== Starting script ===")
 
 # 1 _ Gathering COMOKIT datasets
-# 
+#
 
 # Get all CSV files
 batch_path = args.inputFolder
@@ -97,7 +98,7 @@ for key, value in dictionaryCSVs.items():
     CSVs.append(value[:].values)
 
 # 2.1 _ Prepare variables/functions for processing
-# 
+#
 
 output_name  = ["Susceptible", "Recovered", "Asymptomatic", "Symptomatic", "Need hospital", "Need ICU", "Death"]
 output_color = ["c", "g", "b", "r", "g", "y", "m", "k"]
@@ -106,32 +107,35 @@ output_color = ["c", "g", "b", "r", "g", "y", "m", "k"]
 def processPerHour(index, graph, outputs):
     prevSum = 0
     # Set/Clear for new line
-    output_CSVs = [pd.DataFrame() for i in range(len(output_name))]
+    output_CSVs = [[] for i in range(len(output_name))]
 
     stepTo = args.stepTo
     # Per file
     for csv in CSVs:
+        sumStepTo = [[] for i in range(len(output_name))]
         for hour in range(args.stepTo):
             # Gather data per col/row
             if len(csv) > (index + hour): # Check if row exist
                 # Gather line data in every file
                 #output_CSVs[x] = output_CSVs[x].append([int(csv[index + hour][0])])   # total_incidence
-                output_CSVs[4] = output_CSVs[4].append([int(csv[index + hour][1])])   # need_hosp
-                output_CSVs[5] = output_CSVs[5].append([int(csv[index + hour][2])])   # need_icu
-                output_CSVs[0] = output_CSVs[0].append([int(csv[index + hour][3])])   # susceptible
+                sumStepTo[4].append(int(csv[index + hour][1]))   # need_hosp
+                sumStepTo[5].append(int(csv[index + hour][2]))   # need_icu
+                sumStepTo[0].append(int(csv[index + hour][3]))   # susceptible
                 # csv[4] # latent
-                output_CSVs[2] = output_CSVs[2].append([int(csv[index + hour][5])])   # asymptomatic
-                output_CSVs[3] = output_CSVs[3].append([int(csv[index + hour][6])])   # presymptomatic
-                output_CSVs[3] = output_CSVs[3].append([int(csv[index + hour][7])])   # symptomatic
-                output_CSVs[1] = output_CSVs[1].append([int(csv[index + hour][8])])   # recovered
-                output_CSVs[6] = output_CSVs[6].append([int(csv[index + hour][9])])   # dead
-    
+                sumStepTo[2].append(int(csv[index + hour][5]))   # asymptomatic
+                sumStepTo[3].append(int(csv[index + hour][6]))   # presymptomatic
+                sumStepTo[3].append(int(csv[index + hour][7]))   # symptomatic
+                sumStepTo[1].append(int(csv[index + hour][8]))   # recovered
+                sumStepTo[6].append(int(csv[index + hour][9]))   # dead
+        for indicator in range(len(output_name)):
+            output_CSVs[indicator].append(max(sumStepTo[indicator]))
+
     # Process data
     for i in range(len(output_name)):
 
         if args.variance:
-            meanReplication = float(output_CSVs[i].sum() / args.replication )
-            variance = float(output_CSVs[i].std())
+            meanReplication = float(sum(output_CSVs[i]) / args.replication )
+            variance = float(stats.stdev(output_CSVs[i]))
             # [min, max, meanReplication]
             outputs[i][graph] = [
                 max(0.0, (meanReplication - variance)),
@@ -141,11 +145,11 @@ def processPerHour(index, graph, outputs):
         else:
             # [min, max, meanReplication]
             outputs[i][graph] = [
-                float(output_CSVs[i].min() / args.stepTo),
-                float(output_CSVs[i].max() / args.stepTo),
-                float(output_CSVs[i].mean() / args.stepTo)
+                float(min(output_CSVs[i])),
+                float(max(output_CSVs[i])),
+                float(sum(output_CSVs[i]) / args.replication)
                 ]
-        
+
         if multiprocessing.current_process().name == "Process-2" and args.extraVerbose:
             print("[Process-2 - " + str(output_name[i]) + "] Min : " + str(outputs[i][graph][0]) + " | Max : " + str(outputs[i][graph][1]) + " | Mean : "  + str(outputs[i][graph][2]))
 # !def processPerHour
@@ -178,7 +182,7 @@ def splitPerProcess(mini, maxi, index_graph, outputs):
 
 
 # 2.2 _ Launch processing
-# 
+#
 
 lenCSVs = len(CSVs[0])
 threads = []
@@ -188,7 +192,7 @@ output = [manager.list(range( int(lenCSVs/args.stepTo) )) for i in range(len(out
 if not args.quiet:
     print("Start thread processing...")
     if args.verbose:
-        print("= Using " + str(args.cores) + " cores on " + str(multiprocessing.cpu_count()) + " availables")    
+        print("= Using " + str(args.cores) + " cores on " + str(multiprocessing.cpu_count()) + " availables")
 # Create a thread per core
 for split in range(args.cores):
 
@@ -217,7 +221,7 @@ if args.csv:
         print("CSV file saved as : " + csvName)
 
 # 3 _ Generating image
-# 
+#
 
 if not args.quiet:
     print("Creating plot...")
@@ -250,7 +254,7 @@ for row in range(numberRow):
         ax[row][i].fill_between(output_df[outputIndex].index, output_df[outputIndex]["Min"], output_df[outputIndex]["Max"], color=output_color[outputIndex], alpha=0.2, label = "Min/Max")
         ax[row][i].plot(output_df[outputIndex].index, output_df[outputIndex]["Mean"], color=output_color[outputIndex], label = "Mean")
         ax[row][i].legend(loc="upper left", title=output_name[outputIndex], frameon=True)
-        
+
         outputIndex += 1
 
 # Set axes legends
