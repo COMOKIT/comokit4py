@@ -109,26 +109,40 @@ def processPerHour(index, graph, outputs):
     # Set/Clear for new line
     output_CSVs = [[] for i in range(len(output_name))]
 
-    stepTo = args.stepTo
-    # Per file
-    for csv in CSVs:
-        sumStepTo = [[] for i in range(len(output_name))]
+    # Collect data in files
+    for i in range(len(CSVs)):
+        # Create temporary 3D array
+        #  [Indicator
+        #    [per replication]
+        #  ]
+        sumStepTo = [[[] for i in range(len(CSVs))] for i in range(len(output_name))]
+
+        # Used to handle last loop if last day end before 24h
+        real_stepTo = args.stepTo
+
         for hour in range(args.stepTo):
             # Gather data per col/row
-            if len(csv) > (index + hour): # Check if row exist
+            if len(CSVs[i]) > (index + hour): # Check if row exist
                 # Gather line data in every file
                 #output_CSVs[x] = output_CSVs[x].append([int(csv[index + hour][0])])   # total_incidence
-                sumStepTo[4].append(int(csv[index + hour][1]))   # need_hosp
-                sumStepTo[5].append(int(csv[index + hour][2]))   # need_icu
-                sumStepTo[0].append(int(csv[index + hour][3]))   # susceptible
+                sumStepTo[4][i].append(int(CSVs[i][index + hour][1]))   # need_hosp
+                sumStepTo[5][i].append(int(CSVs[i][index + hour][2]))   # need_icu
+                sumStepTo[0][i].append(int(CSVs[i][index + hour][3]))   # susceptible
                 # csv[4] # latent
-                sumStepTo[2].append(int(csv[index + hour][5]))   # asymptomatic
-                sumStepTo[3].append(int(csv[index + hour][6]))   # presymptomatic
-                sumStepTo[3].append(int(csv[index + hour][7]))   # symptomatic
-                sumStepTo[1].append(int(csv[index + hour][8]))   # recovered
-                sumStepTo[6].append(int(csv[index + hour][9]))   # dead
+                sumStepTo[2][i].append(int(CSVs[i][index + hour][5]))   # asymptomatic
+                sumStepTo[3][i].append(int(CSVs[i][index + hour][6]))   # presymptomatic
+                sumStepTo[3][i].append(int(CSVs[i][index + hour][7]))   # symptomatic
+                sumStepTo[1][i].append(int(CSVs[i][index + hour][8]))   # recovered
+                sumStepTo[6][i].append(int(CSVs[i][index + hour][9]))   # dead
+            else:
+                # Fix value for mean when last day < 24h
+                real_stepTo -= 1
+
+        # Compile value per replication
+        # Need to keep every rep for gather min/max values
         for indicator in range(len(output_name)):
-            output_CSVs[indicator].append(max(sumStepTo[indicator]))
+            output_CSVs[indicator].append(sum(sumStepTo[indicator][i]) / real_stepTo)
+    # === !Collect data in files
 
     # Process data
     for i in range(len(output_name)):
@@ -142,16 +156,23 @@ def processPerHour(index, graph, outputs):
                 float(meanReplication + variance),
                 meanReplication
                 ]
+        # Saved
+        #   - Min value over replications
+        #   - Max value over replications
+        #   - Mean value over replications
         else:
-            # [min, max, meanReplication]
+            # [min, max, mean]
             outputs[i][graph] = [
                 float(min(output_CSVs[i])),
                 float(max(output_CSVs[i])),
                 float(sum(output_CSVs[i]) / args.replication)
                 ]
 
+        # Verbose
         if multiprocessing.current_process().name == "Process-2" and args.extraVerbose:
             print("[Process-2 - " + str(output_name[i]) + "] Min : " + str(outputs[i][graph][0]) + " | Max : " + str(outputs[i][graph][1]) + " | Mean : "  + str(outputs[i][graph][2]))
+    # === !Process data
+
 # !def processPerHour
 
 def splitPerProcess(mini, maxi, index_graph, outputs):
