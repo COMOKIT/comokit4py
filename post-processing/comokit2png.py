@@ -238,7 +238,7 @@ for index, thread in enumerate(threads):
 if args.verbose:
     print("Quick view of some processed data :")
     print(output[0][:3])
-    print("Processed " + str(len(output)) + " days")
+    print("Processed " + str(len(output[0])) + " days")
 
 # Save output CSV
 if args.csv:
