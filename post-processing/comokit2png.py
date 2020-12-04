@@ -39,6 +39,7 @@ parser.add_argument('-t', '--title', metavar="", help='Graph title (default: [di
 parser.add_argument('-V', '--variance', action='store_true', help='Process min/max with variance')
 parser.add_argument('--csv', action='store_true', help='Save output as CSV file')
 #parser.add_argument('-p', '--plotRow', metavar="", help='Number of line to display graphs (default: 3)', type=int, default=3)
+parser.add_argument('-m', '--median', action='store_true', help='Display median curve in graph')
 
 # Other
 parser.add_argument('-q', '--quiet', action='store_true', help='Disable verbose mode')
@@ -160,6 +161,7 @@ def processPerHour(index, graph, outputs):
         #   - Min value over replications
         #   - Max value over replications
         #   - Mean value over replications
+        #   if - Median value over replications
         else:
             # [min, max, mean]
             outputs[i][graph] = [
@@ -168,9 +170,13 @@ def processPerHour(index, graph, outputs):
                 float(sum(output_CSVs[i]) / args.replication)
                 ]
 
+            # [min, max, mean, median]
+            if args.median:
+                outputs[i][graph] += [stats.median(output_CSVs[i])]
+
         # Verbose
         if multiprocessing.current_process().name == "Process-2" and args.extraVerbose:
-            print("[Process-2 - " + str(output_name[i]) + "] Min : " + str(outputs[i][graph][0]) + " | Max : " + str(outputs[i][graph][1]) + " | Mean : "  + str(outputs[i][graph][2]))
+            print("[Process-2 - " + str(output_name[i]) + "] : " + str(outputs[i][graph]) )
     # === !Process data
 
 # !def processPerHour
@@ -248,6 +254,8 @@ if not args.quiet:
     print("Creating plot...")
 
 col_name = ["Min", "Max", "Mean"]
+if args.median:
+    col_name.append("Median")
 
 # Turn result in user-friendly DataFrame
 output_df = []
@@ -274,6 +282,10 @@ for row in range(numberRow):
 
         ax[row][i].fill_between(output_df[outputIndex].index, output_df[outputIndex]["Min"], output_df[outputIndex]["Max"], color=output_color[outputIndex], alpha=0.2, label = "Min/Max")
         ax[row][i].plot(output_df[outputIndex].index, output_df[outputIndex]["Mean"], color=output_color[outputIndex], label = "Mean")
+
+        if args.median:
+            ax[row][i].plot(output_df[outputIndex].index, output_df[outputIndex]["Median"], color="k", label = "Median")
+
         ax[row][i].legend(loc="upper left", title=output_name[outputIndex], frameon=True)
 
         outputIndex += 1
