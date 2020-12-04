@@ -242,10 +242,9 @@ if args.verbose:
 
 # Save output CSV
 if args.csv:
-    csvName = args.outputImg + str(len([f for f in listdir("./") if isfile(join("./", f)) and (args.outputImg in f) and (".csv" in f)])) + '.csv'
-    pd.DataFrame(output).to_csv(csvName)
+    pd.DataFrame(output, index=output_name).to_csv(args.outputImg + '.csv', header=None)
     if not args.quiet:
-        print("CSV file saved as : " + csvName)
+        print("CSV file saved as : " + args.outputImg + '.csv')
 
 # 3 _ Generating image
 #
@@ -298,9 +297,8 @@ for i in range(numberRow):
     plt.setp(ax[i][0], ylabel='Number of person')
 
 # Save output graph
-imgName = args.outputImg + str(len([f for f in listdir("./") if isfile(join("./", f)) and (args.outputImg in f) and (".png" in f)])) + '.png'
 plt.tight_layout()
-plt.savefig(imgName, bbox_inches='tight')
+plt.savefig(args.outputImg + '.png', bbox_inches='tight')
 
 if not args.quiet:
-    print("Output image saved as : " + imgName)
+    print("Output image saved as : " + args.outputImg + '.png')
