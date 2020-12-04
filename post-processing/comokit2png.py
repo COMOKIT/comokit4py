@@ -281,10 +281,11 @@ for row in range(numberRow):
             continue
 
         ax[row][i].fill_between(output_df[outputIndex].index, output_df[outputIndex]["Min"], output_df[outputIndex]["Max"], color=output_color[outputIndex], alpha=0.2, label = "Min/Max")
-        ax[row][i].plot(output_df[outputIndex].index, output_df[outputIndex]["Mean"], color=output_color[outputIndex], label = "Mean")
 
         if args.median:
             ax[row][i].plot(output_df[outputIndex].index, output_df[outputIndex]["Median"], color="k", label = "Median")
+
+        ax[row][i].plot(output_df[outputIndex].index, output_df[outputIndex]["Mean"], color=output_color[outputIndex], label = "Mean")
 
         ax[row][i].legend(loc="upper left", title=output_name[outputIndex], frameon=True)
 
