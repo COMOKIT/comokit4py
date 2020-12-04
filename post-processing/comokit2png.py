@@ -101,8 +101,8 @@ for key, value in dictionaryCSVs.items():
 # 2.1 _ Prepare variables/functions for processing
 #
 
-output_name  = ["Susceptible", "Recovered", "Asymptomatic", "Symptomatic", "Need hospital", "Need ICU", "Death"]
-output_color = ["c", "g", "b", "r", "g", "y", "m", "k"]
+output_name  = ["Susceptible", "Recovered", "Presymptomatic", "Asymptomatic", "Symptomatic", "Need hospital", "Need ICU", "Death"]
+output_color = ["g", "b", "olive", "lightgreen", "y", "orange", "r", "m"]
 
 # Aggregation + Data processing
 def processPerHour(index, graph, outputs):
@@ -126,15 +126,15 @@ def processPerHour(index, graph, outputs):
             if len(CSVs[i]) > (index + hour): # Check if row exist
                 # Gather line data in every file
                 #output_CSVs[x] = output_CSVs[x].append([int(csv[index + hour][0])])   # total_incidence
-                sumStepTo[4][i].append(int(CSVs[i][index + hour][1]))   # need_hosp
-                sumStepTo[5][i].append(int(CSVs[i][index + hour][2]))   # need_icu
+                sumStepTo[5][i].append(int(CSVs[i][index + hour][1]))   # need_hosp
+                sumStepTo[6][i].append(int(CSVs[i][index + hour][2]))   # need_icu
                 sumStepTo[0][i].append(int(CSVs[i][index + hour][3]))   # susceptible
                 # csv[4] # latent
-                sumStepTo[2][i].append(int(CSVs[i][index + hour][5]))   # asymptomatic
-                sumStepTo[3][i].append(int(CSVs[i][index + hour][6]))   # presymptomatic
-                sumStepTo[3][i].append(int(CSVs[i][index + hour][7]))   # symptomatic
+                sumStepTo[3][i].append(int(CSVs[i][index + hour][5]))   # asymptomatic
+                sumStepTo[2][i].append(int(CSVs[i][index + hour][6]))   # presymptomatic
+                sumStepTo[4][i].append(int(CSVs[i][index + hour][7]))   # symptomatic
                 sumStepTo[1][i].append(int(CSVs[i][index + hour][8]))   # recovered
-                sumStepTo[6][i].append(int(CSVs[i][index + hour][9]))   # dead
+                sumStepTo[7][i].append(int(CSVs[i][index + hour][9]))   # dead
             else:
                 # Fix value for mean when last day < 24h
                 real_stepTo -= 1
@@ -274,7 +274,7 @@ outputIndex = 0
 for row in range(numberRow):
     for i in range(numberCol):
 
-        if (row != numberCol-1 and i == 2) or (outputIndex + 1 > len(output_df)):
+        if (row == 0 and i == 2) :
             # Debug display
             ax[row][i].axis('off')
             continue
