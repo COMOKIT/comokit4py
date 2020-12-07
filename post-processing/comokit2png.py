@@ -49,6 +49,9 @@ parser.add_argument('-vv', '--extraVerbose', action='store_true', help='Enable e
 parser.add_argument('-c', '--cores', metavar='', help="Number of core to use (default: max number of cores)", default=multiprocessing.cpu_count(), type=int)
 parser.add_argument('-s', '--stepTo', metavar='', help="Compile several steps in one (default: 1 -> disable)", default=1, type=int)
 
+# Magic
+parser.add_argument('--camps', action='store_true', help='Tweak display for COMOKIT-Camps purpose')
+
 args = parser.parse_args()
 
 if args.extraVerbose:
@@ -278,7 +281,38 @@ fig, ax = plt.subplots(nrows=numberRow, ncols=numberCol, sharey='row',figsize=(1
 
 fig.suptitle( args.title )
 
+# Fake x axis aggregation
 index = [x / args.displayStep for x in output_df[0].index]
+
+if args.camps:
+    # Add needed library
+    import datetime 
+    from matplotlib.dates import DateFormatter, drange
+    import matplotlib.transforms as mtransforms
+
+    # Change un-named days to real date
+    date1 = datetime.datetime(2020, 1, 24) 
+    index = drange(date1, 
+        date1 + datetime.timedelta( hours = len(output_df[0]) ), 
+        datetime.timedelta(hours = args.stepTo) 
+        )[:-1]
+
+    # Format display date
+    formatter = DateFormatter('%m-%d')
+    for axis in ax:
+        for a in axis:
+            a.xaxis.set_major_formatter(formatter)
+            fig.autofmt_xdate(rotation=25)
+
+    # Set policy time area
+    policyTimeDate = [ drange(datetime.datetime(2020, 3, 17), datetime.datetime(2020, 5, 11), datetime.timedelta(hours = args.stepTo))[i] for i in (0, -1) ]
+    policyTime = []
+    for i in index:
+        if policyTimeDate[0] < i and i  < policyTimeDate[-1]:
+            policyTime.append(True)
+        else:
+            policyTime.append(False)
+
 outputIndex = 0
 
 # Set curves
@@ -289,6 +323,11 @@ for row in range(numberRow):
             # Debug display
             ax[row][i].axis('off')
             continue
+
+        if args.camps:
+            # Draw policy area
+            ax[row][i].fill_between(index, 0, 1, where=policyTime, 
+                            facecolor='grey', alpha=0.25, transform=mtransforms.blended_transform_factory(ax[row][i].transData, ax[row][i].transAxes))
 
         ax[row][i].fill_between(index, output_df[outputIndex]["Min"], output_df[outputIndex]["Max"], color=output_color[outputIndex], alpha=0.2, label = "Min/Max")
 
