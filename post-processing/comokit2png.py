@@ -39,6 +39,7 @@ parser.add_argument('-t', '--title', metavar="", help='Graph title (default: [di
 parser.add_argument('-V', '--variance', action='store_true', help='Process min/max with variance')
 parser.add_argument('--csv', action='store_true', help='Save output as CSV file')
 #parser.add_argument('-p', '--plotRow', metavar="", help='Number of line to display graphs (default: 3)', type=int, default=3)
+parser.add_argument('-S', '--displayStep', metavar='', help="Change x index scale in png (default: 24 -> day)", default=24, type=int)
 parser.add_argument('-m', '--median', action='store_true', help='Display median curve in graph')
 
 # Other
@@ -46,7 +47,7 @@ parser.add_argument('-q', '--quiet', action='store_true', help='Disable verbose 
 parser.add_argument('-v', '--verbose', action='store_true', help='Enable extra verbose')
 parser.add_argument('-vv', '--extraVerbose', action='store_true', help='Enable even more extra verbose')
 parser.add_argument('-c', '--cores', metavar='', help="Number of core to use (default: max number of cores)", default=multiprocessing.cpu_count(), type=int)
-parser.add_argument('-s', '--stepTo', metavar='', help="Change step displayed in the graph (default: 24 -> day)", default=24, type=int)
+parser.add_argument('-s', '--stepTo', metavar='', help="Compile several steps in one (default: 1 -> disable)", default=1, type=int)
 
 args = parser.parse_args()
 
@@ -277,6 +278,7 @@ fig, ax = plt.subplots(nrows=numberRow, ncols=numberCol, sharey='row',figsize=(1
 
 fig.suptitle( args.title )
 
+index = [x / args.displayStep for x in output_df[0].index]
 outputIndex = 0
 
 # Set curves
@@ -288,14 +290,17 @@ for row in range(numberRow):
             ax[row][i].axis('off')
             continue
 
-        ax[row][i].fill_between(output_df[outputIndex].index, output_df[outputIndex]["Min"], output_df[outputIndex]["Max"], color=output_color[outputIndex], alpha=0.2, label = "Min/Max")
+        ax[row][i].fill_between(index, output_df[outputIndex]["Min"], output_df[outputIndex]["Max"], color=output_color[outputIndex], alpha=0.2, label = "Min/Max")
 
         if args.median:
-            ax[row][i].plot(output_df[outputIndex].index, output_df[outputIndex]["Median"], color="k", label = "Median")
+            ax[row][i].plot(index, output_df[outputIndex]["Median"], color="k", label = "Median")
 
-        ax[row][i].plot(output_df[outputIndex].index, output_df[outputIndex]["Mean"], color=output_color[outputIndex], label = "Mean")
+        ax[row][i].plot(index, output_df[outputIndex]["Mean"], color=output_color[outputIndex], label = "Mean")
 
         ax[row][i].legend(loc="upper left", title=output_name[outputIndex], frameon=True)
+
+        if args.verbose:
+            print("Finished " + str(output_name[outputIndex]))
 
         outputIndex += 1
 
