@@ -210,8 +210,10 @@ def splitPerProcess(mini, maxi, index_graph, outputs):
 
 # 2.2 _ Launch processing
 #
-
 lenCSVs = len(CSVs[0])
+for csv in CSVs:
+    lenCSVs = min(lenCSVs, len(csv))
+
 threads = []
 manager = multiprocessing.Manager()
 output = [manager.list(range( int(lenCSVs/args.stepTo) )) for i in range(len(output_name))]
