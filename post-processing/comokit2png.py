@@ -229,7 +229,7 @@ for split in range(args.cores):
     mini = int(step * split)
 
     # Start a thread on a core
-    x = multiprocessing.Process(target=splitPerProcess, args=(mini, (mini + step -1), int(mini / args.stepTo), output ) )
+    x = multiprocessing.Process(target=splitPerProcess, args=(mini, (mini + step), int(mini / args.stepTo), output ) )
     threads.append(x)
     x.start()
 
@@ -237,9 +237,16 @@ for split in range(args.cores):
 for index, thread in enumerate(threads):
     thread.join()
 
+# Clean oversized array
+for i in range(len(output)):
+    out = output[i]
+    output[i] = [item for item in out if not isinstance(item, int)]
+
 if args.verbose:
-    print("Quick view of some processed data :")
-    print(output[0][:3])
+    print("Array form : ", len(output), "x", len(output[0]), "x", len(output[0][0]))
+    if args.extraVerbose:
+        print("Quick view of some processed data :")
+        print(output[0][:3])
     print("Processed " + str(len(output[0])) + " days")
 
 # Save output CSV
