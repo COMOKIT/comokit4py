@@ -199,7 +199,8 @@ def splitPerProcess(mini, maxi, index_graph, outputs):
 
         if args.verbose and multiprocessing.current_process().name == "Process-2":
             iteration = ((maxi - mini) / args.stepTo)
-            print("[" + multiprocessing.current_process().name + "]\tFinished gathering and processing CSVs' row " + str(row) + "\t(" + str(round(iteration - ((maxi - row) / args.stepTo), 0) + 1) + "/" + str(round(iteration, 0)+1) + " iteration)\n")
+            if row == 0 or args.extraVerbose:
+                print("[" + multiprocessing.current_process().name + "]\tFinished gathering and processing CSVs' row " + str(row) + "\t(" + str(round(iteration - ((maxi - row) / args.stepTo), 0) + 1) + "/" + str(round(iteration, 0)+1) + " iteration)")
             if row == 0:
                 print("\tProcessed " + str(len(CSVs) * args.stepTo) + " lines over " + str(len(output_name)) + " cols ( == " + str((len(CSVs) * args.stepTo)*len(output_name)) + " cells)\n")
 
