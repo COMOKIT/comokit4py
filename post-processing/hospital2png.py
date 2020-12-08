@@ -29,6 +29,7 @@ parser = argparse.ArgumentParser(usage='$ python3 %(prog)s [options]')
 parser.add_argument('-i', '--inputFolder', metavar="", help='Path to folder where are saved all the COMOKIT CSV files from explorations (default: "./batch_output")', type=str, default="./batch_output")
 parser.add_argument('-o', '--outputImg', metavar="", help='Where to save output graph (default: "./out" =generate=> "./out[GeneratedNumber].png")', type=str, default="./out")
 parser.add_argument('-e', '--experimentName', metavar="", help='Name of the experiment (if you have several in a same folder)', type=str, default="")
+parser.add_argument('-idx', '--indexColumn', metavar="", help='The indexes of column to be aggregated and plot (default: [all])', nargs="+", type=int, default="")
 
 # PNG
 parser.add_argument('-t', '--title', metavar="", help='Graph title (default: [disabled])', type=str, default="")
@@ -44,25 +45,30 @@ args = parser.parse_args()
 
 # Get all CSV files
 batch_path = args.inputFolder
-onlyfiles = [f for f in listdir(batch_path) if isfile(join(batch_path, f)) and ("Hospital_stats-" + args.experimentName in f)]
+onlyfiles = [f for f in listdir(batch_path) if isfile(join(batch_path, f))
+	and (("batchAggregated-" + args.experimentName in f) or ("Hospital_stats-"  + args.experimentName in f))]
 
 if args.verbose:
 	print("Gathering " + str(len(onlyfiles)) + " CSV files")
 
 # Use dictionnary to keep col name and collect per col
 dictionaryCSVs = {}
+
 # Gather all CSV data for post processing
 for csv_file in onlyfiles:
 
-	df = pd.read_csv(join(batch_path, csv_file), dtype="int").reset_index(drop=True)
+	df = pd.read_csv(join(batch_path, csv_file), dtype="float").reset_index(drop=True)
+	df_key = df
+	if args.indexColumn:
+		df_key = df.iloc[:,args.indexColumn]
 
 	# Create directory entries on first loop
 	if len(dictionaryCSVs) == 0:
-		for key in df:
-			dictionaryCSVs[key] = []
+			for key in df_key:
+				dictionaryCSVs[key] = []
 
 	# Gather data
-	for key in df: 
+	for key in df_key:
 		dictionaryCSVs[key].append(df[key][0])
 
 if args.verbose:
