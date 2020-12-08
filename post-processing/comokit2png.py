@@ -50,7 +50,7 @@ parser.add_argument('-c', '--cores', metavar='', help="Number of core to use (de
 parser.add_argument('-s', '--stepTo', metavar='', help="Compile several steps in one (default: 1 -> disable)", default=1, type=int)
 
 # Magic
-parser.add_argument('--camps', action='store_true', help='Tweak display for COMOKIT-Camps purpose')
+parser.add_argument('--azure', action='store_true', help='Tweak display for COMOKIT-azure purpose')
 
 args = parser.parse_args()
 
@@ -285,7 +285,7 @@ fig.suptitle( args.title )
 # Fake x axis aggregation
 index = [x / args.displayStep for x in output_df[0].index]
 
-if args.camps:
+if args.azure:
     # Add needed library
     import datetime 
     from matplotlib.dates import DateFormatter, drange
@@ -325,7 +325,7 @@ for row in range(numberRow):
             ax[row][i].axis('off')
             continue
 
-        if args.camps:
+        if args.azure:
             # Draw policy area
             ax[row][i].fill_between(index, 0, 1, where=policyTime, 
                             facecolor='grey', alpha=0.25, transform=mtransforms.blended_transform_factory(ax[row][i].transData, ax[row][i].transAxes))
