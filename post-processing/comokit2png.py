@@ -62,20 +62,26 @@ args = parser.parse_args()
 # Apply predefined tweaks
 # without overriding potentially already set
 if args.azure:
-    print("=== Apply missing parameter for Azure project ===")
+    if not args.quiet:
+        print("=== Apply missing parameter for Azure project ===")
     if not args.startDate:
         args.startDate = [2020, 1, 24]
-        print("\tSet --startDate", args.startDate)
+        if not args.quiet:
+            print("\tSet --startDate", args.startDate)
     if not args.startPolicy:
         args.startPolicy = [2020, 3, 17]
-        print("\tSet --startPolicy", args.startPolicy)
+        if not args.quiet:
+            print("\tSet --startPolicy", args.startPolicy)
     if not args.endPolicy:
         args.endPolicy = [2020, 5, 11]
-        print("\tSet --endPolicy", args.endPolicy)
+        if not args.quiet:
+            print("\tSet --endPolicy", args.endPolicy)
     if args.replication == 1: # Default value
         args.replication = 50
-        print("\tSet --replication", args.replication)
-    print("=== Done ===\n")
+        if not args.quiet:
+            print("\tSet --replication", args.replication)
+    if not args.quiet:
+        print("=== Done ===\n")
 
 if args.extraVerbose:
     args.verbose = True
