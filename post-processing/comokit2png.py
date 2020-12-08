@@ -41,6 +41,7 @@ parser.add_argument('--csv', action='store_true', help='Save output as CSV file'
 #parser.add_argument('-p', '--plotRow', metavar="", help='Number of line to display graphs (default: 3)', type=int, default=3)
 parser.add_argument('-S', '--displayStep', metavar='', help="Change x index scale in png (default: 24 -> day)", default=24, type=int)
 parser.add_argument('-m', '--median', action='store_true', help='Display median curve in graph')
+parser.add_argument('-Q', '--quartile', action='store_true', help='Display quartile curves in graph (override median option)')
 
 # Other
 parser.add_argument('-q', '--quiet', action='store_true', help='Disable verbose mode')
@@ -174,9 +175,16 @@ def processPerHour(index, graph, outputs):
                 float(sum(output_CSVs[i]) / args.replication)
                 ]
 
-            # [min, max, mean, median]
-            if args.median:
-                outputs[i][graph] += [stats.median(output_CSVs[i])]
+            if args.quartile:
+                import numpy as np
+                # [min, max, mean, q1, q2, q3]
+                outputs[i][graph] += [np.quantile(output_CSVs[i], .25), 
+                np.quantile(output_CSVs[i], .50),
+                np.quantile(output_CSVs[i], .75)]
+            else:
+                # [min, max, mean, median]
+                if args.median:
+                    outputs[i][graph] += [stats.median(output_CSVs[i])]
 
         # Verbose
         if multiprocessing.current_process().name == "Process-2" and args.extraVerbose:
@@ -267,8 +275,14 @@ if not args.quiet:
     print("Creating plot...")
 
 col_name = ["Min", "Max", "Mean"]
-if args.median:
-    col_name.append("Median")
+
+if args.quartile:
+    col_name.append("Q1 quartile")
+    col_name.append("Q2 quartile")
+    col_name.append("Q3 quartile")
+else:
+    if args.median:
+        col_name.append("Median")
 
 # Turn result in user-friendly DataFrame
 output_df = []
@@ -331,9 +345,13 @@ for row in range(numberRow):
                             facecolor='grey', alpha=0.25, transform=mtransforms.blended_transform_factory(ax[row][i].transData, ax[row][i].transAxes))
 
         ax[row][i].fill_between(index, output_df[outputIndex]["Min"], output_df[outputIndex]["Max"], color=output_color[outputIndex], alpha=0.2, label = "Min/Max")
-
-        if args.median:
-            ax[row][i].plot(index, output_df[outputIndex]["Median"], color="k", label = "Median")
+        if args.quartile:
+            ax[row][i].plot(index, output_df[outputIndex]["Q1 quartile"], color="k", linestyle='dotted', label = "Q1 quartile")
+            ax[row][i].plot(index, output_df[outputIndex]["Q2 quartile"], color="k", linestyle='solid', label = "Q2 quartile")
+            ax[row][i].plot(index, output_df[outputIndex]["Q3 quartile"], color="k", linestyle='dashed', label = "Q3 quartile")
+        else:
+            if args.median:
+                ax[row][i].plot(index, output_df[outputIndex]["Median"], color="k", label = "Median")
 
         ax[row][i].plot(index, output_df[outputIndex]["Mean"], color=output_color[outputIndex], label = "Mean")
 
