@@ -1,0 +1,8 @@
+numpy
+datetime
+matplotlib
+pandas
+statistics
+argparse
+# Generate error in Python 3.8 / pip 20.3
+#multiprocessing
