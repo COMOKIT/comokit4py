@@ -300,8 +300,11 @@ fig.suptitle( args.title )
 
 # Fake x axis aggregation
 index = [x / args.displayStep for x in output_df[0].index]
+policyTime = None
 
-if args.startDate:
+# Change x axis display with dates
+if (args.startDate 
+    and len(args.startDate) == 3):
     # Add needed library
     import datetime 
     from matplotlib.dates import DateFormatter, drange
