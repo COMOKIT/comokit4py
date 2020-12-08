@@ -43,6 +43,8 @@ parser.add_argument('-S', '--displayStep', metavar='', help="Change x index scal
 parser.add_argument('-m', '--median', action='store_true', help='Display median curve in graph')
 parser.add_argument('-Q', '--quartile', action='store_true', help='Display quartile curves in graph (override median option)')
 
+parser.add_argument('-d', '--startDate', metavar=("YYYY", "MM", "DD"), nargs = 3, help = 'Set starting real date in PNG x axis')
+
 # Other
 parser.add_argument('-q', '--quiet', action='store_true', help='Disable verbose mode')
 parser.add_argument('-v', '--verbose', action='store_true', help='Enable extra verbose')
@@ -299,14 +301,14 @@ fig.suptitle( args.title )
 # Fake x axis aggregation
 index = [x / args.displayStep for x in output_df[0].index]
 
-if args.azure:
+if args.startDate:
     # Add needed library
     import datetime 
     from matplotlib.dates import DateFormatter, drange
     import matplotlib.transforms as mtransforms
 
     # Change un-named days to real date
-    date1 = datetime.datetime(2020, 1, 24) 
+    date1 = datetime.datetime(int(args.startDate[0]), int(args.startDate[1]), int(args.startDate[2])) 
     index = drange(date1, 
         date1 + datetime.timedelta( hours = len(output_df[0]) ), 
         datetime.timedelta(hours = args.stepTo) 
