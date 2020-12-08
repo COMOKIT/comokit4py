@@ -10,7 +10,6 @@
 ## Author: RoiArthurB
 ## Copyright: Copyright 2020, COMOKIT, COMOKIT-HPC
 ## Licence: LGPL 3.0
-## Version: 1.0.0
 ## Maintainer: RoiArthurB
 ##################################################
 
