@@ -44,6 +44,8 @@ parser.add_argument('-m', '--median', action='store_true', help='Display median 
 parser.add_argument('-Q', '--quartile', action='store_true', help='Display quartile curves in graph (override median option)')
 
 parser.add_argument('-d', '--startDate', metavar=("YYYY", "MM", "DD"), nargs = 3, help = 'Set starting real date in PNG x axis')
+parser.add_argument('-p', '--startPolicy', metavar=("YYYY", "MM", "DD"), nargs = 3, help = 'Set starting policy grey area in PNG (needs --startDate and --endPolicy)')
+parser.add_argument('-P', '--endPolicy', metavar=("YYYY", "MM", "DD"), nargs = 3, help = 'Set starting policy grey area in PNG (needs --startDate and --startPolicy)')
 
 # Other
 parser.add_argument('-q', '--quiet', action='store_true', help='Disable verbose mode')
@@ -324,14 +326,17 @@ if (args.startDate
             a.xaxis.set_major_formatter(formatter)
             fig.autofmt_xdate(rotation=25)
 
-    # Set policy time area
-    policyTimeDate = [ drange(datetime.datetime(2020, 3, 17), datetime.datetime(2020, 5, 11), datetime.timedelta(hours = args.stepTo))[i] for i in (0, -1) ]
-    policyTime = []
-    for i in index:
-        if policyTimeDate[0] < i and i  < policyTimeDate[-1]:
-            policyTime.append(True)
-        else:
-            policyTime.append(False)
+    # Prepare policy time area
+    if ((args.startPolicy and args.endPolicy) # Check if parameters are set
+        and ((len(args.startPolicy) == 3) and (len(args.endPolicy) == 3))): # Check if properly set
+
+        policyTimeDate = [ drange(datetime.datetime(int(args.startPolicy[0]), int(args.startPolicy[1]), int(args.startPolicy[2])), datetime.datetime(int(args.endPolicy[0]), int(args.endPolicy[1]), int(args.endPolicy[2])), datetime.timedelta(hours = args.stepTo))[i] for i in (0, -1) ]
+        policyTime = []
+        for i in index:
+            if policyTimeDate[0] < i and i  < policyTimeDate[-1]:
+                policyTime.append(True)
+            else:
+                policyTime.append(False)
 
 outputIndex = 0
 
@@ -344,7 +349,7 @@ for row in range(numberRow):
             ax[row][i].axis('off')
             continue
 
-        if args.azure:
+        if policyTime is not None:
             # Draw policy area
             ax[row][i].fill_between(index, 0, 1, where=policyTime, 
                             facecolor='grey', alpha=0.25, transform=mtransforms.blended_transform_factory(ax[row][i].transData, ax[row][i].transAxes))
