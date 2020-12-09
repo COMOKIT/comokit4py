@@ -29,7 +29,7 @@ parser = argparse.ArgumentParser(usage='$ python3 %(prog)s [options]')
 parser.add_argument('-i', '--inputFolder', metavar="", help='Path to folder where are saved all the COMOKIT CSV files from explorations (default: "./batch_output")', type=str, default="./batch_output")
 parser.add_argument('-o', '--outputImg', metavar="", help='Where to save output graph (default: "./out" =generate=> "./out.png")', type=str, default="./out")
 parser.add_argument('-e', '--experimentName', metavar="", help='Name of the experiment (if you have several in a same folder)', type=str, default="")
-parser.add_argument('-idx', '--indexColumn', metavar="", help='The indexes of column to be aggregated and plot (default: [all])', nargs="+", type=int)
+parser.add_argument('-idx', '--indexColumn', metavar="", help='The indexes of column to be aggregated and plot (without: [all])', nargs="+", type=int)
 parser.add_argument('-a', '--aggregated', action='store_true', help='Will gather files starting by "batchAggregated-" (without: "Hospital_stats-")')
 
 # PNG
@@ -65,12 +65,11 @@ for csv_file in onlyfiles:
 	if len(dictionaryCSVs) == 0:
 		df_key = []
 		if args.indexColumn:
-			for i in args.indexColumn:
-				# If col index exist
-				if i >= 0 and i < len(df.keys()):
-					df_key.append(str(df.iloc[:,i]).split("Name: ")[1].split(",")[0])
-					if args.verbose:
-						print("Add column", str(df.iloc[:,i]).split("Name: ")[1].split(",")[0] )
+			index = 0
+			for column in df:
+				if index in args.indexColumn:
+					df_key.append(column)
+				index += 1
 		else:
 			df_key = df
 
