@@ -27,9 +27,10 @@ parser = argparse.ArgumentParser(usage='$ python3 %(prog)s [options]')
 
 # Files
 parser.add_argument('-i', '--inputFolder', metavar="", help='Path to folder where are saved all the COMOKIT CSV files from explorations (default: "./batch_output")', type=str, default="./batch_output")
-parser.add_argument('-o', '--outputImg', metavar="", help='Where to save output graph (default: "./out" =generate=> "./out[GeneratedNumber].png")', type=str, default="./out")
+parser.add_argument('-o', '--outputImg', metavar="", help='Where to save output graph (default: "./out" =generate=> "./out.png")', type=str, default="./out")
 parser.add_argument('-e', '--experimentName', metavar="", help='Name of the experiment (if you have several in a same folder)', type=str, default="")
 parser.add_argument('-idx', '--indexColumn', metavar="", help='The indexes of column to be aggregated and plot (default: [all])', nargs="+", type=int, default="")
+parser.add_argument('-a', '--aggregated', action='store_true', help='Will gather files starting by "batchAggregated-" (without: "Hospital_stats-")')
 
 # PNG
 parser.add_argument('-t', '--title', metavar="", help='Graph title (default: [disabled])', type=str, default="")
@@ -43,10 +44,11 @@ args = parser.parse_args()
 # 1 _ Gathering COMOKIT datasets
 #
 
+baseFileName = "batchAggregated-" if args.aggregated else "Hospital_stats-"
+
 # Get all CSV files
 batch_path = args.inputFolder
-onlyfiles = [f for f in listdir(batch_path) if isfile(join(batch_path, f))
-	and (("batchAggregated-" + args.experimentName in f) or ("Hospital_stats-"  + args.experimentName in f))]
+onlyfiles = [f for f in listdir(batch_path) if isfile(join(batch_path, f)) and (baseFileName + args.experimentName in f)]
 
 if args.verbose:
 	print("Gathering " + str(len(onlyfiles)) + " CSV files")
