@@ -108,7 +108,12 @@ for csv_file in onlyfiles:
     df = pd.read_csv(join(batch_path, csv_file), dtype="int").reset_index(drop=True)
     if replicationIndex in dictionaryCSVs:
         # Sum new CSV with previous gathered CSVs
-        dictionaryCSVs[replicationIndex] = dictionaryCSVs[replicationIndex].add(df.values)
+        if len(dictionaryCSVs[replicationIndex]) < len(df):
+            dictionaryCSVs[replicationIndex] = dictionaryCSVs[replicationIndex].add(df, fill_value = 0)
+        elif len(dictionaryCSVs[replicationIndex]) > len(df):
+            dictionaryCSVs[replicationIndex] = df.add(dictionaryCSVs[replicationIndex], fill_value = 0)
+        else:
+            dictionaryCSVs[replicationIndex] = dictionaryCSVs[replicationIndex].add(df)
 
         # Update value
         numberCSVs[replicationIndex] += 1
@@ -193,6 +198,7 @@ def processPerHour(index, graph, outputs):
         #   - Min value over replications
         #   - Max value over replications
         #   - Mean value over replications
+        #   if - Quartile [Q1, Q2, Q3] value over replications
         #   if - Median value over replications
         else:
             # [min, max, mean]
@@ -269,7 +275,7 @@ for split in range(args.cores):
     mini = int(step * split)
 
     # Start a thread on a core
-    x = multiprocessing.Process(target=splitPerProcess, args=(mini, (mini + step), int(mini / args.stepTo), output ) )
+    x = multiprocessing.Process(target=splitPerProcess, args=(mini, min(lenCSVs, mini + step + min(5, args.cores)), int(mini / args.stepTo), output ) )
     threads.append(x)
     x.start()
 
@@ -324,7 +330,7 @@ fig, ax = plt.subplots(nrows=numberRow, ncols=numberCol, sharey='row',figsize=(1
 fig.suptitle( args.title )
 
 # Fake x axis aggregation
-index = [x / args.displayStep for x in output_df[0].index]
+index = [x / args.displayStep for x in range(len(output_df[0]))]
 policyTime = None
 
 # Change x axis display with dates
