@@ -346,7 +346,7 @@ if (args.startDate
     index = drange(date1, 
         date1 + datetime.timedelta( hours = len(output_df[0]) ), 
         datetime.timedelta(hours = args.stepTo) 
-        )[:-1]
+        )
 
     # Format display date
     formatter = DateFormatter('%m-%d')
