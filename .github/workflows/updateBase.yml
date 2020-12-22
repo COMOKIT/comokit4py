@@ -1,0 +1,71 @@
+name: Daily Update - COMOKIT-HPC Base folder
+
+on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron:  '0 0 * * *'
+
+jobs:
+
+### Activity check
+### uses GitHub API to check last non-automagic commit in repository
+### if it's older than a day, all other steps are skipped
+### From https://github.community/t/trigger-workflow-if-there-is-commit-in-last-24-hours/17074/3
+
+      - name:  Activity check
+        run:  |
+              :
+              #=== Check COMOKIT HPC
+              curl -sL https://api.github.com/repos/COMOKIT/COMOKIT-HPC/commits | jq -r '[.[]][0]' > $HOME/commit.json
+              date_repo="$(jq -r '.commit.author.date' $HOME/commit.json)"
+              timestamp=$(date --utc -d "$date_repo" +%s)
+              rm -f $HOME/commit.json
+
+              days=$(( ( $(date --utc +%s) - $timestamp ) / 86400 ))
+              echo "Last repository activity : $timestamp ~ $days ago"
+              #=== ! check
+
+              alive=0
+              if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+                echo "[WARNING] Ignoring activity limits : workflow triggered manually"
+                alive=1
+              else
+                # Check if last commit on HPC is earlier than a day ago
+                # If yes run Job, if no stop there
+                if [ $days -lt 1 ]; then
+                   echo Repository active : $days days
+                   alive=1
+                else
+                   echo "[WARNING] Repository active : $days days (limit 1) - Nothing to update"
+                fi
+              fi
+
+              if [ $alive -eq 1 ]; then
+                echo "GHA_REPO_ALIVE=true" >> $GITHUB_ENV
+                echo "Rebuild continuous releases"
+              else
+                echo "GHA_REPO_ALIVE=false" >> $GITHUB_ENV
+                echo "[WARNING] Repository not updated"
+              fi
+        shell: bash
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Update subtree and clean it
+      if: env.GHA_REPO_ALIVE == 'true'
+      run: |
+        git stash
+        git stash clear
+        git subtree pull --prefix=base git@github.com:COMOKIT/COMOKIT-HPC.git master
+        rm -fr base/docker base/.github base/.gitignore base/LICENSE base/tools base/.travis.yml
+
+    - uses: stefanzweifel/git-auto-commit-action@v4
+      if: env.GHA_REPO_ALIVE == 'true'
+      with:
+        commit_message: "[BOT] Update base"
+        branch: main
+        file_pattern: --all
+        commit_author: GitHub Actions <actions@github.com> # defaults to author of the commit that triggered the run
