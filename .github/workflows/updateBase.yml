@@ -64,14 +64,13 @@ jobs:
         run: |
           git stash
           git stash clear
-          git subtree pull --prefix=base git@github.com:COMOKIT/COMOKIT-HPC.git master
+          git subtree pull --squash --prefix=base https://github.com/COMOKIT/COMOKIT-HPC.git master
           rm -fr base/docker base/.github base/.gitignore base/LICENSE base/tools base/.travis.yml
+          git add --all
+          git commit --amend -m "[BOT] Update Base folder"
 
-      - name: Commit and push update
+      - name: Push update
         if: env.GHA_REPO_ALIVE == 'true'
-        uses: stefanzweifel/git-auto-commit-action@v4
+        uses: actions-js/push@master
         with:
-          commit_message: "[BOT] Update base"
-          branch: main
-          file_pattern: --all
-          commit_author: GitHub Actions <actions@github.com> # defaults to author of the commit that triggered the run
+          github_token: ${{ secrets.GITHUB_TOKEN }}
