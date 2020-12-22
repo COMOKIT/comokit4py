@@ -65,15 +65,12 @@ jobs:
       - name: Update subtree and clean it
         if: env.GHA_REPO_ALIVE == 'true'
         run: |
+          git config --global user.email "actions@github.com"
+          git config --global user.name "GitHub Actions"
           git stash
           git stash clear
           git subtree pull --squash --message="[BOT] Update Base folder" --prefix=base https://github.com/COMOKIT/COMOKIT-HPC.git master
           rm -fr base/docker base/.github base/.gitignore base/LICENSE base/tools base/.travis.yml
           git add --all
           git commit --amend --no-edit
-
-      - name: Push update
-        if: env.GHA_REPO_ALIVE == 'true'
-        uses: actions-js/push@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          git push
