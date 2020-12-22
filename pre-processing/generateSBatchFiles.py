@@ -22,6 +22,109 @@ import argparse
 
 xmlPath = ""
 
+def setupGamaEnv(gamaPath, output, outputFolder, absolute = True, folder = None):
+
+	# Make gama executable
+	os.chmod(gamaPath, 0o555)
+
+	# Create output folder 
+	if not os.path.exists(output):
+		os.makedirs(output)
+
+	# Set absolute path or not
+	if absolute:
+		output = os.path.abspath(output)
+		gamaPath = os.path.abspath(gamaPath)
+		outputFolder = os.path.abspath(outputFolder)
+
+	# Gather XML in a list
+	if folder != None:
+		if os.path.isdir(folder):
+			for fname in os.listdir(folder)[:1]:
+				if fname.endswith('.xml'):
+					# Get pattern of xml file before the index element
+					xmlPath = (os.path.abspath(folder + "/" + fname).rsplit("-", 1)[0] + "-") if absolute else ((folder + "/" + fname).rsplit("-", 1)[0] + "-")
+					break;
+			if xmlPath == "":
+				raise TypeError('The folder doesn\'t contain any XML file.')
+		else: 
+			raise TypeError('The folder doesn\'t exist.')
+	else:
+		raise Exception('You should specify a folder with XML (w/ `-f`) or an XML (w/ `-x`) in your command.\nTry to launch the script with `-h` for full help options.')
+
+	return xmlPath
+
+def genSbatchArray(output, submission = 1, maxSubmission = 1, nodes = 1, cpuPerTask = 1, core = 1, maxHour = 1, EDF = False):
+	sbatchScript = ("#!/bin/bash\n"
+		"#-------------------------------------------------------------------------------\n"
+		"#\n"
+		"# Batch options for SLURM (Simple Linux Utility for Resource Management)\n"
+		"# =======================\n"
+		"#\n"
+		"#SBATCH --array=0-" + str(submission -1) + "%" + str(maxSubmission) + "\n"
+		"#SBATCH --nodes=" + str(nodes) + "\n"
+		"#SBATCH --cpus-per-task=" + str(cpuPerTask) + "\n"
+		"#SBATCH --ntasks=" + str(int(nodes * core / cpuPerTask)) + "\n"
+		"#SBATCH --ntasks-per-node=" + str(int(core / cpuPerTask)) + "\n"
+		"#SBATCH --time=" + str(maxHour) + ":00:00\n"
+		"#SBATCH --job-name=COMOKIT\n")
+	if (EDF):
+		sbatchScript += ("#SBATCH --exclusive\n"
+				"#SBATCH --partition=cn\n"
+				"#SBATCH --wckey=IRD:GAMA\n")
+		
+	sbatchScript += ("#\n"
+			"#-------------------------------------------------------------------------------\n"
+			"\n"
+			"# Change to submission directory\n"
+			"if test -n ${1} ; then cd ${1} ; fi\n"
+			"srun --multi-prog " +  output + "/vague.cnf\n")
+
+	try:
+		file = open(output + "/sbatch_array.sh","w")
+		file.write( sbatchScript )
+		file.close()
+		os.chmod(output + "/sbatch_array.sh", 0o775)
+	except:
+		raise Exception("\tError while saving file")
+
+	return True
+
+def genVague(output, nodes = 1, cpuPerTask = 1, core = 1):
+	try:
+		file = open(output + "/vague.cnf","w")
+		file.write( "0-" + str(int(nodes * core / cpuPerTask) - 1 ) + " " + output + "/launch_pack_8.sh %t" )
+		file.close()
+	except:
+		raise Exception("\tError while saving file")
+
+	return True
+
+def genLaunchPack(gama, output, outputFolder, xmlPath, nodes = 1, cpuPerTask = 1, core = 1, delay = None):
+	sbatchGamaScript = ("#!/bin/bash\n"
+		"\n"
+		"id_mask=$(( $SLURM_ARRAY_TASK_ID * " + str(int(nodes * core / cpuPerTask)) + " + $1 ))\n"
+		"if [ ! -f  " + xmlPath + "${id_mask}.xml ]; then echo \"le fichier mask-${id_mask}.xml est absent (queue de distrib?)\"; exit 2; fi\n")
+	sbatchGamaScript += gama + " -hpc 1 " + xmlPath + "${id_mask}.xml " + outputFolder+"${id_mask}"
+
+	if delay != None:
+		sbatchGamaScript += "\nsleep "+delay
+
+	try:
+		file = open(output + "/launch_pack_8.sh","w")
+		file.write( sbatchGamaScript )
+		file.close()
+		os.chmod(output + "/launch_pack_8.sh", 0o775)
+	except:
+		raise Exception("\tError while saving file")
+	
+	return True
+
+def generateSlurmFiles(gama, output, outputFolder, xmlPath, submission = 1, maxSubmission = 1, nodes = 1, cpuPerTask = 1, core = 1, maxHour = 1, EDF = False, delay = None):
+	genSbatchArray(output, submission, maxSubmission, nodes, cpuPerTask, core, maxHour, EDF)
+	genVague(output, nodes, cpuPerTask, core)
+	genLaunchPack(gama, output, outputFolder, xmlPath, nodes, cpuPerTask, core, delay)
+
 #
 #	MAIN
 #
@@ -53,105 +156,24 @@ if __name__ == '__main__':
 	# 1 _ Setup environment to be sure to launch
 	#
 	print("=== Prepare everything")
-	# Make gama executable
-	os.chmod(args.gama, 0o555)
-
-	# Create output folder 
-	if not os.path.exists(args.output):
-		os.makedirs(args.output)
-
-	# Set absolute path or not
-	if args.A:
-		args.output = os.path.abspath(args.output)
-		args.gama = os.path.abspath(args.gama)
-		args.outputFolder = os.path.abspath(args.outputFolder)
-
-	# Gather XML in a list
-	if args.folder != None:
-		if os.path.isdir(args.folder):
-			for fname in os.listdir(args.folder)[:1]:
-				if fname.endswith('.xml'):
-					# Get pattern of xml file before the index element
-					xmlPath = (os.path.abspath(args.folder + "/" + fname).rsplit("-", 1)[0] + "-") if args.A else ((args.folder + "/" + fname).rsplit("-", 1)[0] + "-")
-					break;
-			if xmlPath == "":
-				raise ValueError('The folder doesn\'t contain any XML file.')
-		else: 
-			raise ValueError('The folder doesn\'t exist.')
-	else:
-		raise ValueError('You should specify a folder with XML (w/ `-f`) or an XML (w/ `-x`) in your command.\nTry to launch the script with `-h` for full help options.')
+	xmlPath = setupGamaEnv(args.gama, args.output, args.outputFolder, args.A, args.folder)
+	if xmlPath != "":
+		print("\tDone !")
 
 	# 2 _ Create SBatch first script
 	#
 	print("=== Generate " + args.output + "/sbatch_array.sh file")
-	
-	sbatchScript = ("#!/bin/bash\n"
-		"#-------------------------------------------------------------------------------\n"
-		"#\n"
-		"# Batch options for SLURM (Simple Linux Utility for Resource Management)\n"
-		"# =======================\n"
-		"#\n"
-		"#SBATCH --array=0-" + str(args.submission -1) + "%" + str(args.maxSubmission) + "\n"
-		"#SBATCH --nodes=" + str(args.nodes) + "\n"
-		"#SBATCH --cpus-per-task=" + str(args.cpuPerTask) + "\n"
-		"#SBATCH --ntasks=" + str(int(args.nodes * args.core / args.cpuPerTask)) + "\n"
-		"#SBATCH --ntasks-per-node=" + str(int(args.core / args.cpuPerTask)) + "\n"
-		"#SBATCH --time=" + str(args.time) + ":00:00\n"
-		"#SBATCH --job-name=COMOKIT\n")
-	if (args.EDF):
-		sbatchScript += ("#SBATCH --exclusive\n"
-				"#SBATCH --partition=cn\n"
-				"#SBATCH --wckey=IRD:GAMA\n")
-		
-	sbatchScript += ("#\n"
-			"#-------------------------------------------------------------------------------\n"
-			"\n"
-			"# Change to submission directory\n"
-			"if test -n ${1} ; then cd ${1} ; fi\n"
-			"srun --multi-prog " +  args.output + "/vague.cnf\n")
-
-	try:
-		file = open(args.output + "/sbatch_array.sh","w")
-		file.write( sbatchScript )
-		file.close()
-		os.chmod(args.output + "/sbatch_array.sh", 0o775)
-	except:
-		print("\tError while saving file")
-	finally:
+	if genSbatchArray(args.output, args.submission, args.maxSubmission, args.nodes, args.cpuPerTask, args.core, args.time, args.EDF):
 		print("\tSaved !")
 
 	# 3 _ Create SBatch second script
 	#
 	print("=== Generate " + args.output + "/vague.cnf file")
-
-	try:
-		file = open(args.output + "/vague.cnf","w")
-		file.write( "0-" + str(int(args.nodes * args.core / args.cpuPerTask) - 1 ) + " " + args.output + "/launch_pack_8.sh %t" )
-		file.close()
-	except:
-		print("\tError while saving file")
-	finally:
+	if genVague(args.output, args.nodes, args.cpuPerTask, args.core):
 		print("\tSaved !")
 
 	# 4 _ Create gama headless launching script
 	#
 	print("=== Generate " + args.output + "/launch_pack_8.sh file")
-
-	sbatchGamaScript = ("#!/bin/bash\n"
-		"\n"
-		"id_mask=$(( $SLURM_ARRAY_TASK_ID * " + str(int(args.nodes * args.core / args.cpuPerTask)) + " + $1 ))\n"
-		"if [ ! -f  " + xmlPath + "${id_mask}.xml ]; then echo \"le fichier mask-${id_mask}.xml est absent (queue de distrib?)\"; exit 2; fi\n")
-	sbatchGamaScript += args.gama + " -hpc 1 " + xmlPath + "${id_mask}.xml " + args.outputFolder+"${id_mask}"
-
-	if args.delay != None:
-		sbatchGamaScript += "\nsleep "+args.delay
-
-	try:
-		file = open(args.output + "/launch_pack_8.sh","w")
-		file.write( sbatchGamaScript )
-		file.close()
-		os.chmod(args.output + "/launch_pack_8.sh", 0o775)
-	except:
-		print("\tError while saving file")
-	finally:
+	if genLaunchPack(args.gama, args.output, args.outputFolder, xmlPath, args.nodes, args.cpuPerTask, args.core, args.delay):
 		print("\tSaved !")
