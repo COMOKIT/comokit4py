@@ -2,10 +2,16 @@ name: Daily Update - COMOKIT-HPC Base folder
 
 on:
   schedule:
-    # * is a special character in YAML so you have to quote this string
-    - cron:  '0 0 * * *'
+    - cron: "0 0 * * *"
+  workflow_dispatch:
 
 jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    name: Create daily release
+    steps:
 
 ### Activity check
 ### uses GitHub API to check last non-automagic commit in repository
@@ -48,24 +54,24 @@ jobs:
                 echo "[WARNING] Repository not updated"
               fi
         shell: bash
+        
+      - name: Checkout code
+        if: env.GHA_REPO_ALIVE == 'true'
+        uses: actions/checkout@v2
 
-  build:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v1
+      - name: Update subtree and clean it
+        if: env.GHA_REPO_ALIVE == 'true'
+        run: |
+          git stash
+          git stash clear
+          git subtree pull --prefix=base git@github.com:COMOKIT/COMOKIT-HPC.git master
+          rm -fr base/docker base/.github base/.gitignore base/LICENSE base/tools base/.travis.yml
 
-    - name: Update subtree and clean it
-      if: env.GHA_REPO_ALIVE == 'true'
-      run: |
-        git stash
-        git stash clear
-        git subtree pull --prefix=base git@github.com:COMOKIT/COMOKIT-HPC.git master
-        rm -fr base/docker base/.github base/.gitignore base/LICENSE base/tools base/.travis.yml
-
-    - uses: stefanzweifel/git-auto-commit-action@v4
-      if: env.GHA_REPO_ALIVE == 'true'
-      with:
-        commit_message: "[BOT] Update base"
-        branch: main
-        file_pattern: --all
-        commit_author: GitHub Actions <actions@github.com> # defaults to author of the commit that triggered the run
+      - name: Commit and push update
+        if: env.GHA_REPO_ALIVE == 'true'
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "[BOT] Update base"
+          branch: main
+          file_pattern: --all
+          commit_author: GitHub Actions <actions@github.com> # defaults to author of the commit that triggered the run
