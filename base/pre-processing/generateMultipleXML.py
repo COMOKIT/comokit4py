@@ -114,33 +114,10 @@ def autoIndexSelector( argsFName ):
 	return len([f for f in os.listdir(path) 
 		if (tail[:-4] in f) and os.path.isfile(os.path.join(path, f))])
 
-#
-#	MAIN
-#
-if __name__ == '__main__':
+def generateExperimentUniverse(gamlFilePath):
 
-	# 0 _ Get/Set parameters
-	# 
-	parser = argparse.ArgumentParser(usage='$ python3 %(prog)s [options] -f INT -xml <experiment name> /path/to/file.gaml /path/to/file.xml')
-	parser.add_argument('-r', '--replication', metavar='INT', help="Number of replication for each paramater space (default: 1)", default=1, type=int)
-	parser.add_argument('-s', '--split', metavar='INT', help="Split XML file every S replications (default: 1)", default=-1, type=int)
-	parser.add_argument('-o', '--output', metavar='STR', help="Relative path from GAML file to folder where save output CSV (default: \"../../batch_output\" => /path/to/COMOKIT/batch_output)", default="../../batch_output", type=str)
-	parser.add_argument('-u', '--until', metavar='STR', help="Stop condition for the simulations (default: \"world.sim_stop()\"", default="world.sim_stop()", type=str)
-	parser.add_argument('-S', '--seed', metavar='INT', help="Starting value for seeding simulation (default: 0)", default=0, type=int)	
-	parser.add_argument('-f', '--final', metavar='INT', help="Final step for simulations", default=-1, type=int,  required=True)
-	parser.add_argument('-xml', metavar=("<experiment name>", "/path/to/file.gaml", "/path/to/file.xml"), nargs = 3, help = 'Classical xml arguments', required=True)
-	args = parser.parse_args()
-
-	expName, gamlFilePath, xmlFilePath = args.xml
-	
 	# Turn them all in absolute path
 	gamlFilePath = os.path.abspath(gamlFilePath)
-	xmlFilePath = os.path.abspath(xmlFilePath)
-	args.output = os.path.abspath(os.path.split(gamlFilePath)[0] + "/" + args.output)
-
-	# Prevent wrong path
-	if args.output[-1] == "/":
-		args.output = args.output[:-1]
 
 	# 1 _ Gather all parameters
 	# 
@@ -150,8 +127,6 @@ if __name__ == '__main__':
 				temp = extractParametersAttributes( l.strip()  )
 				if temp is not None:
 					parametersList.append( extractParametersAttributes( l.strip()  ) )
-
-	print("Total number of parameters detected : " + str(len(parametersList)))
 
 	# 2 _ Create list of possible values for every parameters
 	# 
@@ -170,18 +145,15 @@ if __name__ == '__main__':
 
 	# 3 _ Calculate all the possible universe
 	#	https://www.geeksforgeeks.org/python-all-possible-permutations-of-n-lists/
-	allParamValues = list(itertools.product(*allParamValues)) 
+	return [list(itertools.product(*allParamValues)), parametersList]
 
-	print("Total number of possible combinaison : " + str(len(allParamValues)))
+def createXmlFiles(allParamValues, parametersList, xmlFilePath, replication = 1, split = -1, output = "../../batch_output", seed = 0, final = -1, until = ""):
 
-	# 3.1 _ Inform for whole parameters
-	print("\tReplications : " + str(args.replication))
-	print("\tNumber of exp in file : " + (str(args.split) if args.split != -1 else 'All') )
-	print("\tFinal step : " + str(args.final))
-
-	# 4 _ Generate XML
-	# 
-	print("=== Start generating XML file :\n(every dot will be a simulation with all the replications created)")
+	xmlFilePath = os.path.abspath(xmlFilePath)
+	
+	# Prevent wrong path
+	if output[-1] == "/":
+		output = output[:-1]
 
 	# Create output
 	os.makedirs( os.path.dirname(xmlFilePath), exist_ok=True)
@@ -191,23 +163,23 @@ if __name__ == '__main__':
 	new_allParamValues = []
 	hasCondition = False
 	xmlNumber = autoIndexSelector( xmlFilePath )
-	seed = args.seed
+	localSeed = seed
 	# Number of replication for every simulation
-	for i in range(args.replication):
+	for i in range(replication):
 		# Every dot in the explorable universe
 		for k in range(len(allParamValues)):
 			resultSubFolder = ""
 			
 			simu = ET.SubElement(root, "Simulation", {
-				"id"		: str( seed - args.seed ),
-				"seed"		: str( seed ),
+				"id"		: str( localSeed - seed ),
+				"seed"		: str( localSeed ),
 				"experiment": expName,
 				"sourcePath": gamlFilePath
 				})
-			if args.final != -1:
-				simu.set("finalStep", str(args.final))
-			if args.until != "":
-				simu.set("until", str(args.until))
+			if final != -1:
+				simu.set("finalStep", str(final))
+			if until != "":
+				simu.set("until", str(until))
 
 			parameters = ET.SubElement(simu, "Parameters")
 			# Set values for every parameters in the experiment
@@ -236,7 +208,7 @@ if __name__ == '__main__':
 			# Set batch_output Path
 			ET.SubElement(parameters, "Parameter", {
 				"type"	: "STRING",
-				"value" : args.output + "/" + resultSubFolder[:-1] + "/",
+				"value" : output + "/" + resultSubFolder[:-1],
 				"var"	: "result_folder"
 				})
 
@@ -260,13 +232,13 @@ if __name__ == '__main__':
 			# Set simulation id for csv name
 			ET.SubElement(parameters, "Parameter", {
 				"type"	: "INT",
-				"value" : str( seed ),
+				"value" : str( localSeed - seed ),
 				"var"	: "idSimulation"
 				})
 			ET.SubElement(simu, "Outputs")
 
 			# Write and flush XML root if have to split
-			if( len(list(root)) >= args.split and args.split != -1):
+			if( len(list(root)) >= split and split != -1):
 				tree = ET.ElementTree(root)
 				tree.write(xmlFilePath[:-4]+"-"+str(xmlNumber)+".xml")
 				
@@ -274,23 +246,58 @@ if __name__ == '__main__':
 				xmlNumber = xmlNumber + 1
 
 			# Prepare for next loop
-			seed = seed +1
-
-		# Verbose to see the script running
-		sys.stdout.write('.')
-		sys.stdout.flush()
+			localSeed = localSeed +1
 
 		# Reset universe space list without duplicated simulations
 		if i == 0 and len(new_allParamValues) > 0 and hasCondition:
 			allParamValues = new_allParamValues
 
-	print("\nNote : Real total number of simulation is " + str(len(allParamValues) * args.replication))
-
-	print("\n=== Start saving XML file")
 	# File write of the (last?) XML file
 	tree = ET.ElementTree(root)
 	if xmlNumber == 0:
 		tree.write(xmlFilePath)
 	elif len(root) > 0:
 		tree.write(xmlFilePath[:-4]+"-"+str(xmlNumber)+".xml")
-	print("\n=== Done ;)")
+
+	return True
+
+#
+#	MAIN
+#
+if __name__ == '__main__':
+
+	# 0 _ Get/Set parameters
+	# 
+	parser = argparse.ArgumentParser(usage='$ python3 %(prog)s [options] -f INT -xml <experiment name> /path/to/file.gaml /path/to/file.xml')
+	parser.add_argument('-r', '--replication', metavar='INT', help="Number of replication for each paramater space (default: 1)", default=1, type=int)
+	parser.add_argument('-s', '--split', metavar='INT', help="Split XML file every S replications (default: 1)", default=-1, type=int)
+	parser.add_argument('-o', '--output', metavar='STR', help="Relative path from GAML file to folder where save output CSV (default: \"../../batch_output\" => /path/to/COMOKIT/batch_output)", default="../../batch_output", type=str)
+	parser.add_argument('-u', '--until', metavar='STR', help="Stop condition for the simulations (default: \"world.sim_stop()\"", default="", type=str)
+	parser.add_argument('-S', '--seed', metavar='INT', help="Starting value for seeding simulation (default: 0)", default=0, type=int)	
+	parser.add_argument('-f', '--final', metavar='INT', help="Final step for simulations", default=-1, type=int,  required=True)
+	parser.add_argument('-xml', metavar=("<experiment name>", "/path/to/file.gaml", "/path/to/file.xml"), nargs = 3, help = 'Classical xml arguments', required=True)
+	args = parser.parse_args()
+
+	expName, gamlFilePath, xmlFilePath = args.xml
+
+	# 1 _ Gather all parameters
+	# 
+	allParamValues, parametersList = generateExperimentUniverse(gamlFilePath)
+
+	print("Total number of possible combinaison : " + str(len(allParamValues)))
+
+	# 3.1 _ Inform for whole parameters
+	print("\tReplications : " + str(args.replication))
+	print("\tNumber of exp in file : " + (str(args.split) if args.split != -1 else 'All') )
+	print("\tFinal step : " + str(args.final))
+
+	# 4 _ Generate XML
+	# 
+	print("=== Start generating XML files...\n")
+
+	print("\tNote : Real total number of simulation is " + str(len(allParamValues) * args.replication))
+
+	if createXmlFiles(allParamValues, parametersList, xmlFilePath, args.replication, args.split, os.path.abspath(os.path.split(gamlFilePath)[0] + "/" + args.output), args.seed, args.final, args.until) :
+		print("\n=== Done ;)")
+	else:
+		print("\n=== Error :(")
