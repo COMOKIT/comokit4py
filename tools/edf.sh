@@ -62,7 +62,7 @@ case "$1" in
 	reps=${2:-1000}
 	cyclend=${3:-5000}
 	generateXML HeadlessComparison Sensitivity\ Analysis/Comparison\ With\ and\ Without\ Environmental\ Transmission.gaml
-    	generateXML ContactRateHumanHeadless Sensitivity\ Analysis/Sensitivity\ Analysis.gaml
+    generateXML ContactRateHumanHeadless Sensitivity\ Analysis/Sensitivity\ Analysis.gaml
  
     generateSBatch
     ;;
