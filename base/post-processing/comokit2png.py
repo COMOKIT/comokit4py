@@ -146,7 +146,7 @@ def processPerHour(index, graph, outputs, CSV_array):
 
 # !def processPerHour
 
-def splitPerProcess(mini, maxi, index_graph, outputs, CSV_array):
+def splitPerProcess(mini: int, maxi: int, index_graph: int, outputs, CSV_array):
 
     for row in range(mini, maxi, args.stepTo):
         if row > len(CSV_array[0]):
