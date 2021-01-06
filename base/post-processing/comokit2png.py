@@ -20,6 +20,7 @@ import argparse, math
 import multiprocessing
 
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 import statistics as stats
 
@@ -27,7 +28,7 @@ import datetime
 from matplotlib.dates import DateFormatter, drange
 import matplotlib.transforms as mtransforms
 
-def gatheringCSV(batch_path, experimentName ):
+def gatheringCSV(batch_path : str, experimentName :str) -> list :
 
     # Get all CSV files
     onlyfiles = [f for f in listdir(batch_path) if isfile(join(batch_path, f)) and ("batchDetailed-" + experimentName in f)and not ("building.csv" in f)]
@@ -66,7 +67,7 @@ def gatheringCSV(batch_path, experimentName ):
 # !def gatheringCSV
 
 # Aggregation + Data processing
-def processPerHour(index, graph, outputs, CSV_array):
+def processPerHour(index : int, graph: int, outputs : list, CSV_array : list) -> None :
     prevSum = 0
     # Set/Clear for new line
     output_CSVs = [[] for i in range(len(output_name))]
@@ -143,10 +144,9 @@ def processPerHour(index, graph, outputs, CSV_array):
                 if args.median:
                     outputs[i][graph] += [stats.median(output_CSVs[i])]
     # === !Process data
-
 # !def processPerHour
 
-def splitPerProcess(mini: int, maxi: int, index_graph: int, outputs, CSV_array):
+def splitPerProcess(mini: int, maxi: int, index_graph : int, outputs : list, CSV_array : list) -> None :
 
     for row in range(mini, maxi, args.stepTo):
         if row > len(CSV_array[0]):
@@ -158,7 +158,7 @@ def splitPerProcess(mini: int, maxi: int, index_graph: int, outputs, CSV_array):
         index_graph += 1
 # !def splitPerProcess
 
-def multithreadCsvProcessing(CSV_array, output_name, stepTo, cores):
+def multithreadCsvProcessing(CSV_array : list, output_name : list, stepTo : int, cores : int) -> list :
     lenCSVs = len(CSV_array[0])
     for csv in CSV_array:
         lenCSVs = min(lenCSVs, len(csv))
@@ -190,7 +190,7 @@ def multithreadCsvProcessing(CSV_array, output_name, stepTo, cores):
     return output
 # !def multithreadCsvProcessing
 
-def saveToCSV(processedCsvArray, colName, csvName):
+def saveToCSV(processedCsvArray : list, colName : list, csvName : str) -> bool :
     try:
         pd.DataFrame(processedCsvArray, index=colName).to_csv(csvName + '.csv', header=None)
     except:
@@ -199,7 +199,7 @@ def saveToCSV(processedCsvArray, colName, csvName):
     return True
 # !def saveToCSV
 
-def generateColumnName(quartile = False, median = False):
+def generateColumnName(quartile = False, median = False) -> list :
     col_name = ["Min", "Max", "Mean"]
 
     if quartile:
@@ -213,7 +213,7 @@ def generateColumnName(quartile = False, median = False):
     return col_name
 # !def generateColumnName
 
-def initPngGraphs(output, col_name, title, displayStep):
+def initPngGraphs(output : list, col_name : list, title : str, displayStep : int) -> list :
     # Turn result in user-friendly DataFrame
     output_df = []
     for i in range(len(output)):
@@ -232,7 +232,7 @@ def initPngGraphs(output, col_name, title, displayStep):
     return output_df, fig, ax, index
 # !def initPngGraphs
 
-def changeIndexToDate(index: int, ax, fig, startDate, len_output_df, stepTo):
+def changeIndexToDate(index: int, ax : np.ndarray, fig : plt.Figure, startDate : list[3], len_output_df : int, stepTo : int) -> list :
     # Change un-named days to real date
     date1 = datetime.datetime(int(startDate[0]), int(startDate[1]), int(startDate[2])) 
     index = drange(date1, 
@@ -250,7 +250,7 @@ def changeIndexToDate(index: int, ax, fig, startDate, len_output_df, stepTo):
     return index
 # !def changeIndexToDate
 
-def addPolicyTime(index, startPolicy, endPolicy, stepTo):
+def addPolicyTime(index : int, startPolicy : list[3], endPolicy : list[3], stepTo : int):
     policyTimeDate = [ drange(datetime.datetime(int(startPolicy[0]), int(startPolicy[1]), int(startPolicy[2])), datetime.datetime(int(endPolicy[0]), int(endPolicy[1]), int(endPolicy[2])), datetime.timedelta(hours = stepTo))[i] for i in (0, -1) ]
     policyTime = []
     for i in index:
@@ -264,7 +264,7 @@ def addPolicyTime(index, startPolicy, endPolicy, stepTo):
     return policyTime
 # !def addPolicyTime
 
-def plotGraphs(index, ax, output_df, output_color, quartile = False, median = False, policyTime = None, numberRow = 3, numberCol = 3):
+def plotGraphs(index : int, ax : np.ndarray, output_df : list, output_color : list, quartile : bool = False, median : bool = False, policyTime : list[3] = None, numberRow : int = 3, numberCol : int = 3) -> plt.Figure :
 
     outputIndex = 0
 
@@ -309,7 +309,7 @@ def plotGraphs(index, ax, output_df, output_color, quartile = False, median = Fa
     return plt
 # !def plotGraphs
 
-def savePngGraphs(output, col_name, output_color, outputImgName, displayStep, title = "", quartile = False, median = False, stepTo = None, startDate = None, startEpidemyDate = None, endEpidemyDate = None, numberRow = 3, numberCol = 3):
+def savePngGraphs(output : list, col_name : list, output_color : list, outputImgName : str, displayStep : int, title : str = "", quartile : bool = False, median : bool = False, stepTo : int = None, startDate : list[3] = None, startEpidemyDate : list[3] = None, endEpidemyDate : list[3] = None, numberRow : int = 3, numberCol : int = 3) -> None:
     output_df, fig, ax, index = initPngGraphs(output, col_name, title, displayStep)
     policyTime = None
 

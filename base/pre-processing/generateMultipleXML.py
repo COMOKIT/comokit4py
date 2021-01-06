@@ -21,16 +21,10 @@ import xml.etree.ElementTree as ET
 import argparse
 
 #
-#	VARIABLES
-#
-
-parametersList = []
-
-#
 #	FUNCTIONS
 #
 
-def removeEndLine (splittedLine):
+def removeEndLine ( splittedLine : str ) -> str :
 	try:
 		result = splittedLine.split(";")[0].split(":")[0]
 
@@ -45,7 +39,7 @@ def removeEndLine (splittedLine):
 
 	return result
 
-def extract_ExperimentLine( line ):
+def extract_ExperimentLine( line : str ) -> dict :
 	result = {
 		"name" : "",
 		"type": "INT",
@@ -89,7 +83,7 @@ def extract_ExperimentLine( line ):
 
 	return result
 
-def extractParametersAttributes( parameterLine ):
+def extractParametersAttributes( parameterLine : str ) -> dict :
 	stringExtractor = parameterLine[0:2]
 	result = None
 	
@@ -108,13 +102,13 @@ def extractParametersAttributes( parameterLine ):
 
 	return result
 
-def autoIndexSelector( argsFName ):
+def autoIndexSelector( argsFName : str ) -> int :
 	path, tail = os.path.split( argsFName )
 
 	return len([f for f in os.listdir(path) 
 		if (tail[:-4] in f) and os.path.isfile(os.path.join(path, f))])
 
-def generateExperimentUniverse(gamlFilePath):
+def generateExperimentUniverse( gamlFilePath : str ) -> list:
 
 	# Turn them all in absolute path
 	gamlFilePath = os.path.abspath(gamlFilePath)
@@ -126,7 +120,7 @@ def generateExperimentUniverse(gamlFilePath):
 			if "parameter" in l: 
 				temp = extractParametersAttributes( l.strip()  )
 				if temp is not None:
-					parametersList.append( extractParametersAttributes( l.strip()  ) )
+					parametersList.append( temp )
 
 	# 2 _ Create list of possible values for every parameters
 	# 
@@ -147,7 +141,7 @@ def generateExperimentUniverse(gamlFilePath):
 	#	https://www.geeksforgeeks.org/python-all-possible-permutations-of-n-lists/
 	return [list(itertools.product(*allParamValues)), parametersList]
 
-def createXmlFiles(allParamValues, parametersList, xmlFilePath, replication = 1, split = -1, output = "../../batch_output", seed = 0, final = -1, until = ""):
+def createXmlFiles(allParamValues : list, parametersList : list, xmlFilePath : str, replication : int = 1, split : int = -1, output : str = "../../batch_output", seed : int = 0, final : int = -1, until : str = "") -> bool :
 
 	xmlFilePath = os.path.abspath(xmlFilePath)
 	
@@ -278,20 +272,23 @@ if __name__ == '__main__':
 	parser.add_argument('-xml', metavar=("<experiment name>", "/path/to/file.gaml", "/path/to/file.xml"), nargs = 3, help = 'Classical xml arguments', required=True)
 	args = parser.parse_args()
 
+	# 0 _ Set used variables
+	# 
 	expName, gamlFilePath, xmlFilePath = args.xml
+	parametersList = []
 
 	# 1 _ Gather all parameters
 	# 
 	allParamValues, parametersList = generateExperimentUniverse(gamlFilePath)
 
+	# 1.1 _ Inform about whole parameters
+	# 
 	print("Total number of possible combinaison : " + str(len(allParamValues)))
-
-	# 3.1 _ Inform for whole parameters
 	print("\tReplications : " + str(args.replication))
 	print("\tNumber of exp in file : " + (str(args.split) if args.split != -1 else 'All') )
 	print("\tFinal step : " + str(args.final))
 
-	# 4 _ Generate XML
+	# 2 _ Generate XML
 	# 
 	print("=== Start generating XML files...\n")
 

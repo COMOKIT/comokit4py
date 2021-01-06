@@ -22,7 +22,7 @@ import argparse
 
 xmlPath = ""
 
-def setupGamaEnv(gamaPath, output, outputFolder, absolute = True, folder = None):
+def setupGamaEnv(gamaPath : str, output : str, outputFolder : str, absolute : bool = True, folder : str = None) -> str :
 
 	# Make gama executable
 	os.chmod(gamaPath, 0o555)
@@ -54,7 +54,7 @@ def setupGamaEnv(gamaPath, output, outputFolder, absolute = True, folder = None)
 
 	return xmlPath
 
-def genSbatchArray(output, submission = 1, maxSubmission = 1, nodes = 1, cpuPerTask = 1, core = 1, maxHour = 1, EDF = False):
+def genSbatchArray(output : str, submission : int = 1, maxSubmission : int = 1, nodes : int = 1, cpuPerTask : int = 1, core : int = 1, maxHour : int = 1, EDF : bool = False) -> bool :
 	sbatchScript = ("#!/bin/bash\n"
 		"#-------------------------------------------------------------------------------\n"
 		"#\n"
@@ -90,7 +90,7 @@ def genSbatchArray(output, submission = 1, maxSubmission = 1, nodes = 1, cpuPerT
 
 	return True
 
-def genVague(output, nodes = 1, cpuPerTask = 1, core = 1):
+def genVague(output : str, nodes : int = 1, cpuPerTask : int = 1, core : int = 1) -> bool :
 	try:
 		file = open(output + "/vague.cnf","w")
 		file.write( "0-" + str(int(nodes * core / cpuPerTask) - 1 ) + " " + output + "/launch_pack_8.sh %t" )
@@ -100,7 +100,7 @@ def genVague(output, nodes = 1, cpuPerTask = 1, core = 1):
 
 	return True
 
-def genLaunchPack(gama, output, outputFolder, xmlPath, nodes = 1, cpuPerTask = 1, core = 1, delay = None):
+def genLaunchPack(gama : str, output : str, outputFolder : str, xmlPath : str, nodes : int = 1, cpuPerTask : int = 1, core : int = 1, delay = None) -> bool :
 	sbatchGamaScript = ("#!/bin/bash\n"
 		"\n"
 		"id_mask=$(( $SLURM_ARRAY_TASK_ID * " + str(int(nodes * core / cpuPerTask)) + " + $1 ))\n"
@@ -120,10 +120,12 @@ def genLaunchPack(gama, output, outputFolder, xmlPath, nodes = 1, cpuPerTask = 1
 	
 	return True
 
-def generateSlurmFiles(gama, output, outputFolder, xmlPath, submission = 1, maxSubmission = 1, nodes = 1, cpuPerTask = 1, core = 1, maxHour = 1, EDF = False, delay = None):
+def generateSlurmFiles(gama : str, output : str, outputFolder : str, xmlPath : str, submission : int = 1, maxSubmission : int = 1, nodes : int = 1, cpuPerTask : int = 1, core : int = 1, maxHour : int = 1, EDF : bool = False, delay = None) -> bool :
 	genSbatchArray(output, submission, maxSubmission, nodes, cpuPerTask, core, maxHour, EDF)
 	genVague(output, nodes, cpuPerTask, core)
 	genLaunchPack(gama, output, outputFolder, xmlPath, nodes, cpuPerTask, core, delay)
+
+	return True
 
 #
 #	MAIN
