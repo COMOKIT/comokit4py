@@ -10,7 +10,7 @@ jobs:
 
     runs-on: ubuntu-latest
 
-    name: Check && Update base code
+    name: Update base code
     steps:
 
 ### Activity check
@@ -70,5 +70,5 @@ jobs:
           git stash
           git stash clear
           git subtree pull --squash --message="[BOT] Update Base folder" --prefix=base https://github.com/COMOKIT/COMOKIT-HPC.git master || git add --all && git commit -m "[BOT] Update Base folder" #If auto-merge have a conflict
-          rm -fr base/docker base/.github base/.gitignore base/LICENSE base/tools base/.travis.yml && git add --all && git commit --amend --no-edit
+          if  [ -d base/.github ]; then rm -fr base/docker base/.github base/.gitignore base/LICENSE base/tools base/.travis.yml && git add --all && git commit --amend --no-edit; else echo "No extra file squashed"; fi
           git push
