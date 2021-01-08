@@ -17,46 +17,12 @@ import os, pkgutil
 # Import all other py scripts
 __all__ = list(module for _, module, _ in pkgutil.iter_modules([os.path.dirname(__file__)]))
 
-class Gama:
-
-	#
-	#	BASE
-	#
-	
-	#	=>> VAR <<=
-	
-	
-	def __init__(self):
-		print("TODO")
-	#!
-	
-	def setup():
-		print("TODO")
-	#!
-
-	#
-	#	GET/SET
-	#
-
-	#
-	#	SCRIPT USAGE
-	#
-
-class exploration:
-
-	#
-	#	BASE
-	#
-	
-	gama : Gama 
-
-	def __init__():
-		print("TODO")
-	#!
-
-	#
-	#	GET/SET
-	#
+class Workspace:
+	def __init__(self, gama : Gama, explorationPlan : GamaExploration, outputDirectory : str):
+		self.gama = gama
+		self.explorationPlan = explorationPlan
+		self.outputDirectory = outputDirectory
+	#! __init__
 
 	#
 	#	SCRIPT USAGE
@@ -91,6 +57,36 @@ class exploration:
 		col_name = comokit2png.generateColumnName()
 		comokit2png.savePngGraphs()
 	#!
+#! Workspace
+
+class Gama:
+
+	#
+	#	BASE
+	#
+	
+	#	=>> VAR <<=
+	
+	
+	def __init__(self):
+		print("TODO")
+	#!
+	
+	def setup():
+		print("TODO")
+	#!
+
+	#
+	#	GET/SET
+	#
+
+	#
+	#	SCRIPT USAGE
+	#
+	
+#! Gama
+
+class GamaExploration:
 
 	#
 	#	BASE
