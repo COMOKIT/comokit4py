@@ -64,21 +64,23 @@ class Gama:
 	#
 	#	BASE
 	#
-	
-	#	=>> VAR <<=
-	
-	
-	def __init__(self):
-		print("TODO")
-	#!
-	
-	def setup():
-		print("TODO")
-	#!
+	def __init__(self, pathToHeadlessScript : str, memory : str = "4096m"):
+		self.headless = pathToHeadlessScript
+		self.memory = memory
+	#! __init__
 
 	#
 	#	GET/SET
 	#
+	def getPathToHeadlessScript() -> str:
+		return self.pathToHeadlessScript
+	def setPathToHeadlessScript(path : str) -> None:
+		self.headless = path
+
+	def getMemory() -> str:
+		return self.memory
+	def setMemory(memory : int) -> None:
+		self.memory = memory
 
 	#
 	#	SCRIPT USAGE
