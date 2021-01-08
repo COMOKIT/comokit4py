@@ -247,8 +247,30 @@ class Workspace:
 		generateMultipleXML.createXmlFiles(allParamValues = explorationPlan.expSpace, parametersList = explorationPlan.parametersList, xmlFilePath = self.xmlDirectory, replication = explorationPlan.replication, split = explorationPlan.split, output  = os.path.join(self.workspaceDirectory, "batch_output"), seed = explorationPlan.seed, final = explorationPlan.final, until = explorationPlan.until)
 	#!generateNeededForExploration
 
-	def prepareSBatch(self):
-		print("TODO")
+	def prepareSBatch(self, jobTimeout : int, core : int, nodes : int = 1, submission : int = 1, maxSubmission : int = 6, delay : int = 0) -> None:
+		"""
+		Create all needed structures and files to launch SLURM sbatch job
+
+		:param jobTimeout:		Limit hour for SLURM job
+		:param core:			Number of cores used per node
+		:param nodes:			(Optional) Number of nodes used by SLURM [Default = 1]
+		:param submission:		(Optional) Total of submission on SLURM [Default = 1]
+		:param maxSubmission:	(Optional) Max number of active submission on SLURM [Default = 6]
+		:param delay:			(Optional) Delay in between launching headless (ex. 2s, 3m, 4h, 5d) [Default = 0]
+
+		:return: None
+		"""
+		self.sbatch = {
+			"output": os.path.join(self.workspaceDirectory, "sbatchUtilities"),
+			"outputFolder": os.path.join(self.workspaceDirectory, "sbatchUtilities/tmp/.gama-output")
+		}
+		# Setup
+		xmlPath = generateSBatchFiles.setupGamaEnv(gamaPath = self.gama.getPathToHeadlessScript(), output = self.sbatch["output"], outputFolder = self.sbatch["outputFolder"], absolute = True, folder = self.xmlDirectory )
+
+		# Gen files
+		generateSBatchFiles.genSbatchArray(output = self.sbatch["output"], submission = submission, maxSubmission = maxSubmission, nodes = nodes, cpuPerTask = 1, core = core, maxHour = jobTimeout, EDF = self.edf)
+		generateSBatchFiles.genVague(output = self.sbatch["output"], nodes = nodes, cpuPerTask = 1, core = core)
+		generateSBatchFiles.genLaunchPack(gama = self.gama.getPathToHeadlessScript(), output = self.sbatch["output"], outputFolder = self.sbatch["outputFolder"], xmlPath = self.xmlDirectory, nodes = nodes, cpuPerTask = 1, core = core, delay = delay)
 	#!
 
 	#
