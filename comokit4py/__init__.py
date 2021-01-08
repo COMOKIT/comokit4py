@@ -15,6 +15,7 @@
 
 import os, pkgutil
 import subprocess, platform
+from . import generateMultipleXML
 # Import all other py scripts
 __all__ = list(module for _, module, _ in pkgutil.iter_modules([os.path.dirname(__file__)]))
 
@@ -61,14 +62,10 @@ class Gama:
 
 	def getBaseDir(self) -> str:
 		return self.baseDir
-	#def setBaseDir => Automatic update from headlessScript
+	# setBaseDir => Automatic update from headlessScript
 	def getVersion(self) -> str:
 		return self.version
-	#def setVersion => Automatic update from headlessScript
-
-	#
-	#	SCRIPT USAGE
-	#
+	# setVersion => Automatic update from headlessScript
 	
 #! Gama
 
@@ -78,12 +75,12 @@ class GamaExploration:
 	#	BASE
 	#
 	
-	# Variables
+	#
+	#  Variables
 	expSpace : list
 	parametersList : list
 
-	# Constructor
-	def __init__(self, experimentName : str, gamlFile : str, replication : int, final : int, experimentPerXML : int = "-1", xmlOutputName : str = "headless.xml", until : str = "", seed : int = 0):
+	def __init__(self, experimentName : str, gamlFile : str, replication : int, final : int, experimentPerXML : int = -1, xmlOutputName : str = "headless.xml", until : str = "", seed : int = 0):
 		"""
 		Constructor for GamaExploration object
 
@@ -132,7 +129,7 @@ class GamaExploration:
 		self.replication = replication
 
 	def getExperimentPerXML(self) -> int:
-		return experimentPerXML
+		return self.experimentPerXML
 	def setExperimentPerXML(self, experimentPerXML : int) -> None:
 		self.experimentPerXML = experimentPerXML
 
@@ -164,7 +161,6 @@ class GamaExploration:
 	#
 	#	Functions
 	#
-	
 	def calculatesExperimentSpace(self) -> None:
 		"""
 		Scrap experiment's parameters and calculate all the possible combinaison
@@ -173,12 +169,19 @@ class GamaExploration:
 		
 		:return: None
 		"""
-		self.expSpace, self.parametersList = generateMultipleXML.generateExperimentUniverse(gamlFilePath)
+		self.expSpace, self.parametersList = generateMultipleXML.generateExperimentUniverse(self.gamlFile)
+	#! calculatesExperimentSpace
+	
 	#! Functions
 
 #! GamaExploration
 
 class Workspace:
+
+	#
+	#	BASE
+	#
+	
 	def __init__(self, gama : Gama, explorationPlan : GamaExploration, workspaceDirectory : str):
 		"""
 		Constructor for Workspace object
@@ -195,7 +198,7 @@ class Workspace:
 	#! __init__
 
 	#
-	#	SCRIPT USAGE
+	#	Functions
 	#
 
 	#
