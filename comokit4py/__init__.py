@@ -24,21 +24,21 @@ class Gama:
 	#	BASE
 	#
 	def __init__(self, pathToHeadlessScript : str, memory : str = "4096m"):
-		self.headless = pathToHeadlessScript
 		self.memory = memory
+		self.headless = os.path.abspath(pathToHeadlessScript)
 	#! __init__
 
 	#
 	#	GET/SET
 	#
-	def getPathToHeadlessScript() -> str:
-		return self.pathToHeadlessScript
-	def setPathToHeadlessScript(path : str) -> None:
-		self.headless = path
+	def getPathToHeadlessScript(self) -> str:
+		return self.headless
+	def setPathToHeadlessScript(self, path : str) -> None:
+		self.headless = os.path.abspath(path)
 
-	def getMemory() -> str:
+	def getMemory(self) -> str:
 		return self.memory
-	def setMemory(memory : int) -> None:
+	def setMemory(self, memory : int) -> None:
 		self.memory = memory
 
 	#
