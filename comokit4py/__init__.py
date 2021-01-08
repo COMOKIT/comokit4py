@@ -235,18 +235,16 @@ class Workspace:
 
 	#
 	#	Generate Input
-	def generateNeededForExploration(self):
+	def generateNeededForExploration(self) -> None:
 		"""
-		Function description
+		Create all XML files for running GAMA headless
 
-		:param A: Desc
-		:param B: Desc
-		:return: Desc
+		:return: None
 		"""
 		if explorationPlan.expSpace == undefined:
 			explorationPlan.ExperimentSpace()
 
-		generateMultipleXML.createXmlFiles(allParamValues = explorationPlan.expSpace, parametersList = explorationPlan.parametersList, xmlFilePath = self.workspaceDirectory, replication = explorationPlan.replication, split = explorationPlan.split, output  = self.workspaceDirectory + "/batch_output", seed = explorationPlan.seed, final = explorationPlan.final, until = explorationPlan.until)
+		generateMultipleXML.createXmlFiles(allParamValues = explorationPlan.expSpace, parametersList = explorationPlan.parametersList, xmlFilePath = self.xmlDirectory, replication = explorationPlan.replication, split = explorationPlan.split, output  = os.path.join(self.workspaceDirectory, "batch_output"), seed = explorationPlan.seed, final = explorationPlan.final, until = explorationPlan.until)
 	#!generateNeededForExploration
 
 	def prepareSBatch(self):
