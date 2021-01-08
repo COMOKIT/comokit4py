@@ -14,78 +14,9 @@
 ##################################################
 
 import os, pkgutil
+import subprocess, platform
 # Import all other py scripts
 __all__ = list(module for _, module, _ in pkgutil.iter_modules([os.path.dirname(__file__)]))
-
-class Workspace:
-	def __init__(self, gama : Gama, explorationPlan : GamaExploration, workspaceDirectory : str):
-		"""
-		Constructor for Workspace object
-
-		:param gama: Gama object for launching exploration
-		:param explorationPlan: GamaExploration object to know what to launch
-		:param workspaceDirectory: Directory path when everything will be store
-
-		:return: Workspace object
-		"""
-		self.gama = gama
-		self.explorationPlan = explorationPlan
-		self.workspaceDirectory = os.path.abspath(workspaceDirectory)
-	#! __init__
-
-	#
-	#	SCRIPT USAGE
-	#
-
-	#
-	#	Check
-
-	#
-	#	Generate Input
-	def generateNeededForExploration():
-		"""
-		Function description
-
-		:param A: Desc
-		:param B: Desc
-		:return: Desc
-		"""
-		if explorationPlan.expSpace == undefined:
-			explorationPlan.ExperimentSpace()
-
-		generateMultipleXML.createXmlFiles(allParamValues = explorationPlan.expSpace, parametersList = explorationPlan.parametersList, xmlFilePath = self.workspaceDirectory, replication = explorationPlan.replication, split = explorationPlan.split, output  = self.workspaceDirectory + "/batch_output", seed = explorationPlan.seed, final = explorationPlan.final, until = explorationPlan.until)
-	#!generateNeededForExploration
-
-	def prepareSBatch():
-		print("TODO")
-	#!
-
-	#
-	#	Run
-	def runGamaHeadless():
-		print("TODO")
-	#!
-
-	def runSlurm():
-		print("TODO")
-	#!
-
-	#
-	#	Generate Output
-	def genereateCsv():
-		print("TODO")
-		comokit2png.multithreadCsvProcessing()
-		comokit2png.saveToCSV()
-	#! genereateCsv
-
-	def genereatePng():
-		print("TODO")
-		comokit2png.multithreadCsvProcessing()
-		comokit2png.saveToCSV()
-		col_name = comokit2png.generateColumnName()
-		comokit2png.savePngGraphs()
-	#!
-#! Workspace
 
 class Gama:
 
@@ -221,3 +152,86 @@ class GamaExploration:
 	#! Functions
 
 #! GamaExploration
+
+class Workspace:
+	def __init__(self, gama : Gama, explorationPlan : GamaExploration, workspaceDirectory : str):
+		"""
+		Constructor for Workspace object
+
+		:param gama: Gama object for launching exploration
+		:param explorationPlan: GamaExploration object to know what to launch
+		:param workspaceDirectory: Directory path when everything will be store
+
+		:return: Workspace object
+		"""
+		self.gama = gama
+		self.explorationPlan = explorationPlan
+		self.workspaceDirectory = os.path.abspath(workspaceDirectory)
+	#! __init__
+
+	#
+	#	SCRIPT USAGE
+	#
+
+	#
+	#	Check
+	def verifyGama() -> bool:
+		return os.path.isfile( self.gama.getPathToHeadlessScript() ) and is_exe( self.gama.getPathToHeadlessScript() )
+	#! verifyGama
+
+	def verifyJavaVersion() -> bool:
+		javaVersion = int(subprocess.check_output(['java', '-version'], stderr=subprocess.STDOUT).decode().split('"')[1][2])
+
+		return (int(gama.split(".")[1]) <= 6 and javaVersion == 6) or (int(gama.split(".")[1]) > 6 and javaVersion == 8)
+	#! verifyJavaVersion
+
+	def verifyAll() -> bool:
+		return self.verifyGama() and self.verifyJavaVersion()
+	#! verifyAll
+
+	#
+	#	Generate Input
+	def generateNeededForExploration():
+		"""
+		Function description
+
+		:param A: Desc
+		:param B: Desc
+		:return: Desc
+		"""
+		if explorationPlan.expSpace == undefined:
+			explorationPlan.ExperimentSpace()
+
+		generateMultipleXML.createXmlFiles(allParamValues = explorationPlan.expSpace, parametersList = explorationPlan.parametersList, xmlFilePath = self.workspaceDirectory, replication = explorationPlan.replication, split = explorationPlan.split, output  = self.workspaceDirectory + "/batch_output", seed = explorationPlan.seed, final = explorationPlan.final, until = explorationPlan.until)
+	#!generateNeededForExploration
+
+	def prepareSBatch():
+		print("TODO")
+	#!
+
+	#
+	#	Run
+	def runGamaHeadless():
+		print("TODO")
+	#!
+
+	def runSlurm():
+		print("TODO")
+	#!
+
+	#
+	#	Generate Output
+	def genereateCsv():
+		print("TODO")
+		comokit2png.multithreadCsvProcessing()
+		comokit2png.saveToCSV()
+	#! genereateCsv
+
+	def genereatePng():
+		print("TODO")
+		comokit2png.multithreadCsvProcessing()
+		comokit2png.saveToCSV()
+		col_name = comokit2png.generateColumnName()
+		comokit2png.savePngGraphs()
+	#!
+#! Workspace
