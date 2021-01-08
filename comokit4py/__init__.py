@@ -23,10 +23,27 @@ class Gama:
 	#
 	#	BASE
 	#
+	
+	#
+	# Variable
+	baseDir : str
+	version : str
+
 	def __init__(self, pathToHeadlessScript : str, memory : str = "4096m"):
 		self.memory = memory
 		self.headless = os.path.abspath(pathToHeadlessScript)
+		self.__generateLocalPathVariables()
 	#! __init__
+	
+	#
+	#	Private
+	#
+	def __generateLocalPathVariables(self):
+		self.baseDir =  os.path.abspath(os.path.join(self.headless,"../.."))
+
+		# Update path for MacOS
+		tempBaseDir = os.path.join(self.baseDir, "Eclipse") if platform.system() != "Linux" else self.baseDir
+		self.version = subprocess.check_output(['cat', os.path.join(tempBaseDir, 'configuration/config.ini')], stderr=subprocess.STDOUT).decode().split("version=")[1].split("\n")[0]
 
 	#
 	#	GET/SET
@@ -35,11 +52,19 @@ class Gama:
 		return self.headless
 	def setPathToHeadlessScript(self, path : str) -> None:
 		self.headless = os.path.abspath(path)
+		__generateLocalPathVariables()
 
 	def getMemory(self) -> str:
 		return self.memory
 	def setMemory(self, memory : int) -> None:
 		self.memory = memory
+
+	def getBaseDir(self) -> str:
+		return self.baseDir
+	#def setBaseDir => Automatic update from headlessScript
+	def getVersion(self) -> str:
+		return self.version
+	#def setVersion => Automatic update from headlessScript
 
 	#
 	#	SCRIPT USAGE
