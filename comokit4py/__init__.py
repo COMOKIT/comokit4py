@@ -111,51 +111,51 @@ class GamaExploration:
 	#
 	#	GET/SET
 	#
-	def getExperimentName() -> str:
+	def getExperimentName(self) -> str:
 		return self.experimentName
-	def setExperimentName(experimentName : str) -> None:
+	def setExperimentName(self, experimentName : str) -> None:
 		self.experimentName = experimentName
 
-	def getGamlFile() -> str:
+	def getGamlFile(self) -> str:
 		return self.gamlFile
-	def setGamlFile(gamlFile : str) -> None:
+	def setGamlFile(self, gamlFile : str) -> None:
 		self.gamlFile = gamlFile
 
-	def getXmlOutputName() -> str:
+	def getXmlOutputName(self) -> str:
 		return self.xmlOutputName
-	def setXmlOutputName(xmlOutputName : str) -> None:
+	def setXmlOutputName(self, xmlOutputName : str) -> None:
 		self.xmlOutputName = xmlOutputName
 
-	def getReplication() -> int:
+	def getReplication(self) -> int:
 		return self.replication
-	def setReplication() -> None:
+	def setReplication(self) -> None:
 		self.replication = replication
 
-	def getExperimentPerXML() -> int:
+	def getExperimentPerXML(self) -> int:
 		return experimentPerXML
-	def setExperimentPerXML(experimentPerXML : int) -> None:
+	def setExperimentPerXML(self, experimentPerXML : int) -> None:
 		self.experimentPerXML = experimentPerXML
 
-	def getFinal() -> int:
+	def getFinal(self) -> int:
 		return self.final
-	def setFinal(final: int) -> None:
+	def setFinal(self, final: int) -> None:
 		self.final = final
 
-	def getUntil() -> str:
+	def getUntil(self) -> str:
 		return self.until
-	def setUntil(until : str) -> None:
+	def setUntil(self, until : str) -> None:
 		self.until = until
 
-	def getSeed() -> int:
+	def getSeed(self) -> int:
 		return self.seed
-	def setSeed(seed : int) -> None:
+	def setSeed(self, seed : int) -> None:
 		self.seed = seed
 
-	def getExperimentSpace() -> list:
+	def getExperimentSpace(self) -> list:
 		return self.expSpace
 	# setExperimentSpace => calcultesExpSpace
 	
-	def getParametersList() -> list:
+	def getParametersList(self) -> list:
 		return self.parametersList
 	# setParametersList => calcultesExpSpace
 	
@@ -165,7 +165,7 @@ class GamaExploration:
 	#	Functions
 	#
 	
-	def calculatesExperimentSpace() -> None:
+	def calculatesExperimentSpace(self) -> None:
 		"""
 		Scrap experiment's parameters and calculate all the possible combinaison
 
@@ -200,23 +200,23 @@ class Workspace:
 
 	#
 	#	Check
-	def verifyGama() -> bool:
+	def verifyGama(self) -> bool:
 		return os.path.isfile( self.gama.getPathToHeadlessScript() ) and is_exe( self.gama.getPathToHeadlessScript() )
 	#! verifyGama
 
-	def verifyJavaVersion() -> bool:
+	def verifyJavaVersion(self) -> bool:
 		javaVersion = int(subprocess.check_output(['java', '-version'], stderr=subprocess.STDOUT).decode().split('"')[1][2])
 
 		return (int(gama.split(".")[1]) <= 6 and javaVersion == 6) or (int(gama.split(".")[1]) > 6 and javaVersion == 8)
 	#! verifyJavaVersion
 
-	def verifyAll() -> bool:
+	def verifyAll(self) -> bool:
 		return self.verifyGama() and self.verifyJavaVersion()
 	#! verifyAll
 
 	#
 	#	Generate Input
-	def generateNeededForExploration():
+	def generateNeededForExploration(self):
 		"""
 		Function description
 
@@ -230,29 +230,29 @@ class Workspace:
 		generateMultipleXML.createXmlFiles(allParamValues = explorationPlan.expSpace, parametersList = explorationPlan.parametersList, xmlFilePath = self.workspaceDirectory, replication = explorationPlan.replication, split = explorationPlan.split, output  = self.workspaceDirectory + "/batch_output", seed = explorationPlan.seed, final = explorationPlan.final, until = explorationPlan.until)
 	#!generateNeededForExploration
 
-	def prepareSBatch():
+	def prepareSBatch(self):
 		print("TODO")
 	#!
 
 	#
 	#	Run
-	def runGamaHeadless():
+	def runGamaHeadless(self):
 		print("TODO")
 	#!
 
-	def runSlurm():
+	def runSlurm(self):
 		print("TODO")
 	#!
 
 	#
 	#	Generate Output
-	def genereateCsv():
+	def genereateCsv(self):
 		print("TODO")
 		comokit2png.multithreadCsvProcessing()
 		comokit2png.saveToCSV()
 	#! genereateCsv
 
-	def genereatePng():
+	def genereatePng(self):
 		print("TODO")
 		comokit2png.multithreadCsvProcessing()
 		comokit2png.saveToCSV()
