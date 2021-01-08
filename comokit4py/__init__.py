@@ -15,7 +15,7 @@
 
 import os, pkgutil
 import subprocess, platform
-from . import generateMultipleXML
+from . import generateMultipleXML generateSBatchFiles
 # Import all other py scripts
 __all__ = list(module for _, module, _ in pkgutil.iter_modules([os.path.dirname(__file__)]))
 
@@ -182,20 +182,36 @@ class Workspace:
 	#	BASE
 	#
 	
+	#
+	# Variables
+	edf : bool = False
+	sbatch : dict
+
 	def __init__(self, gama : Gama, explorationPlan : GamaExploration, workspaceDirectory : str):
 		"""
 		Constructor for Workspace object
 
-		:param gama: Gama object for launching exploration
-		:param explorationPlan: GamaExploration object to know what to launch
-		:param workspaceDirectory: Directory path when everything will be store
+		:param gama:				Gama object for launching exploration
+		:param explorationPlan:		GamaExploration object to know what to launch
+		:param workspaceDirectory:	Directory path when everything will be store
 
 		:return: Workspace object
 		"""
 		self.gama = gama
 		self.explorationPlan = explorationPlan
 		self.workspaceDirectory = os.path.abspath(workspaceDirectory)
+		self.xmlDirectory = os.path.join(self.workspaceDirectory, "xml")
 	#! __init__
+	
+	#
+	#	GET/SET
+	#
+	def getEdfBool(self) -> bool:
+		return self.edf
+	def setEdfBool(self, edf : bool) -> None:
+		self.edf = edf
+	def toggleEdfBool(self) -> None:
+		self.edf = not self.edf
 
 	#
 	#	Functions
