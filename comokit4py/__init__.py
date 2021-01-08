@@ -18,7 +18,16 @@ import os, pkgutil
 __all__ = list(module for _, module, _ in pkgutil.iter_modules([os.path.dirname(__file__)]))
 
 class Workspace:
-	def __init__(self, gama : Gama, explorationPlan : GamaExploration, outputDirectory : str):
+	def __init__(self, gama : Gama, explorationPlan : GamaExploration, workspaceDirectory : str):
+		"""
+		Constructor for Workspace object
+
+		:param gama: Gama object for launching exploration
+		:param explorationPlan: GamaExploration object to know what to launch
+		:param workspaceDirectory: Directory path when everything will be store
+
+		:return: Workspace object
+		"""
 		self.gama = gama
 		self.explorationPlan = explorationPlan
 		self.outputDirectory = outputDirectory
