@@ -20,6 +20,8 @@ import itertools
 import xml.etree.ElementTree as ET
 import argparse
 
+parametersList = []
+
 #
 #	FUNCTIONS
 #
@@ -141,7 +143,7 @@ def generateExperimentUniverse( gamlFilePath : str ) -> list:
 	#	https://www.geeksforgeeks.org/python-all-possible-permutations-of-n-lists/
 	return [list(itertools.product(*allParamValues)), parametersList]
 
-def createXmlFiles(allParamValues : list, parametersList : list, xmlFilePath : str, replication : int = 1, split : int = -1, output : str = "../../batch_output", seed : int = 0, final : int = -1, until : str = "") -> bool :
+def createXmlFiles(experimentName : str, gamlFilePath : str, allParamValues : list, parametersList : list, xmlFilePath : str, replication : int = 1, split : int = -1, output : str = "../../batch_output", seed : int = 0, final : int = -1, until : str = "") -> bool :
 
 	xmlFilePath = os.path.abspath(xmlFilePath)
 	
@@ -167,7 +169,7 @@ def createXmlFiles(allParamValues : list, parametersList : list, xmlFilePath : s
 			simu = ET.SubElement(root, "Simulation", {
 				"id"		: str( localSeed - seed ),
 				"seed"		: str( localSeed ),
-				"experiment": expName,
+				"experiment": experimentName,
 				"sourcePath": gamlFilePath
 				})
 			if final != -1:
@@ -294,7 +296,7 @@ if __name__ == '__main__':
 
 	print("\tNote : Real total number of simulation is " + str(len(allParamValues) * args.replication))
 
-	if createXmlFiles(allParamValues, parametersList, xmlFilePath, args.replication, args.split, os.path.abspath(os.path.split(gamlFilePath)[0] + "/" + args.output), args.seed, args.final, args.until) :
+	if createXmlFiles(expName, gamlFilePath, allParamValues, parametersList, xmlFilePath, args.replication, args.split, os.path.abspath(os.path.split(gamlFilePath)[0] + "/" + args.output), args.seed, args.final, args.until) :
 		print("\n=== Done ;)")
 	else:
 		print("\n=== Error :(")

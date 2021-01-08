@@ -67,10 +67,10 @@ def gatheringCSV(batch_path : str, experimentName :str) -> list :
 # !def gatheringCSV
 
 # Aggregation + Data processing
-def processPerHour(index : int, graph: int, outputs : list, CSV_array : list) -> None :
+def processPerHour(index : int, graph: int, outputs : list, CSV_array : list, stepTo : int, replication: int, len_output_name : int, quartile : bool, median : bool, variance : bool) -> None :
     prevSum = 0
     # Set/Clear for new line
-    output_CSVs = [[] for i in range(len(output_name))]
+    output_CSVs = [[] for i in range(len_output_name)]
 
     # Collect data in files
     for i in range(len(CSV_array)):
@@ -78,12 +78,12 @@ def processPerHour(index : int, graph: int, outputs : list, CSV_array : list) ->
         #  [Indicator
         #    [per replication]
         #  ]
-        sumStepTo = [[[] for i in range(len(CSV_array))] for i in range(len(output_name))]
+        sumStepTo = [[[] for i in range(len(CSV_array))] for i in range(len_output_name)]
 
         # Used to handle last loop if last day end before 24h
-        real_stepTo = args.stepTo
+        real_stepTo = stepTo
 
-        for hour in range(args.stepTo):
+        for hour in range(stepTo):
             # Gather data per col/row
             if len(CSV_array[i]) > (index + hour): # Check if row exist
                 # Gather line data in every file
@@ -103,15 +103,15 @@ def processPerHour(index : int, graph: int, outputs : list, CSV_array : list) ->
 
         # Compile value per replication
         # Need to keep every rep for gather min/max values
-        for indicator in range(len(output_name)):
+        for indicator in range(len_output_name):
             output_CSVs[indicator].append(sum(sumStepTo[indicator][i]) / real_stepTo)
     # === !Collect data in files
 
     # Process data
-    for i in range(len(output_name)):
+    for i in range(len_output_name):
 
-        if args.variance:
-            meanReplication = float(sum(output_CSVs[i]) / args.replication )
+        if variance:
+            meanReplication = float(sum(output_CSVs[i]) / replication )
             variance = float(stats.stdev(output_CSVs[i]))
             # [min, max, meanReplication]
             outputs[i][graph] = [
@@ -130,10 +130,10 @@ def processPerHour(index : int, graph: int, outputs : list, CSV_array : list) ->
             outputs[i][graph] = [
                 float(min(output_CSVs[i])),
                 float(max(output_CSVs[i])),
-                float(sum(output_CSVs[i]) / args.replication)
+                float(sum(output_CSVs[i]) / replication)
                 ]
 
-            if args.quartile:
+            if quartile:
                 import numpy as np
                 # [min, max, mean, q1, q2, q3]
                 outputs[i][graph] += [np.quantile(output_CSVs[i], .25), 
@@ -141,31 +141,32 @@ def processPerHour(index : int, graph: int, outputs : list, CSV_array : list) ->
                 np.quantile(output_CSVs[i], .75)]
             else:
                 # [min, max, mean, median]
-                if args.median:
+                if median:
                     outputs[i][graph] += [stats.median(output_CSVs[i])]
     # === !Process data
 # !def processPerHour
 
-def splitPerProcess(mini: int, maxi: int, index_graph : int, outputs : list, CSV_array : list) -> None :
+def splitPerProcess(mini: int, maxi: int, index_graph : int, outputs : list, CSV_array : list, stepTo : int, replication: int, len_output_name : int, quartile : bool, median : bool, variance : bool) -> None :
 
-    for row in range(mini, maxi, args.stepTo):
+    for row in range(mini, maxi, stepTo):
         if row > len(CSV_array[0]):
             continue
 
         # Process a row
-        processPerHour(row, index_graph, outputs, CSV_array)
+        processPerHour(row, index_graph, outputs, CSV_array, stepTo, replication, len_output_name, quartile, median, variance)
 
         index_graph += 1
 # !def splitPerProcess
 
-def multithreadCsvProcessing(CSV_array : list, output_name : list, stepTo : int, cores : int) -> list :
+def multithreadCsvProcessing(CSV_array : list, output_name : list, stepTo : int, replication : int, cores : int, quartile : bool, median : bool, variance : bool) -> list :
     lenCSVs = len(CSV_array[0])
     for csv in CSV_array:
         lenCSVs = min(lenCSVs, len(csv))
 
     threads = []
     manager = multiprocessing.Manager()
-    output = [manager.list(range( int(lenCSVs/stepTo) )) for i in range(len(output_name))]
+    len_output_name = len(output_name)
+    output = [manager.list(range( int(lenCSVs/stepTo) )) for i in range(len_output_name)]
 
     # Create a thread per core
     for split in range(cores):
@@ -174,7 +175,7 @@ def multithreadCsvProcessing(CSV_array : list, output_name : list, stepTo : int,
         mini = int(step * split)
 
         # Start a thread on a core
-        x = multiprocessing.Process(target=splitPerProcess, args=(mini, min(lenCSVs, mini + step + min(5, cores)), int(mini / stepTo), output, CSV_array ) )
+        x = multiprocessing.Process(target=splitPerProcess, args=(mini, min(lenCSVs, mini + step + min(5, cores)), int(mini / stepTo), output, CSV_array, stepTo, replication, len_output_name, quartile, median, variance) )
         threads.append(x)
         x.start()
 
@@ -264,7 +265,7 @@ def addPolicyTime(index : int, startPolicy : list[3], endPolicy : list[3], stepT
     return policyTime
 # !def addPolicyTime
 
-def plotGraphs(index : int, ax : np.ndarray, output_df : list, output_color : list, quartile : bool = False, median : bool = False, policyTime : list[3] = None, numberRow : int = 3, numberCol : int = 3) -> plt.Figure :
+def plotGraphs(index : int, ax : np.ndarray, output_df : list, output_name : list, output_color : list, quartile : bool = False, median : bool = False, policyTime : list[3] = None, numberRow : int = 3, numberCol : int = 3) -> plt.Figure :
 
     outputIndex = 0
 
@@ -309,7 +310,7 @@ def plotGraphs(index : int, ax : np.ndarray, output_df : list, output_color : li
     return plt
 # !def plotGraphs
 
-def savePngGraphs(output : list, col_name : list, output_color : list, outputImgName : str, displayStep : int, title : str = "", quartile : bool = False, median : bool = False, stepTo : int = None, startDate : list[3] = None, startEpidemyDate : list[3] = None, endEpidemyDate : list[3] = None, numberRow : int = 3, numberCol : int = 3) -> None:
+def savePngGraphs(output : list, col_name : list, output_color : list, outputImgName : str, output_name : list, displayStep : int, title : str = "", quartile : bool = False, median : bool = False, stepTo : int = None, startDate : list[3] = None, startEpidemyDate : list[3] = None, endEpidemyDate : list[3] = None, numberRow : int = 3, numberCol : int = 3) -> None:
     output_df, fig, ax, index = initPngGraphs(output, col_name, title, displayStep)
     policyTime = None
 
@@ -321,7 +322,7 @@ def savePngGraphs(output : list, col_name : list, output_color : list, outputImg
         else:
             policyTime = None
 
-    plt = plotGraphs(index, ax, output_df, output_color, quartile, median, policyTime = policyTime, numberRow = numberRow, numberCol = numberCol)
+    plt = plotGraphs(index = index, ax = ax, output_df = output_df, output_name = output_name, output_color = output_color, quartile = quartile, median = median, policyTime = policyTime, numberRow = numberRow, numberCol = numberCol)
 
     plt.savefig(outputImgName + '.png', bbox_inches='tight')
 # !def savePngGraphs
@@ -413,8 +414,7 @@ if __name__ == '__main__':
         if args.verbose:
             print("= Using " + str(args.cores) + " cores on " + str(multiprocessing.cpu_count()) + " availables")
 
-    output = multithreadCsvProcessing(CSVs, output_name, args.stepTo, args.cores)
-
+    output = multithreadCsvProcessing(CSVs, output_name, args.stepTo, args.replication, args.cores, args.quartile, args.median, args.variance)
     if args.verbose:
         print("Array form : ", len(output), "x", len(output[0]), "x", len(output[0][0]))
         if args.extraVerbose:
@@ -437,7 +437,7 @@ if __name__ == '__main__':
 
     col_name = generateColumnName(args.quartile, args.median)
 
-    savePngGraphs(output = output, col_name = col_name, output_color = output_color, outputImgName = args.outputImg, displayStep = args.displayStep, title = args.title, quartile = args.quartile, median = args.median, stepTo = args.stepTo, startDate = args.startDate, startEpidemyDate = args.startPolicy, endEpidemyDate = args.endPolicy)
+    savePngGraphs(output = output, col_name = col_name, output_color = output_color, outputImgName = args.outputImg, output_name = output_name, displayStep = args.displayStep, title = args.title, quartile = args.quartile, median = args.median, stepTo = args.stepTo, startDate = args.startDate, startEpidemyDate = args.startPolicy, endEpidemyDate = args.endPolicy)
 
     if not args.quiet:
         print("Output image saved as : " + args.outputImg + '.png')
