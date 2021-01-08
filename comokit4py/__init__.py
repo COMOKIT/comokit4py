@@ -177,4 +177,19 @@ class GamaExploration:
 	
 	#! GET/SET
 
+	#
+	#	Functions
+	#
+	
+	def calculatesExperimentSpace() -> None:
+		"""
+		Scrap experiment's parameters and calculate all the possible combinaison
+
+		Results are store in object's variables [expSpace, parametersList]
+		
+		:return: None
+		"""
+		self.expSpace, self.parametersList = generateMultipleXML.generateExperimentUniverse(gamlFilePath)
+	#! Functions
+
 #! GamaExploration
