@@ -30,21 +30,38 @@ class Workspace:
 		"""
 		self.gama = gama
 		self.explorationPlan = explorationPlan
-		self.outputDirectory = outputDirectory
+		self.workspaceDirectory = os.path.abspath(workspaceDirectory)
 	#! __init__
 
 	#
 	#	SCRIPT USAGE
 	#
 
-	def prepareGAML():
-		print("TODO")
-	#!
+	#
+	#	Check
+
+	#
+	#	Generate Input
+	def generateNeededForExploration():
+		"""
+		Function description
+
+		:param A: Desc
+		:param B: Desc
+		:return: Desc
+		"""
+		if explorationPlan.expSpace == undefined:
+			explorationPlan.ExperimentSpace()
+
+		generateMultipleXML.createXmlFiles(allParamValues = explorationPlan.expSpace, parametersList = explorationPlan.parametersList, xmlFilePath = self.workspaceDirectory, replication = explorationPlan.replication, split = explorationPlan.split, output  = self.workspaceDirectory + "/batch_output", seed = explorationPlan.seed, final = explorationPlan.final, until = explorationPlan.until)
+	#!generateNeededForExploration
 
 	def prepareSBatch():
 		print("TODO")
 	#!
 
+	#
+	#	Run
 	def runGamaHeadless():
 		print("TODO")
 	#!
@@ -53,6 +70,8 @@ class Workspace:
 		print("TODO")
 	#!
 
+	#
+	#	Generate Output
 	def genereateCsv():
 		print("TODO")
 		comokit2png.multithreadCsvProcessing()
