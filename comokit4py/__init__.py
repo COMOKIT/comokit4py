@@ -93,13 +93,33 @@ class GamaExploration:
 	#
 	#	BASE
 	#
-	def __init__(self, experimentName : str, gamlFile : str, xmlOutputName : str, replication : int, experimentPerXML : int, final : int, until : str = "", seed : int = 0):
+	
+	# Variables
+	expSpace : list
+	parametersList : list
+
+	# Constructor
+	def __init__(self, experimentName : str, gamlFile : str, replication : int, final : int, experimentPerXML : int = "-1", xmlOutputName : str = "headless.xml", until : str = "", seed : int = 0):
+		"""
+		Constructor for GamaExploration object
+
+		:param experimentName: 		Name of the experiment you want to explore
+		:param gamlFile: 			Path to the GAML file to explore
+		:param replication: 		Number of replication of each parameter combinaison
+		:param final: 				Maximal step to explore (force end the simulation if not already finished)
+		:param experimentPerXML: 	(Optional) Split exploration plan in several XML files [Default = disable = -1]
+		:param xmlOutputName: 		(Optional) Name of the generated XML file(s) [Default = "headless.xml"]
+		:param until: 				(Optional) Define GAML experiment end condition
+		:param seed: 				(Optional) Starting seed value [Default = 0]
+		
+		:return: Workspace object
+		"""
 		self.experimentName = experimentName
-		self.gamlFile = gamlFile
-		self.xmlOutputName = xmlOutputName
+		self.gamlFile = os.path.abspath(gamlFile)
 		self.replication = replication
-		self.experimentPerXML = experimentPerXML
 		self.final = final
+		self.experimentPerXML = experimentPerXML
+		self.xmlOutputName = xmlOutputName
 		self.until = until
 		self.seed = seed
 	#! __init__
@@ -146,6 +166,15 @@ class GamaExploration:
 		return self.seed
 	def setSeed(seed : int) -> None:
 		self.seed = seed
+
+	def getExperimentSpace() -> list:
+		return self.expSpace
+	# setExperimentSpace => calcultesExpSpace
+	
+	def getParametersList() -> list:
+		return self.parametersList
+	# setParametersList => calcultesExpSpace
+	
 	#! GET/SET
 
 #! GamaExploration
