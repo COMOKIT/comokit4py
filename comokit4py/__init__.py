@@ -1,4 +1,20 @@
+#!/usr/bin/python3
+
+##################################################
+## Short bio
+#
+## $ pip install comokit4py
+## > import comokit4py
+#
+##################################################
+## Author: RoiArthurB
+## Copyright: Copyright 2021, COMOKIT
+## Licence: LGPL 3.0
+## Maintainer: RoiArthurB
+##################################################
+
 import os, pkgutil
+# Import all other py scripts
 __all__ = list(module for _, module, _ in pkgutil.iter_modules([os.path.dirname(__file__)]))
 
 class Gama:
