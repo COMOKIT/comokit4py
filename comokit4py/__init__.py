@@ -401,14 +401,18 @@ class Workspace:
 		return comokit2png.saveToCSV(processedCsvArray = output, colName = self.processedOutputVariable["output_name"], csvName = outputCsvFileName)
 	#! genereateCsv
 
-	def generatePng(self, title : str = "", outputPngFileName : list = "out", output : list = None, csv : bool = False) -> bool:
+	def generatePng(self, title : str = "", outputPngFileName : list = "out", output : list = None) -> bool:
 		"""
+		Turn COMOKIT's raw output CSV into png graphs
+
+		:param title:				(Optional) Output in png title [Default = ""]
+		:param outputPngFileName:	(Optional) Name of the png file name (extension automatic) [Default = 'out']
+		:param output:				(Optional) Output list of raw processed data [Default re-process data]
+
+		:return: Bool if png file saved
 		"""
 		if output == None:
 			output = rawOutputProcessing()
-
-		if csv:
-			self.generateCsv(outputCsvFileName = outputPngFileName, output = output)
 
 		return comokit2png.savePngGraphs(
 			output = output, 
