@@ -376,8 +376,10 @@ class Workspace:
 
 	def rawOutputProcessing(self) -> list:
 		"""
-		"""
+		Compiled COMOKIT's raw output CSV into saveable list
 
+		:return: Python list of post-processed COMOKIT explored data
+		"""
 		if self.processedOutputVariable == None:
 			self.prepareProcessedOutput()
 		
