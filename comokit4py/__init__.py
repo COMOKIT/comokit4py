@@ -13,7 +13,7 @@
 ## Maintainer: RoiArthurB
 ##################################################
 
-import os, pkgutil
+import os, sys, pkgutil
 import subprocess, platform
 from . import generateMultipleXML generateSBatchFiles
 # Import all other py scripts
@@ -322,12 +322,26 @@ class Workspace:
 		print("TODO")
 	#!
 
-	def runSlurm(self, detach = False) -> None:
-		command = ['slurm', os.path.join(self.sbatch["outputFolder"], 'sbatch_array.sh')]
-		if detach:
-			command.append("&")
+	def runSlurm(self, log : bool = True, logFileName : str = 'out.log') -> None:
+		"""
+		Create all needed structures and files to launch SLURM sbatch job
 
-		subprocess.check_output(command, stderr=subprocess.STDOUT)
+		:param log:			(Optional) Log slurm output in file [Default = True]
+		:param logFileName:	(Optional) Name of the log file [Default = 'out.log']
+
+		:return: None
+		"""
+		if log:
+			logfile = open(os.path.join(self.sbatch["outputFolder"], logFileName), 'w')
+		
+		proc=subprocess.Popen(["slurm", os.path.join(self.sbatch["outputFolder"], 'sbatch_array.sh')], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+		
+		for line in proc.stdout:
+			if log:
+				logfile.write(line.decode())
+			else:
+				sys.stdout.write(line.decode())
+			proc.wait()
 	#!
 
 	#
