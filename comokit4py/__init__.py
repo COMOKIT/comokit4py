@@ -392,8 +392,14 @@ class Workspace:
 			variance = False)
 	#! rawOutputProcessing
 
-	def generateCsv(self, outputCsvFileName : list = "out", output : list = None) -> bool:
+	def generateCsv(self, output : list = None, outputCsvFileName : list = "out") -> bool:
 		"""
+		Turn COMOKIT's raw output CSV into compiled csv file
+
+		:param output:				(Optional) Output list of raw processed data [Default re-process data]
+		:param outputCsvFileName:	(Optional) Name of the png file name (extension automatic) [Default = 'out']
+
+		:return: Bool if csv file saved
 		"""
 		if output == None:
 			output = rawOutputProcessing()
