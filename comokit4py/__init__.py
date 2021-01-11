@@ -15,7 +15,7 @@
 
 import os, sys, pkgutil
 import subprocess, platform, multiprocessing
-from . import generateMultipleXML generateSBatchFiles, comokit2png
+from . import generateMultipleXML, generateSBatchFiles, comokit2png
 # Import all other py scripts
 __all__ = list(module for _, module, _ in pkgutil.iter_modules([os.path.dirname(__file__)]))
 
