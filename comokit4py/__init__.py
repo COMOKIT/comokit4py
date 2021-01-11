@@ -347,7 +347,7 @@ class Workspace:
 
 	#
 	#	Generate Output
-	def prepareProcessedOutput(self, displayStep : int = 24, median : bool = False, quartile : bool = False, startDate : list[3], startPolicyDate : list[3], endPolicyDate : list[3], cores : int = multiprocessing.cpu_count(), stepTo : int = 1, output_name : list = ["Susceptible", "Recovered", "Presymptomatic", "Asymptomatic", "Symptomatic", "Need hospital", "Need ICU", "Death"], output_color : list = ["g", "b", "olive", "lightgreen", "y", "orange", "r", "m"] ) -> None :
+	def prepareProcessedOutput(self, displayStep : int = 24, median : bool = False, quartile : bool = False, startDate : list[3] = None, startPolicyDate : list[3] = None, endPolicyDate : list[3] = None, cores : int = multiprocessing.cpu_count(), stepTo : int = 1, output_name : list = ["Susceptible", "Recovered", "Presymptomatic", "Asymptomatic", "Symptomatic", "Need hospital", "Need ICU", "Death"], output_color : list = ["g", "b", "olive", "lightgreen", "y", "orange", "r", "m"] ) -> None :
 		"""
 		"""
 
@@ -363,8 +363,8 @@ class Workspace:
 		self.processedOutputVariable["cores"] = cores
 		self.processedOutputVariable["stepTo"] = stepTo
 
-    	self.processedOutputVariable["output_name"]  = output_name
-    	self.processedOutputVariable["output_color"] = output_color
+		self.processedOutputVariable["output_name"]  = output_name
+		self.processedOutputVariable["output_color"] = output_color
 
 		self.processedOutputVariable["startDate"] = startDate
 		if startDate != None:
@@ -413,7 +413,7 @@ class Workspace:
 		return comokit2png.savePngGraphs(
 			output = output, 
 			col_name = comokit2png.generateColumnName(quartile = self.processedOutputVariable["quartile"], median = self.processedOutputVariable["median"]), 
-			output_color = self.processedOutputVariable["output_color"]r, 
+			output_color = self.processedOutputVariable["output_color"], 
 			outputImgName = outputPngFileName, 
 			output_name = self.processedOutputVariable["output_name"],
 			displayStep = self.processedOutputVariable["displayStep"], 
