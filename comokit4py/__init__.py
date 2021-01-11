@@ -410,7 +410,6 @@ class Workspace:
 		if csv:
 			self.generateCsv(outputCsvFileName = outputPngFileName, output = output)
 
-		col_name = 
 		return comokit2png.savePngGraphs(
 			output = output, 
 			col_name = comokit2png.generateColumnName(quartile = self.processedOutputVariable["quartile"], median = self.processedOutputVariable["median"]), 
