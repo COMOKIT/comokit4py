@@ -288,10 +288,21 @@ class Workspace:
 
 		:return: None
 		"""
-		if explorationPlan.expSpace == undefined:
-			explorationPlan.ExperimentSpace()
+		if self.explorationPlan.expSpace == None:
+			self.explorationPlan.ExperimentSpace()
 
-		generateMultipleXML.createXmlFiles(allParamValues = explorationPlan.expSpace, parametersList = explorationPlan.parametersList, xmlFilePath = self.xmlDirectory, replication = explorationPlan.replication, split = explorationPlan.split, output  = os.path.join(self.workspaceDirectory, "batch_output"), seed = explorationPlan.seed, final = explorationPlan.final, until = explorationPlan.until)
+		generateMultipleXML.createXmlFiles(
+			experimentName = self.explorationPlan.experimentName,
+			gamlFilePath = self.explorationPlan.getGamlFile(),
+			allParamValues = self.explorationPlan.expSpace, 
+			parametersList = self.explorationPlan.parametersList, 
+			xmlFilePath = self.xmlDirectory, 
+			replication = self.explorationPlan.replication, 
+			split = self.explorationPlan.getExperimentPerXML(), 
+			output  = os.path.join(self.workspaceDirectory, "batch_output"), 
+			seed = self.explorationPlan.seed, 
+			final = self.explorationPlan.final, 
+			until = self.explorationPlan.until)
 	#!generateNeededForExploration
 
 	def prepareSBatch(self, jobTimeout : int, core : int, nodes : int = 1, submission : int = 1, maxSubmission : int = 6, delay : int = 0) -> None:
