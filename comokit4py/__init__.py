@@ -272,7 +272,7 @@ class Workspace:
 		slurmInstalled = True
 		if slurm:
 			slurmInstalled = self.verifySlurm()
-		
+
 		return self.verifyGama() and self.verifyJavaVersion() and slurmInstalled
 	#! verifyAll
 
@@ -322,8 +322,12 @@ class Workspace:
 		print("TODO")
 	#!
 
-	def runSlurm(self):
-		print("TODO")
+	def runSlurm(self, detach = False) -> None:
+		command = ['slurm', os.path.join(self.sbatch["outputFolder"], 'sbatch_array.sh')]
+		if detach:
+			command.append("&")
+
+		subprocess.check_output(command, stderr=subprocess.STDOUT)
 	#!
 
 	#
