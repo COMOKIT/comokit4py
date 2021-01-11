@@ -201,6 +201,9 @@ class Workspace:
 		self.gama = gama
 		self.explorationPlan = explorationPlan
 		self.workspaceDirectory = os.path.abspath(workspaceDirectory)
+		if not os.path.exists( self.workspaceDirectory ):
+			os.mkdir( self.workspaceDirectory )
+
 		self.xmlDirectory = os.path.join(self.workspaceDirectory, "xml")
 	#! __init__
 	
@@ -226,7 +229,7 @@ class Workspace:
 
 		:return: Bool if everything is ready
 		"""
-		return os.path.isfile( self.gama.getPathToHeadlessScript() ) and is_exe( self.gama.getPathToHeadlessScript() )
+		return os.path.isfile( self.gama.getPathToHeadlessScript() ) and os.access(self.gama.getPathToHeadlessScript(), os.X_OK)
 	#! verifyGama
 
 	def verifyJavaVersion(self) -> bool:
@@ -239,7 +242,7 @@ class Workspace:
 
 		try:
 			javaVersion = int(subprocess.check_output(['java', '-version'], stderr=subprocess.STDOUT).decode().split('"')[1][2])
-			verified = (int(gama.split(".")[1]) <= 6 and javaVersion == 6) or (int(gama.split(".")[1]) > 6 and javaVersion == 8)
+			verified = (int(self.gama.getVersion().split(".")[1]) <= 6 and javaVersion == 6) or (int(self.gama.getVersion().split(".")[1]) > 6 and javaVersion == 8)
 		except:
 			verified = False
 
