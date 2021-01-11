@@ -14,8 +14,8 @@
 ##################################################
 
 import os, sys, pkgutil
-import subprocess, platform
-from . import generateMultipleXML generateSBatchFiles
+import subprocess, platform, multiprocessing
+from . import generateMultipleXML generateSBatchFiles, comokit2png
 # Import all other py scripts
 __all__ = list(module for _, module, _ in pkgutil.iter_modules([os.path.dirname(__file__)]))
 
@@ -186,6 +186,7 @@ class Workspace:
 	# Variables
 	edf : bool = False
 	sbatch : dict
+	processedOutputVariable : dict
 
 	def __init__(self, gama : Gama, explorationPlan : GamaExploration, workspaceDirectory : str):
 		"""
@@ -346,17 +347,85 @@ class Workspace:
 
 	#
 	#	Generate Output
-	def genereateCsv(self):
-		print("TODO")
-		comokit2png.multithreadCsvProcessing()
-		comokit2png.saveToCSV()
+	def prepareProcessedOutput(self, displayStep : int = 24, median : bool = False, quartile : bool = False, startDate : list[3], startPolicyDate : list[3], endPolicyDate : list[3], cores : int = multiprocessing.cpu_count(), stepTo : int = 1, output_name : list = ["Susceptible", "Recovered", "Presymptomatic", "Asymptomatic", "Symptomatic", "Need hospital", "Need ICU", "Death"], output_color : list = ["g", "b", "olive", "lightgreen", "y", "orange", "r", "m"] ) -> None :
+		"""
+		"""
+
+		# Auto variables
+		self.processedOutputVariable["inputFolder"] = os.path.join(self.workspaceDirectory, "batch_output")
+		#self.processedOutputVariable["experimentName"] = self.explorationPlan.getExperimentName()
+		self.processedOutputVariable["replication"] = self.explorationPlan.getReplication()
+
+		# Parametrable
+		self.processedOutputVariable["displayStep"] = displayStep
+		self.processedOutputVariable["median"] = median
+		self.processedOutputVariable["quartile"] = quartile
+		self.processedOutputVariable["cores"] = cores
+		self.processedOutputVariable["stepTo"] = stepTo
+
+    	self.processedOutputVariable["output_name"]  = output_name
+    	self.processedOutputVariable["output_color"] = output_color
+
+		self.processedOutputVariable["startDate"] = startDate
+		if startDate != None:
+			if endPolicyDate != None:
+				self.processedOutputVariable["startPolicyDate"] = startPolicyDate
+			if startPolicyDate != None:
+				self.processedOutputVariable["endPolicyDate"] = endPolicyDate
+	#! prepareProcessedOutput
+
+	def rawOutputProcessing(self) -> list:
+		"""
+		"""
+
+		if self.processedOutputVariable == None:
+			self.prepareProcessedOutput()
+		
+		return comokit2png.multithreadCsvProcessing(
+			CSV_array = gatheringCSV(batch_path = self.processedOutputVariable["inputFolder"], experimentName = self.explorationPlan.getExperimentName()), 
+			output_name = self.processedOutputVariable["output_name"], 
+			stepTo = self.processedOutputVariable["stepTo"], 
+			replication = self.explorationPlan.getReplication(), 
+			cores = self.processedOutputVariable["cores"], 
+			quartile = self.processedOutputVariable["quartile"], 
+			median = self.processedOutputVariable["median"], 
+			variance = False)
+	#! rawOutputProcessing
+
+	def generateCsv(self, outputCsvFileName : list = "out", output : list = None) -> bool:
+		"""
+		"""
+		if output == None:
+			output = rawOutputProcessing()
+
+		return comokit2png.saveToCSV(processedCsvArray = output, colName = self.processedOutputVariable["output_name"], csvName = outputCsvFileName)
 	#! genereateCsv
 
-	def genereatePng(self):
-		print("TODO")
-		comokit2png.multithreadCsvProcessing()
-		comokit2png.saveToCSV()
-		col_name = comokit2png.generateColumnName()
-		comokit2png.savePngGraphs()
-	#!
+	def generatePng(self, title : str = "", outputPngFileName : list = "out", output : list = None, csv : bool = False) -> bool:
+		"""
+		"""
+		if output == None:
+			output = rawOutputProcessing()
+
+		if csv:
+			self.generateCsv(outputCsvFileName = outputPngFileName, output = output)
+
+		col_name = 
+		return comokit2png.savePngGraphs(
+			output = output, 
+			col_name = comokit2png.generateColumnName(quartile = self.processedOutputVariable["quartile"], median = self.processedOutputVariable["median"]), 
+			output_color = self.processedOutputVariable["output_color"]r, 
+			outputImgName = outputPngFileName, 
+			output_name = self.processedOutputVariable["output_name"],
+			displayStep = self.processedOutputVariable["displayStep"], 
+			title = title,
+			quartile = self.processedOutputVariable["quartile"], 
+			median = self.processedOutputVariable["median"], 
+			stepTo = self.processedOutputVariable["stepTo"], 
+			startDate = self.processedOutputVariable["startDate"], 
+			startEpidemyDate = self.processedOutputVariable["startPolicyDate"], 
+			endEpidemyDate = self.processedOutputVariable["endPolicyDate"], 
+			numberRow = 3, numberCol = 3)
+	#! generatePng
+	
 #! Workspace
