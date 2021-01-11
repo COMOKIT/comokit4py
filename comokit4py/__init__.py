@@ -319,9 +319,49 @@ class Workspace:
 
 	#
 	#	Run
-	def runGamaHeadless(self):
-		print("TODO")
-	#!
+	def __runExplo(self, command : list, log : bool, logFileName : str) -> None:
+		"""
+		Create all needed structures and files to launch SLURM sbatch job
+
+		:param log:			(Optional) Log slurm output in file [Default = True]
+		:param logFileName:	(Optional) Name of the log file [Default = 'out.log']
+
+		:return: None
+		"""
+		if log:
+			if not os.path.exists( self.workspaceDirectory ):
+				os.mkdir( self.workspaceDirectory )
+
+			logfile = open(os.path.join(self.workspaceDirectory, logFileName), 'w')
+		
+		proc=subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+		
+		for line in proc.stdout:
+			if log:
+				logfile.write(line.decode())
+			else:
+				sys.stdout.write(line.decode())
+			proc.wait()
+
+	def runGamaHeadless(self, log : bool = True, logFileName : str = 'out.log', cores : int = 1) -> None:
+		"""
+		Create all needed structures and files to launch SLURM sbatch job
+
+		:param log:			(Optional) Log slurm output in file [Default = True]
+		:param logFileName:	(Optional) Name of the log file [Default = 'out.log']
+		:param core:		(Optional) Number of cores allowed to GAMA [Default = 1]
+
+		:return: None
+		"""
+
+		xmlFiles = [f for f in os.listdir(self.xmlDirectory) if os.path.isfile(join(self.xmlDirectory, f)) and (".xml" in f)]
+
+		for xml in xmlFiles:
+			self.__runExplo(
+				command = [self.gama.getPathToHeadlessScript(), "-m", self.gama.getMemory, "-hpc", cores, xml, self.workspaceDirectory], 
+				log = log, 
+				logFileName = logFileName)
+	#! runGamaHeadless
 
 	def runSlurm(self, log : bool = True, logFileName : str = 'out.log') -> None:
 		"""
@@ -332,18 +372,11 @@ class Workspace:
 
 		:return: None
 		"""
-		if log:
-			logfile = open(os.path.join(self.sbatch["outputFolder"], logFileName), 'w')
-		
-		proc=subprocess.Popen(["slurm", os.path.join(self.sbatch["outputFolder"], 'sbatch_array.sh')], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-		
-		for line in proc.stdout:
-			if log:
-				logfile.write(line.decode())
-			else:
-				sys.stdout.write(line.decode())
-			proc.wait()
-	#!
+		self.__runExplo(
+			command = ["slurm", os.path.join(self.sbatch["outputFolder"], 'sbatch_array.sh')], 
+			log = log, 
+			logFileName = logFileName)
+	#! runSlurm
 
 	#
 	#	Generate Output
