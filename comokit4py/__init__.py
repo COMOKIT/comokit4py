@@ -220,17 +220,60 @@ class Workspace:
 	#
 	#	Check
 	def verifyGama(self) -> bool:
+		"""
+		Check if GAMA is ready to use in this workspace
+
+		:return: Bool if everything is ready
+		"""
 		return os.path.isfile( self.gama.getPathToHeadlessScript() ) and is_exe( self.gama.getPathToHeadlessScript() )
 	#! verifyGama
 
 	def verifyJavaVersion(self) -> bool:
-		javaVersion = int(subprocess.check_output(['java', '-version'], stderr=subprocess.STDOUT).decode().split('"')[1][2])
+		"""
+		Check if the good Java is installed and usable
 
-		return (int(gama.split(".")[1]) <= 6 and javaVersion == 6) or (int(gama.split(".")[1]) > 6 and javaVersion == 8)
+		:return: Bool if everything is ready
+		"""
+		verified = False
+
+		try:
+			javaVersion = int(subprocess.check_output(['java', '-version'], stderr=subprocess.STDOUT).decode().split('"')[1][2])
+			verified = (int(gama.split(".")[1]) <= 6 and javaVersion == 6) or (int(gama.split(".")[1]) > 6 and javaVersion == 8)
+		except:
+			verified = False
+
+		return verified
 	#! verifyJavaVersion
 
-	def verifyAll(self) -> bool:
-		return self.verifyGama() and self.verifyJavaVersion()
+	def verifySlurm(self) -> bool:
+		"""
+		Check if the slurm is installed and usable
+
+		:return: Bool if everything is ready
+		"""
+		verified = False
+
+		try:
+			verified = subprocess.check_output(['slurm', '-h'], stderr=subprocess.STDOUT).decode() != ""
+		except:
+			verified = False
+
+		return verified
+	#! verifySlurm
+
+	def verifyAll(self, slurm : bool = False) -> bool:
+		"""
+		Check if everything (GAMA, Java, Slurm?) is installed and usable
+
+		:param slurm: (Optional) Check also for SLURM
+
+		:return: Bool if everything is ready
+		"""
+		slurmInstalled = True
+		if slurm:
+			slurmInstalled = self.verifySlurm()
+		
+		return self.verifyGama() and self.verifyJavaVersion() and slurmInstalled
 	#! verifyAll
 
 	#
