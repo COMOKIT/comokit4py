@@ -308,12 +308,15 @@ class Workspace:
 		if self.explorationPlan.expSpace == None:
 			self.explorationPlan.ExperimentSpace()
 
+		if not os.path.exists( self.xmlDirectory ):
+			os.mkdir( self.xmlDirectory )
+
 		generateMultipleXML.createXmlFiles(
 			experimentName = self.explorationPlan.experimentName,
 			gamlFilePath = self.explorationPlan.getGamlFile(),
 			allParamValues = self.explorationPlan.expSpace, 
 			parametersList = self.explorationPlan.parametersList, 
-			xmlFilePath = self.xmlDirectory, 
+			xmlFilePath = os.path.join(self.xmlDirectory, "headless.xml"), 
 			replication = self.explorationPlan.replication, 
 			split = self.explorationPlan.getExperimentPerXML(), 
 			output  = os.path.join(self.workspaceDirectory, "batch_output"), 
@@ -385,7 +388,7 @@ class Workspace:
 		:return: None
 		"""
 
-		xmlFiles = [f for f in os.listdir(self.xmlDirectory) if os.path.isfile(join(self.xmlDirectory, f)) and (".xml" in f)]
+		xmlFiles = [f for f in os.listdir(self.xmlDirectory) if os.path.isfile(os.path.join(self.xmlDirectory, f)) and (".xml" in f)]
 
 		for xml in xmlFiles:
 			self.__runExplo(
