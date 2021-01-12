@@ -13,7 +13,7 @@
 ## Maintainer: RoiArthurB
 ##################################################
 
-import os, sys, pkgutil
+import os, sys, pkgutil, shutil
 import subprocess, platform, multiprocessing
 from . import generateMultipleXML, generateSBatchFiles, comokit2png
 # Import all other py scripts
@@ -188,7 +188,7 @@ class Workspace:
 	sbatch : dict
 	processedOutputVariable : dict
 
-	def __init__(self, gama : Gama, explorationPlan : GamaExploration, workspaceDirectory : str):
+	def __init__(self, gama : Gama, explorationPlan : GamaExploration, workspaceDirectory : str, rebuildWorkspace : bool = False):
 		"""
 		Constructor for Workspace object
 
@@ -205,6 +205,9 @@ class Workspace:
 			os.mkdir( self.workspaceDirectory )
 
 		self.xmlDirectory = os.path.join(self.workspaceDirectory, "xml")
+
+		if rebuildWorkspace:
+			self.rebuildWorkspace()
 	#! __init__
 	
 	#
@@ -220,6 +223,20 @@ class Workspace:
 	#
 	#	Functions
 	#
+	def rebuildWorkspace(self) -> None:
+		if  os.path.exists( self.workspaceDirectory ):
+			shutil.rmtree( self.workspaceDirectory )
+		os.mkdir( self.workspaceDirectory )
+
+		if  os.path.exists( self.workspaceDirectory ):
+			shutil.rmtree( self.workspaceDirectory )
+		os.mkdir( self.workspaceDirectory )
+
+		if  os.path.exists( self.xmlDirectory ):
+			shutil.rmtree( self.xmlDirectory )
+		os.mkdir( self.xmlDirectory )
+	#! rebuildWorkspace
+
 
 	#
 	#	Check
