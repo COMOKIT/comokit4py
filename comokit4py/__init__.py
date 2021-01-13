@@ -312,17 +312,18 @@ class Workspace:
 			os.mkdir( self.xmlDirectory )
 
 		generateMultipleXML.createXmlFiles(
-			experimentName = self.explorationPlan.experimentName,
+			experimentName = self.explorationPlan.getExperimentName(),
 			gamlFilePath = self.explorationPlan.getGamlFile(),
-			allParamValues = self.explorationPlan.expSpace, 
-			parametersList = self.explorationPlan.parametersList, 
+			allParamValues = self.explorationPlan.getExperimentSpace(), 
+			parametersList = self.explorationPlan.getParametersList(), 
 			xmlFilePath = os.path.join(self.xmlDirectory, "headless.xml"), 
-			replication = self.explorationPlan.replication, 
+			replication = self.explorationPlan.getReplication(), 
 			split = self.explorationPlan.getExperimentPerXML(), 
 			output  = os.path.join(self.workspaceDirectory, "batch_output"), 
-			seed = self.explorationPlan.seed, 
-			final = self.explorationPlan.final, 
-			until = self.explorationPlan.until)
+			seed = self.explorationPlan.getSeed(), 
+			final = self.explorationPlan.getFinal(), 
+			until = self.explorationPlan.getUntil()
+		)
 	#!generateNeededForExploration
 
 	def prepareSBatch(self, jobTimeout : int, core : int, nodes : int = 1, submission : int = 1, maxSubmission : int = 6, delay : int = 0) -> None:
