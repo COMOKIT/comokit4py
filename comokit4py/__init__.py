@@ -186,7 +186,7 @@ class Workspace:
 	# Variables
 	edf : bool = False
 	sbatch : dict
-	processedOutputVariable : dict
+	processedOutputVariable : dict = {}
 
 	def __init__(self, gama : Gama, explorationPlan : GamaExploration, workspaceDirectory : str, rebuildWorkspace : bool = False):
 		"""
@@ -454,7 +454,7 @@ class Workspace:
 			self.prepareProcessedOutput()
 		
 		return comokit2png.multithreadCsvProcessing(
-			CSV_array = gatheringCSV(batch_path = self.processedOutputVariable["inputFolder"], experimentName = self.explorationPlan.getExperimentName()), 
+			CSV_array = comokit2png.gatheringCSV(batch_path = self.processedOutputVariable["inputFolder"], experimentName = self.explorationPlan.getExperimentName()), 
 			output_name = self.processedOutputVariable["output_name"], 
 			stepTo = self.processedOutputVariable["stepTo"], 
 			replication = self.explorationPlan.getReplication(), 
@@ -464,7 +464,7 @@ class Workspace:
 			variance = False)
 	#! rawOutputProcessing
 
-	def generateCsv(self, output : list = None, outputCsvFileName : list = "out") -> bool:
+	def generateCsv(self, output : list = None, outputCsvFileName : str = "out") -> bool:
 		"""
 		Turn COMOKIT's raw output CSV into compiled csv file
 
@@ -479,7 +479,7 @@ class Workspace:
 		return comokit2png.saveToCSV(processedCsvArray = output, colName = self.processedOutputVariable["output_name"], csvName = outputCsvFileName)
 	#! genereateCsv
 
-	def generatePng(self, title : str = "", outputPngFileName : list = "out", output : list = None) -> bool:
+	def generatePng(self, title : str = "", output : list = None, outputPngFileName : list = "out") -> bool:
 		"""
 		Turn COMOKIT's raw output CSV into png graphs
 
