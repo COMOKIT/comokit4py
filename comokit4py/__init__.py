@@ -171,8 +171,6 @@ class GamaExploration:
 		"""
 		self.expSpace, self.parametersList = generateMultipleXML.generateExperimentUniverse(self.gamlFile)
 	#! calculatesExperimentSpace
-	
-	#! Functions
 
 #! GamaExploration
 
@@ -350,7 +348,7 @@ class Workspace:
 		generateSBatchFiles.genSbatchArray(output = self.sbatch["output"], submission = submission, maxSubmission = maxSubmission, nodes = nodes, cpuPerTask = 1, core = core, maxHour = jobTimeout, EDF = self.edf)
 		generateSBatchFiles.genVague(output = self.sbatch["output"], nodes = nodes, cpuPerTask = 1, core = core)
 		generateSBatchFiles.genLaunchPack(gama = self.gama.getPathToHeadlessScript(), output = self.sbatch["output"], outputFolder = self.sbatch["outputFolder"], xmlPath = self.xmlDirectory, nodes = nodes, cpuPerTask = 1, core = core, delay = delay)
-	#!
+	#! prepareSBatch
 
 	#
 	#	Run
@@ -358,7 +356,7 @@ class Workspace:
 		"""
 		Create all needed structures and files to launch SLURM sbatch job
 
-		:param log:			(Optional) Log slurm output in file [Default = True]
+		:param log:			(Optional) Log std output in file [Default = True]
 		:param logFileName:	(Optional) Name of the log file [Default = 'out.log']
 
 		:return: None
@@ -377,6 +375,7 @@ class Workspace:
 			else:
 				sys.stdout.write(line.decode())
 			proc.wait()
+	#! __runExplo
 
 	def runGamaHeadless(self, log : bool = True, logFileName : str = 'out.log', cores : int = 1) -> None:
 		"""
@@ -419,6 +418,28 @@ class Workspace:
 	#	Generate Output
 	def prepareProcessedOutput(self, displayStep : int = 24, median : bool = False, quartile : bool = False, startDate : list[3] = None, startPolicyDate : list[3] = None, endPolicyDate : list[3] = None, cores : int = multiprocessing.cpu_count(), stepTo : int = 1, output_name : list = ["Susceptible", "Recovered", "Presymptomatic", "Asymptomatic", "Symptomatic", "Need hospital", "Need ICU", "Death"], output_color : list = ["g", "b", "olive", "lightgreen", "y", "orange", "r", "m"] ) -> None :
 		"""
+		Prepare private variables for following functions generating CSV or PNG output files
+
+		:param displayStep:			(Optional) Output list of raw processed data [Default re-process data]
+		:param median:				(Optional) Display median curve in graph [Default False]
+		:param quartile:			(Optional) Display quartile curves in graph (override median option) [Default False]
+		:param startDate:			(Optional) Set starting real date in PNG x axis [Default None]
+		:param startPolicyDate:		(Optional) Set starting policy grey area in PNG (needs startDate and endPolicyDate) [Default None]
+		:param endPolicyDate:		(Optional) Set starting policy grey area in PNG (needs --startDate and --startPolicy) [Default toto]
+		:param cores:				(Optional) Number of core to use [Default Max number of cores available]
+		:param stepTo:				(Optional) Compile several steps in one [Default 1 => Disable]
+		:param output_name:			(Optional) List of outputed graphs [Default ["Susceptible", "Recovered", "Presymptomatic", "Asymptomatic", "Symptomatic", "Need hospital", "Need ICU", "Death"] ]
+		:param output_color:		(Optional) Colors of outputed graphs [Default ["g", "b", "olive", "lightgreen", "y", "orange", "r", "m"]]
+
+		.. WARNING::
+
+            Date parameter should follow this form : `[YYYY, MM, DD]` (list of int)
+
+		.. WARNING::
+
+            /!\\ Changing value of `output_name` and `output_color` may break following `generateCsv()` and `generatePng()` functions /!\\
+
+		:return: None
 		"""
 
 		# Auto variables
@@ -481,9 +502,9 @@ class Workspace:
 
 	def generatePng(self, title : str = "", output : list = None, outputPngFileName : list = "out") -> bool:
 		"""
-		Turn COMOKIT's raw output CSV into png graphs
+		Turn COMOKIT's raw output CSV into a png graphs
 
-		:param title:				(Optional) Output in png title [Default = ""]
+		:param title:				(Optional) Output in png title [Default Disable]
 		:param outputPngFileName:	(Optional) Name of the png file name (extension automatic) [Default = 'out']
 		:param output:				(Optional) Output list of raw processed data [Default re-process data]
 
