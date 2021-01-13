@@ -130,3 +130,5 @@ dmypy.json
 
 # Custom
 test/out
+test/*.png
+test/*.csv
