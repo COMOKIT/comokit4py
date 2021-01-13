@@ -392,8 +392,10 @@ class Workspace:
 		xmlFiles = [f for f in os.listdir(self.xmlDirectory) if os.path.isfile(os.path.join(self.xmlDirectory, f)) and (".xml" in f)]
 
 		for xml in xmlFiles:
+			xml = os.path.join(self.xmlDirectory, xml)
+
 			self.__runExplo(
-				command = [self.gama.getPathToHeadlessScript(), "-m", self.gama.getMemory, "-hpc", cores, xml, self.workspaceDirectory], 
+				command = [self.gama.getPathToHeadlessScript(), "-m", str(self.gama.getMemory()), "-hpc", str(cores), xml, self.workspaceDirectory], 
 				log = log, 
 				logFileName = logFileName)
 	#! runGamaHeadless
