@@ -32,7 +32,7 @@ class Gama:
 
 	def __init__(self, pathToHeadlessScript : str, memory : str = "4096m"):
 		self.memory = memory
-		self.headless = os.path.abspath(pathToHeadlessScript)
+		self.headless = os.path.abspath(os.path.expanduser(pathToHeadlessScript))
 		self.__generateLocalPathVariables()
 	#! __init__
 	
@@ -52,7 +52,7 @@ class Gama:
 	def getPathToHeadlessScript(self) -> str:
 		return self.headless
 	def setPathToHeadlessScript(self, path : str) -> None:
-		self.headless = os.path.abspath(path)
+		self.headless = os.path.abspath(os.path.expanduser(path))
 		__generateLocalPathVariables()
 
 	def getMemory(self) -> str:
@@ -96,7 +96,7 @@ class GamaExploration:
 		:return: Workspace object
 		"""
 		self.experimentName = experimentName
-		self.gamlFile = os.path.abspath(gamlFile)
+		self.gamlFile = os.path.abspath(os.path.expanduser(gamlFile))
 		self.replication = replication
 		self.final = final
 		self.experimentPerXML = experimentPerXML
@@ -198,7 +198,7 @@ class Workspace:
 		"""
 		self.gama = gama
 		self.explorationPlan = explorationPlan
-		self.workspaceDirectory = os.path.abspath(workspaceDirectory)
+		self.workspaceDirectory = os.path.abspath(os.path.expanduser(workspaceDirectory))
 		if not os.path.exists( self.workspaceDirectory ):
 			os.mkdir( self.workspaceDirectory )
 
