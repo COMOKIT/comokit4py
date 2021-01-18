@@ -158,6 +158,286 @@
             
   <div class="section" id="gamaexploration">
 <h1>GamaExploration<a class="headerlink" href="#gamaexploration" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="comokit4py.GamaExploration">
+<em class="property">class </em><code class="sig-prename descclassname">comokit4py.</code><code class="sig-name descname">GamaExploration</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">experimentName</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">gamlFile</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">replication</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">final</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">experimentPerXML</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">xmlOutputName</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'headless.xml'</span></em>, <em class="sig-param"><span class="n">until</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em>, <em class="sig-param"><span class="n">seed</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#comokit4py.GamaExploration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>GamaExploration object</p>
+<p>Object necessary for defining the exploration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>experimentName</strong> (<em>str</em>) – Name of the experiment you want to explore</p></li>
+<li><p><strong>gamlFile</strong> (<em>str</em>) – Path to the GAML file to explore</p></li>
+<li><p><strong>replication</strong> (<em>int</em>) – Number of replication of each parameter combinaison</p></li>
+<li><p><strong>final</strong> (<em>int</em>) – Maximal step to explore (force end the simulation if not already finished)</p></li>
+<li><p><strong>experimentPerXML</strong> (<em>int</em>) – (Optional) Split exploration plan in several XML files [Default = disable = -1]</p></li>
+<li><p><strong>xmlOutputName</strong> (<em>str</em>) – (Optional) Name of the generated XML file(s) [Default = “headless.xml”]</p></li>
+<li><p><strong>until</strong> (<em>str</em>) – (Optional) Define GAML experiment end condition</p></li>
+<li><p><strong>seed</strong> (<em>int</em>) – (Optional) Starting seed value [Default = 0]</p></li>
+<li><p><strong>_expSpace</strong> (<em>list</em>) – (Generated) Experiment parameters space</p></li>
+<li><p><strong>_parametersList</strong> (<em>list</em>) – (Generated) List of experiment’s parameter</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="comokit4py.GamaExploration.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">experimentName</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">gamlFile</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">replication</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">final</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">experimentPerXML</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">- 1</span></em>, <em class="sig-param"><span class="n">xmlOutputName</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'headless.xml'</span></em>, <em class="sig-param"><span class="n">until</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em>, <em class="sig-param"><span class="n">seed</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#comokit4py.GamaExploration.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor for GamaExploration</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.GamaExploration.calculatesExperimentSpace">
+<code class="sig-name descname">calculatesExperimentSpace</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#comokit4py.GamaExploration.calculatesExperimentSpace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scrap experiment’s parameters and calculate all the possible combinaison</p>
+<p>Results are store in object’s variables [expSpace, parametersList]</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.GamaExploration.getExperimentName">
+<code class="sig-name descname">getExperimentName</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#comokit4py.GamaExploration.getExperimentName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return setted GAML experiment name</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>GAML experiment name</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.GamaExploration.getExperimentPerXML">
+<code class="sig-name descname">getExperimentPerXML</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="headerlink" href="#comokit4py.GamaExploration.getExperimentPerXML" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return setted number of simulation by xml</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This parameter is useful for launching several GAMA in parallel</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Simulation per XML number</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.GamaExploration.getExperimentSpace">
+<code class="sig-name descname">getExperimentSpace</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#comokit4py.GamaExploration.getExperimentSpace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return generated experiment space parameters (full combinaison set)</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This parameter is automatically setted by the <code class="docutils literal notranslate"><span class="pre">self.calculatesExperimentSpace()</span></code> function</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.GamaExploration.getFinal">
+<code class="sig-name descname">getFinal</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="headerlink" href="#comokit4py.GamaExploration.getFinal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return setted maximal step for simulations</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Max final step</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.GamaExploration.getGamlFile">
+<code class="sig-name descname">getGamlFile</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#comokit4py.GamaExploration.getGamlFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return setted GAML file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>GAML file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.GamaExploration.getParametersList">
+<code class="sig-name descname">getParametersList</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#comokit4py.GamaExploration.getParametersList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return generated experiment parameters list</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This parameter is automatically setted by the <code class="docutils literal notranslate"><span class="pre">self.calculatesExperimentSpace()</span></code> function</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.GamaExploration.getReplication">
+<code class="sig-name descname">getReplication</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="headerlink" href="#comokit4py.GamaExploration.getReplication" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return setted replication number</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Replication number</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.GamaExploration.getSeed">
+<code class="sig-name descname">getSeed</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; int<a class="headerlink" href="#comokit4py.GamaExploration.getSeed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return setted starting seed</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Seed</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.GamaExploration.getUntil">
+<code class="sig-name descname">getUntil</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#comokit4py.GamaExploration.getUntil" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return setted simulation stop condition</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Stop condition</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.GamaExploration.getXmlOutputName">
+<code class="sig-name descname">getXmlOutputName</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; str<a class="headerlink" href="#comokit4py.GamaExploration.getXmlOutputName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return setted XML name file (used for gama headless)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>XML name file</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.GamaExploration.setExperimentName">
+<code class="sig-name descname">setExperimentName</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">experimentName</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#comokit4py.GamaExploration.setExperimentName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set GAML experiment name for exploring</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>experimentName</strong> (<em>str</em>) – GAML experiment name</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.GamaExploration.setExperimentPerXML">
+<code class="sig-name descname">setExperimentPerXML</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">experimentPerXML</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#comokit4py.GamaExploration.setExperimentPerXML" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set number of simulation by xml</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This parameter is useful for launching several GAMA in parallel</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>experimentPerXML</strong> (<em>int</em>) – Simulation per XML number</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.GamaExploration.setFinal">
+<code class="sig-name descname">setFinal</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">final</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#comokit4py.GamaExploration.setFinal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set maximal step for simulations</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>final</strong> (<em>int</em>) – Max final step</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.GamaExploration.setGamlFile">
+<code class="sig-name descname">setGamlFile</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gamlFile</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#comokit4py.GamaExploration.setGamlFile" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set GAML file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>gamlFile</strong> (<em>str</em>) – GAML file</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.GamaExploration.setReplication">
+<code class="sig-name descname">setReplication</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">replication</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#comokit4py.GamaExploration.setReplication" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set replication number</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>replication</strong> (<em>int</em>) – Replication number</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.GamaExploration.setSeed">
+<code class="sig-name descname">setSeed</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seed</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#comokit4py.GamaExploration.setSeed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set starting seed</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>seed</strong> (<em>str</em>) – Start seed value</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.GamaExploration.setUntil">
+<code class="sig-name descname">setUntil</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">until</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#comokit4py.GamaExploration.setUntil" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set simulation stop condition</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>final</strong> (<em>str</em>) – Stop condition</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.GamaExploration.setXmlOutputName">
+<code class="sig-name descname">setXmlOutputName</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xmlOutputName</span><span class="p">:</span> <span class="n">str</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#comokit4py.GamaExploration.setXmlOutputName" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set XML name file (used for gama headless)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>xmlOutputName</strong> (<em>str</em>) – XML name file</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 
 

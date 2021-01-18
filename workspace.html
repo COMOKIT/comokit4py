@@ -157,6 +157,265 @@
             
   <div class="section" id="workspace">
 <h1>Workspace<a class="headerlink" href="#workspace" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="comokit4py.Workspace">
+<em class="property">class </em><code class="sig-prename descclassname">comokit4py.</code><code class="sig-name descname">Workspace</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gama</span><span class="p">:</span> <span class="n"><a class="reference internal" href="gama.html#comokit4py.Gama" title="comokit4py.Gama">comokit4py.Gama</a></span></em>, <em class="sig-param"><span class="n">explorationPlan</span><span class="p">:</span> <span class="n"><a class="reference internal" href="gamaExploration.html#comokit4py.GamaExploration" title="comokit4py.GamaExploration">comokit4py.GamaExploration</a></span></em>, <em class="sig-param"><span class="n">workspaceDirectory</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">rebuildWorkspace</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#comokit4py.Workspace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Constructor for Workspace object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gama</strong> (<a class="reference internal" href="gama.html#comokit4py.Gama" title="comokit4py.Gama"><em>Gama</em></a>) – Gama object for launching exploration</p></li>
+<li><p><strong>explorationPlan</strong> (<a class="reference internal" href="gamaExploration.html#comokit4py.GamaExploration" title="comokit4py.GamaExploration"><em>GamaExploration</em></a>) – GamaExploration object to know what to launch</p></li>
+<li><p><strong>workspaceDirectory</strong> (<em>str</em>) – Directory path when everything will be store</p></li>
+<li><p><strong>_edf</strong> (<em>bool</em>) – (Optional) toto</p></li>
+<li><p><strong>_sbatch</strong> (<em>dict</em>) – (Generated) toto</p></li>
+<li><p><strong>_processedOutputVariable</strong> (<em>dict</em>) – (Generated) toto</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Workspace object</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="comokit4py.Workspace.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">gama</span><span class="p">:</span> <span class="n"><a class="reference internal" href="gama.html#comokit4py.Gama" title="comokit4py.Gama">comokit4py.Gama</a></span></em>, <em class="sig-param"><span class="n">explorationPlan</span><span class="p">:</span> <span class="n"><a class="reference internal" href="gamaExploration.html#comokit4py.GamaExploration" title="comokit4py.GamaExploration">comokit4py.GamaExploration</a></span></em>, <em class="sig-param"><span class="n">workspaceDirectory</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">rebuildWorkspace</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#comokit4py.Workspace.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Constructor for Workspace object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gama</strong> (<a class="reference internal" href="gama.html#comokit4py.Gama" title="comokit4py.Gama"><em>Gama</em></a>) – Gama object for launching exploration</p></li>
+<li><p><strong>explorationPlan</strong> (<a class="reference internal" href="gamaExploration.html#comokit4py.GamaExploration" title="comokit4py.GamaExploration"><em>GamaExploration</em></a>) – GamaExploration object to know what to launch</p></li>
+<li><p><strong>workspaceDirectory</strong> (<em>str</em>) – Directory path when everything will be store</p></li>
+<li><p><strong>rebuildWorkspace</strong> (<em>bool</em>) – (Optional) Destroy and rebuild folder architecture [Default: False]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Workspace object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.Workspace.generateCsv">
+<code class="sig-name descname">generateCsv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">output</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>list<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">outputCsvFileName</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'out'</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#comokit4py.Workspace.generateCsv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turn COMOKIT’s raw output CSV into compiled csv file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>output</strong> (<em>list</em>) – (Optional) Output list of raw processed data [Default re-process data]</p></li>
+<li><p><strong>outputCsvFileName</strong> (<em>str</em>) – (Optional) Name of the png file name (extension automatic) [Default = ‘out’]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Bool if csv file saved</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.Workspace.generateNeededForExploration">
+<code class="sig-name descname">generateNeededForExploration</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#comokit4py.Workspace.generateNeededForExploration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create all XML files for running GAMA headless</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.Workspace.generatePng">
+<code class="sig-name descname">generatePng</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">title</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">''</span></em>, <em class="sig-param"><span class="n">output</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>list<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">outputPngFileName</span><span class="p">:</span> <span class="n">list</span> <span class="o">=</span> <span class="default_value">'out'</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#comokit4py.Workspace.generatePng" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turn COMOKIT’s raw output CSV into a png graphs</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>title</strong> (<em>str</em>) – (Optional) Output in png title [Default Disable]</p></li>
+<li><p><strong>output</strong> (<em>list</em>) – (Optional) Output list of raw processed data [Default re-process data]</p></li>
+<li><p><strong>outputPngFileName</strong> (<em>list</em>) – (Optional) Name of the png file name (extension automatic) [Default = ‘out’]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Bool if png file saved</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.Workspace.getEdfBool">
+<code class="sig-name descname">getEdfBool</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#comokit4py.Workspace.getEdfBool" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.Workspace.prepareProcessedOutput">
+<code class="sig-name descname">prepareProcessedOutput</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">displayStep</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">24</span></em>, <em class="sig-param"><span class="n">median</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">quartile</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em>, <em class="sig-param"><span class="n">startDate</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>list<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">startPolicyDate</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>list<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">endPolicyDate</span><span class="p">:</span> <span class="n">Optional<span class="p">[</span>list<span class="p">]</span></span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">cores</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">2</span></em>, <em class="sig-param"><span class="n">stepTo</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">output_name</span><span class="p">:</span> <span class="n">list</span> <span class="o">=</span> <span class="default_value">['Susceptible', 'Recovered', 'Presymptomatic', 'Asymptomatic', 'Symptomatic', 'Need hospital', 'Need ICU', 'Death']</span></em>, <em class="sig-param"><span class="n">output_color</span><span class="p">:</span> <span class="n">list</span> <span class="o">=</span> <span class="default_value">['g', 'b', 'olive', 'lightgreen', 'y', 'orange', 'r', 'm']</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#comokit4py.Workspace.prepareProcessedOutput" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepare private variables for following functions generating CSV or PNG output files</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>displayStep</strong> (<em>int</em>) – (Optional) Output list of raw processed data [Default re-process data]</p></li>
+<li><p><strong>median</strong> (<em>bool</em>) – (Optional) Display median curve in graph [Default False]</p></li>
+<li><p><strong>quartile</strong> (<em>bool</em>) – (Optional) Display quartile curves in graph (override median option) [Default False]</p></li>
+<li><p><strong>startDate</strong> (<em>list</em><em>[</em><em>3</em><em>]</em>) – (Optional) Set starting real date in PNG x axis [Default None]</p></li>
+<li><p><strong>startPolicyDate</strong> (<em>list</em><em>[</em><em>3</em><em>]</em>) – (Optional) Set starting policy grey area in PNG (needs startDate and endPolicyDate) [Default None]</p></li>
+<li><p><strong>endPolicyDate</strong> (<em>list</em><em>[</em><em>3</em><em>]</em>) – (Optional) Set starting policy grey area in PNG (needs –startDate and –startPolicy) [Default toto]</p></li>
+<li><p><strong>cores</strong> (<em>int</em>) – (Optional) Number of core to use [Default Max number of cores available]</p></li>
+<li><p><strong>stepTo</strong> (<em>int</em>) – (Optional) Compile several steps in one [Default 1 =&gt; Disable]</p></li>
+<li><p><strong>output_name</strong> (<em>list</em>) – (Optional) List of outputed graphs [Default [“Susceptible”, “Recovered”, “Presymptomatic”, “Asymptomatic”, “Symptomatic”, “Need hospital”, “Need ICU”, “Death”] ]</p></li>
+<li><p><strong>output_color</strong> (<em>list</em>) – (Optional) Colors of outputed graphs [Default [“g”, “b”, “olive”, “lightgreen”, “y”, “orange”, “r”, “m”]]</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Date parameter should follow this form : <code class="docutils literal notranslate"><span class="pre">[YYYY,</span> <span class="pre">MM,</span> <span class="pre">DD]</span></code> (list of int)</p>
+<p>⚠️ Changing value of <code class="docutils literal notranslate"><span class="pre">output_name</span></code> and <code class="docutils literal notranslate"><span class="pre">output_color</span></code> may break following <code class="docutils literal notranslate"><span class="pre">self.generateCsv()</span></code> and <code class="docutils literal notranslate"><span class="pre">self.generatePng()</span></code> functions ⚠️</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.Workspace.prepareSBatch">
+<code class="sig-name descname">prepareSBatch</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">jobTimeout</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">core</span><span class="p">:</span> <span class="n">int</span></em>, <em class="sig-param"><span class="n">nodes</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">submission</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em>, <em class="sig-param"><span class="n">maxSubmission</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">6</span></em>, <em class="sig-param"><span class="n">delay</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">0</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#comokit4py.Workspace.prepareSBatch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create all needed structures and files to launch SLURM sbatch job</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>jobTimeout</strong> (<em>int</em>) – Limit hour for SLURM job</p></li>
+<li><p><strong>core</strong> (<em>int</em>) – Number of cores used per node</p></li>
+<li><p><strong>nodes</strong> (<em>int</em>) – (Optional) Number of nodes used by SLURM [Default = 1]</p></li>
+<li><p><strong>submission</strong> (<em>int</em>) – (Optional) Total of submission on SLURM [Default = 1]</p></li>
+<li><p><strong>maxSubmission</strong> (<em>int</em>) – (Optional) Max number of active submission on SLURM [Default = 6]</p></li>
+<li><p><strong>delay</strong> (<em>int</em>) – (Optional) Delay in between launching headless (ex. 2s, 3m, 4h, 5d) [Default = 0]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.Workspace.rawOutputProcessing">
+<code class="sig-name descname">rawOutputProcessing</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; list<a class="headerlink" href="#comokit4py.Workspace.rawOutputProcessing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compiled COMOKIT’s raw output CSV into saveable list</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Python list of post-processed COMOKIT explored data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.Workspace.rebuildWorkspace">
+<code class="sig-name descname">rebuildWorkspace</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#comokit4py.Workspace.rebuildWorkspace" title="Permalink to this definition">¶</a></dt>
+<dd><p>Destroy and rebuild folder architecture</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.Workspace.runGamaHeadless">
+<code class="sig-name descname">runGamaHeadless</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">log</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">logFileName</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'out.log'</span></em>, <em class="sig-param"><span class="n">cores</span><span class="p">:</span> <span class="n">int</span> <span class="o">=</span> <span class="default_value">1</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#comokit4py.Workspace.runGamaHeadless" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create all needed structures and files to launch SLURM sbatch job</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>log</strong> (<em>bool</em>) – (Optional) Log slurm output in file [Default = True]</p></li>
+<li><p><strong>logFileName</strong> (<em>str</em>) – (Optional) Name of the log file [Default = ‘out.log’]</p></li>
+<li><p><strong>core</strong> (<em>int</em>) – (Optional) Number of cores allowed to GAMA [Default = 1]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.Workspace.runSlurm">
+<code class="sig-name descname">runSlurm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">log</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">True</span></em>, <em class="sig-param"><span class="n">logFileName</span><span class="p">:</span> <span class="n">str</span> <span class="o">=</span> <span class="default_value">'out.log'</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#comokit4py.Workspace.runSlurm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create all needed structures and files to launch SLURM sbatch job</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>log</strong> (<em>bool</em>) – (Optional) Log slurm output in file [Default = True]</p></li>
+<li><p><strong>logFileName</strong> (<em>str</em>) – (Optional) Name of the log file [Default = ‘out.log’]</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.Workspace.setEdfBool">
+<code class="sig-name descname">setEdfBool</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">edf</span><span class="p">:</span> <span class="n">bool</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#comokit4py.Workspace.setEdfBool" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.Workspace.toggleEdfBool">
+<code class="sig-name descname">toggleEdfBool</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#comokit4py.Workspace.toggleEdfBool" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.Workspace.verifyAll">
+<code class="sig-name descname">verifyAll</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">slurm</span><span class="p">:</span> <span class="n">bool</span> <span class="o">=</span> <span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#comokit4py.Workspace.verifyAll" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if everything (GAMA, Java, Slurm?) is installed and usable</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>slurm</strong> (<em>bool</em>) – (Optional) Check also for SLURM</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Bool if everything is ready</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.Workspace.verifyGama">
+<code class="sig-name descname">verifyGama</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#comokit4py.Workspace.verifyGama" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if GAMA is ready to use in this workspace</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Bool if everything is ready</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.Workspace.verifyJavaVersion">
+<code class="sig-name descname">verifyJavaVersion</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#comokit4py.Workspace.verifyJavaVersion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the good Java is installed and usable</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Bool if everything is ready</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="comokit4py.Workspace.verifySlurm">
+<code class="sig-name descname">verifySlurm</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#comokit4py.Workspace.verifySlurm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the slurm is installed and usable</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Bool if everything is ready</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 
 
