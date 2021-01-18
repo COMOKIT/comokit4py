@@ -233,7 +233,7 @@ def initPngGraphs(output : list, col_name : list, title : str, displayStep : int
     return output_df, fig, ax, index
 # !def initPngGraphs
 
-def changeIndexToDate(index: int, ax : np.ndarray, fig : plt.Figure, startDate : list[3], len_output_df : int, stepTo : int) -> list :
+def changeIndexToDate(index: int, ax : np.ndarray, fig : plt.Figure, startDate : list, len_output_df : int, stepTo : int) -> list :
     # Change un-named days to real date
     date1 = datetime.datetime(int(startDate[0]), int(startDate[1]), int(startDate[2])) 
     index = drange(date1, 
@@ -251,7 +251,7 @@ def changeIndexToDate(index: int, ax : np.ndarray, fig : plt.Figure, startDate :
     return index
 # !def changeIndexToDate
 
-def addPolicyTime(index : int, startPolicy : list[3], endPolicy : list[3], stepTo : int):
+def addPolicyTime(index : int, startPolicy : list, endPolicy : list, stepTo : int):
     policyTimeDate = [ drange(datetime.datetime(int(startPolicy[0]), int(startPolicy[1]), int(startPolicy[2])), datetime.datetime(int(endPolicy[0]), int(endPolicy[1]), int(endPolicy[2])), datetime.timedelta(hours = stepTo))[i] for i in (0, -1) ]
     policyTime = []
     for i in index:
@@ -265,7 +265,7 @@ def addPolicyTime(index : int, startPolicy : list[3], endPolicy : list[3], stepT
     return policyTime
 # !def addPolicyTime
 
-def plotGraphs(index : int, ax : np.ndarray, output_df : list, output_name : list, output_color : list, quartile : bool = False, median : bool = False, policyTime : list[3] = None, numberRow : int = 3, numberCol : int = 3) -> plt.Figure :
+def plotGraphs(index : int, ax : np.ndarray, output_df : list, output_name : list, output_color : list, quartile : bool = False, median : bool = False, policyTime : list = None, numberRow : int = 3, numberCol : int = 3) -> plt.Figure :
 
     outputIndex = 0
 
@@ -310,7 +310,7 @@ def plotGraphs(index : int, ax : np.ndarray, output_df : list, output_name : lis
     return plt
 # !def plotGraphs
 
-def savePngGraphs(output : list, col_name : list, output_color : list, outputImgName : str, output_name : list, displayStep : int, title : str = "", quartile : bool = False, median : bool = False, stepTo : int = None, startDate : list[3] = None, startEpidemyDate : list[3] = None, endEpidemyDate : list[3] = None, numberRow : int = 3, numberCol : int = 3) -> None:
+def savePngGraphs(output : list, col_name : list, output_color : list, outputImgName : str, output_name : list, displayStep : int, title : str = "", quartile : bool = False, median : bool = False, stepTo : int = None, startDate : list = None, startEpidemyDate : list = None, endEpidemyDate : list = None, numberRow : int = 3, numberCol : int = 3) -> None:
     output_df, fig, ax, index = initPngGraphs(output, col_name, title, displayStep)
     policyTime = None
 
