@@ -19,17 +19,13 @@ from . import generateMultipleXML, generateSBatchFiles, comokit2png
 
 class Gama:
 
-	"""
-	Gama object
+	"""Gama object
 
 	:param str pathToHeadlessScript:	Gama headless script path
 	:param str memory:					(Optinal) Memory of the JVM [Default : "4086m"]
 	:param str baseDir:					(Generated) Base folder of the GAMA software
 	:param str version:					(Generated) Version of the setted GAMA software
 	"""
-
-	#
-	# Variable
 	baseDir : str
 	version : str
 
@@ -60,8 +56,7 @@ class Gama:
 		"""
 		return self.headless
 	def setPathToHeadlessScript(self, path : str) -> None:
-		"""
-		Set Gama headless script path, and turn it in absolute path
+		"""Set Gama headless script path, and turn it in absolute path
 
 		:param str path: Gama headless script path
 		
@@ -71,15 +66,13 @@ class Gama:
 		__generateLocalPathVariables()
 
 	def getMemory(self) -> str:
-		"""
-		Return setted Gama memory JVM
+		"""Return setted Gama memory JVM
 		
 		:return: Gama memory JVM
 		"""
 		return self.memory
 	def setMemory(self, memory : str) -> None:
-		"""
-		Set Gama memory JVM
+		"""Set Gama memory JVM
 
 		:param str memory: Memory of the JVM (default when created : "4086m")
 		
@@ -88,16 +81,14 @@ class Gama:
 		self.memory = memory
 
 	def getBaseDir(self) -> str:
-		"""
-		Return generated Gama base directory absolute path
+		"""Return generated Gama base directory absolute path
 		
 		:return: Gama base directory absolute path
 		"""
 		return self.baseDir
 	# setBaseDir => Automatic update from headlessScript
 	def getVersion(self) -> str:
-		"""
-		Return generated Gama version
+		"""Return generated Gama version
 		
 		:return: Gama version
 		"""
@@ -112,26 +103,29 @@ class GamaExploration:
 	#	BASE
 	#
 	
-	#
-	#  Variables
+	"""GamaExploration object
+
+	Object necessary for defining the exploration.
+
+	:param str experimentName: 		Name of the experiment you want to explore
+	:param str gamlFile: 			Path to the GAML file to explore
+	:param int replication: 		Number of replication of each parameter combinaison
+	:param int final: 				Maximal step to explore (force end the simulation if not already finished)
+
+	:param int experimentPerXML: 	(Optional) Split exploration plan in several XML files [Default = disable = -1]
+	:param str xmlOutputName: 		(Optional) Name of the generated XML file(s) [Default = "headless.xml"]
+	:param str until: 				(Optional) Define GAML experiment end condition
+	:param int seed: 				(Optional) Starting seed value [Default = 0]
+
+	:param list expSpace:			(Generated) Experiment parameters space
+	:param list parametersList:		(Generated) List of experiment's parameter
+	"""
 	expSpace : list
 	parametersList : list
 
 	def __init__(self, experimentName : str, gamlFile : str, replication : int, final : int, experimentPerXML : int = -1, xmlOutputName : str = "headless.xml", until : str = "", seed : int = 0):
-		"""
-		Constructor for GamaExploration object
+		"""Constructor for GamaExploration"""
 
-		:param experimentName: 		Name of the experiment you want to explore
-		:param gamlFile: 			Path to the GAML file to explore
-		:param replication: 		Number of replication of each parameter combinaison
-		:param final: 				Maximal step to explore (force end the simulation if not already finished)
-		:param experimentPerXML: 	(Optional) Split exploration plan in several XML files [Default = disable = -1]
-		:param xmlOutputName: 		(Optional) Name of the generated XML file(s) [Default = "headless.xml"]
-		:param until: 				(Optional) Define GAML experiment end condition
-		:param seed: 				(Optional) Starting seed value [Default = 0]
-		
-		:return: Workspace object
-		"""
 		self.experimentName = experimentName
 		self.gamlFile = os.path.abspath(os.path.expanduser(gamlFile))
 		self.replication = replication
@@ -146,50 +140,150 @@ class GamaExploration:
 	#	GET/SET
 	#
 	def getExperimentName(self) -> str:
+		"""Return setted GAML experiment name
+		
+		:return: GAML experiment name
+		"""
 		return self.experimentName
 	def setExperimentName(self, experimentName : str) -> None:
+		"""Set GAML experiment name for exploring
+
+		:param str experimentName: GAML experiment name
+		
+		:return: None
+		"""
 		self.experimentName = experimentName
 
 	def getGamlFile(self) -> str:
+		"""Return setted GAML file
+		
+		:return: GAML file
+		"""
 		return self.gamlFile
 	def setGamlFile(self, gamlFile : str) -> None:
+		"""Set GAML file
+
+		:param str gamlFile: GAML file
+		
+		:return: None
+		"""
 		self.gamlFile = gamlFile
 
 	def getXmlOutputName(self) -> str:
+		"""Return setted XML name file (used for gama headless)
+		
+		:return: XML name file
+		"""
 		return self.xmlOutputName
 	def setXmlOutputName(self, xmlOutputName : str) -> None:
+		"""Set XML name file (used for gama headless)
+
+		:param str xmlOutputName: XML name file
+		
+		:return: None
+		"""
 		self.xmlOutputName = xmlOutputName
 
 	def getReplication(self) -> int:
+		"""Return setted replication number
+		
+		:return: Replication number
+		"""
 		return self.replication
-	def setReplication(self) -> None:
+	def setReplication(self, replication : int) -> None:
+		"""Set replication number
+
+		:param int replication: Replication number
+		
+		:return: None
+		"""
 		self.replication = replication
 
 	def getExperimentPerXML(self) -> int:
+		"""Return setted number of simulation by xml
+
+		.. note::
+			This parameter is useful for launching several GAMA in parallel
+		
+		:return: Simulation per XML number
+		"""
 		return self.experimentPerXML
 	def setExperimentPerXML(self, experimentPerXML : int) -> None:
+		"""Set number of simulation by xml
+
+		.. note::
+			This parameter is useful for launching several GAMA in parallel
+
+		:param int experimentPerXML: Simulation per XML number
+		
+		:return: None
+		"""
 		self.experimentPerXML = experimentPerXML
 
 	def getFinal(self) -> int:
+		"""Return setted maximal step for simulations
+		
+		:return: Max final step
+		"""
 		return self.final
 	def setFinal(self, final: int) -> None:
+		"""Set maximal step for simulations
+
+		:param int final: Max final step
+		
+		:return: None
+		"""
 		self.final = final
 
 	def getUntil(self) -> str:
+		"""Return setted simulation stop condition
+		
+		:return: Stop condition
+		"""
 		return self.until
 	def setUntil(self, until : str) -> None:
+		"""Set simulation stop condition
+
+		:param str final: Stop condition
+		
+		:return: None
+		"""
 		self.until = until
 
 	def getSeed(self) -> int:
+		"""Return setted starting seed
+		
+		:return: Seed
+		"""
 		return self.seed
 	def setSeed(self, seed : int) -> None:
+		"""Set starting seed
+
+		:param str seed: Start seed value
+		
+		:return: None
+		"""
 		self.seed = seed
 
 	def getExperimentSpace(self) -> list:
+		"""Return generated experiment space parameters (full combinaison set)
+
+		.. warning::
+			This parameter is automatically setted by the ``self.calculatesExperimentSpace()`` function
+		
+		:return: list
+		"""
 		return self.expSpace
 	# setExperimentSpace => calcultesExpSpace
 	
 	def getParametersList(self) -> list:
+		"""Return generated experiment parameters list
+
+		.. warning::
+			This parameter is automatically setted by the ``self.calculatesExperimentSpace()`` function
+		
+		:return: list
+		"""
 		return self.parametersList
 	# setParametersList => calcultesExpSpace
 	
@@ -199,8 +293,7 @@ class GamaExploration:
 	#	Functions
 	#
 	def calculatesExperimentSpace(self) -> None:
-		"""
-		Scrap experiment's parameters and calculate all the possible combinaison
+		"""Scrap experiment's parameters and calculate all the possible combinaison
 
 		Results are store in object's variables [expSpace, parametersList]
 		
