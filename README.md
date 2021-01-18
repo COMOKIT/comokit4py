@@ -9,6 +9,12 @@
 
 comokit4py is a Python3 library for easily explore [COMOKIT](https://comokit.org) models, and process outputted data, on your laptop or an HPC in a few Python lines.
 
+## Requirements
+
+- comokit4py works with any version of COMOKIT
+- comokit4py requires GAMA => 1.8 and it's dependancies
+	- comokit4py requires JDK 1.8
+
 ## Installation
 
 Use the package manager [pip](https://pip.pypa.io/en/stable/) to install comokit4py.

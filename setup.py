@@ -18,8 +18,11 @@ setuptools.setup(
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
+        "Environment :: Console",
+        "Environment :: Plugins",
         "License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)",
-        "Operating System :: OS Independent",
+        "Operating System :: MacOS",
+        "Operating System :: POSIX :: Linux",
         "Intended Audience :: Science/Research",
         "Programming Language :: Other",
         "Topic :: Scientific/Engineering",

@@ -16,21 +16,25 @@
 import os, sys, pkgutil, shutil
 import subprocess, platform, multiprocessing
 from . import generateMultipleXML, generateSBatchFiles, comokit2png
-# Import all other py scripts
-__all__ = list(module for _, module, _ in pkgutil.iter_modules([os.path.dirname(__file__)]))
 
 class Gama:
 
-	#
-	#	BASE
-	#
-	
+	"""
+	Gama object
+
+	:param pathToHeadlessScript:	Gama headless script path
+	:param memory:					(Optinal) Memory of the JVM [Default : "4086m"]
+	:param baseDir:					(Generated) Base folder of the GAMA software
+	:param version:					(Generated) Version of the setted GAMA software
+	"""
+
 	#
 	# Variable
 	baseDir : str
 	version : str
 
-	def __init__(self, pathToHeadlessScript : str, memory : str = "4096m"):
+	def __init__(self, pathToHeadlessScript : str, memory : str = "4096m") -> Gama:
+		"""Gama constructor"""
 		self.memory = memory
 		self.headless = os.path.abspath(os.path.expanduser(pathToHeadlessScript))
 		self.__generateLocalPathVariables()
@@ -50,20 +54,53 @@ class Gama:
 	#	GET/SET
 	#
 	def getPathToHeadlessScript(self) -> str:
+		"""Return setted Gama headless script absolute path
+		
+		:return: Gama headless script absolute path
+		"""
 		return self.headless
 	def setPathToHeadlessScript(self, path : str) -> None:
+		"""
+		Set Gama headless script path, and turn it in absolute path
+
+		:param path: Gama headless script path
+		
+		:return: None
+		"""
 		self.headless = os.path.abspath(os.path.expanduser(path))
 		__generateLocalPathVariables()
 
 	def getMemory(self) -> str:
+		"""
+		Return setted Gama memory JVM
+		
+		:return: Gama memory JVM
+		"""
 		return self.memory
-	def setMemory(self, memory : int) -> None:
+	def setMemory(self, memory : str) -> None:
+		"""
+		Set Gama memory JVM
+
+		:param memory: Memory of the JVM (default when created : "4086m")
+		
+		:return: None
+		"""
 		self.memory = memory
 
 	def getBaseDir(self) -> str:
+		"""
+		Return generated Gama base directory absolute path
+		
+		:return: Gama base directory absolute path
+		"""
 		return self.baseDir
 	# setBaseDir => Automatic update from headlessScript
 	def getVersion(self) -> str:
+		"""
+		Return generated Gama version
+		
+		:return: Gama version
+		"""
 		return self.version
 	# setVersion => Automatic update from headlessScript
 	
@@ -453,7 +490,6 @@ class Workspace:
 		self.processedOutputVariable["quartile"] = quartile
 		self.processedOutputVariable["cores"] = cores
 		self.processedOutputVariable["stepTo"] = stepTo
-
 		self.processedOutputVariable["output_name"]  = output_name
 		self.processedOutputVariable["output_color"] = output_color
 
