@@ -22,10 +22,10 @@ class Gama:
 	"""
 	Gama object
 
-	:param pathToHeadlessScript:	Gama headless script path
-	:param memory:					(Optinal) Memory of the JVM [Default : "4086m"]
-	:param baseDir:					(Generated) Base folder of the GAMA software
-	:param version:					(Generated) Version of the setted GAMA software
+	:param str pathToHeadlessScript:	Gama headless script path
+	:param str memory:					(Optinal) Memory of the JVM [Default : "4086m"]
+	:param str baseDir:					(Generated) Base folder of the GAMA software
+	:param str version:					(Generated) Version of the setted GAMA software
 	"""
 
 	#
@@ -33,7 +33,7 @@ class Gama:
 	baseDir : str
 	version : str
 
-	def __init__(self, pathToHeadlessScript : str, memory : str = "4096m") -> Gama:
+	def __init__(self, pathToHeadlessScript : str, memory : str = "4096m"):
 		"""Gama constructor"""
 		self.memory = memory
 		self.headless = os.path.abspath(os.path.expanduser(pathToHeadlessScript))
@@ -63,7 +63,7 @@ class Gama:
 		"""
 		Set Gama headless script path, and turn it in absolute path
 
-		:param path: Gama headless script path
+		:param str path: Gama headless script path
 		
 		:return: None
 		"""
@@ -81,7 +81,7 @@ class Gama:
 		"""
 		Set Gama memory JVM
 
-		:param memory: Memory of the JVM (default when created : "4086m")
+		:param str memory: Memory of the JVM (default when created : "4086m")
 		
 		:return: None
 		"""
@@ -469,11 +469,7 @@ class Workspace:
 		:param output_color:		(Optional) Colors of outputed graphs [Default ["g", "b", "olive", "lightgreen", "y", "orange", "r", "m"]]
 
 		.. WARNING::
-
             Date parameter should follow this form : `[YYYY, MM, DD]` (list of int)
-
-		.. WARNING::
-
             /!\\ Changing value of `output_name` and `output_color` may break following `generateCsv()` and `generatePng()` functions /!\\
 
 		:return: None
