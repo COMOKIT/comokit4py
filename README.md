@@ -1,6 +1,6 @@
 ![PyPI - Package Version](https://img.shields.io/pypi/v/comokit4py)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/comokit4py)
-![PyPI - Downloads](https://img.shields.io/pypi/dd/comokit4py)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/comokit4py)
 
 ![GitHub](https://img.shields.io/github/license/COMOKIT/comokit4py)
 ![Maintenance](https://img.shields.io/maintenance/yes/2021)
