@@ -233,7 +233,7 @@ def initPngGraphs(output : list, col_name : list, title : str, displayStep : int
     return output_df, fig, ax, index
 # !def initPngGraphs
 
-def changeIndexToDate(index: int, ax : np.ndarray, fig : plt.Figure, startDate : list[3], len_output_df : int, stepTo : int) -> list :
+def changeIndexToDate(index: int, ax : np.ndarray, fig : plt.Figure, startDate : list, len_output_df : int, stepTo : int) -> list :
     # Change un-named days to real date
     date1 = datetime.datetime(int(startDate[0]), int(startDate[1]), int(startDate[2])) 
     index = drange(date1, 
