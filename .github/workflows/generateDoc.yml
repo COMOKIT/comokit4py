@@ -2,12 +2,14 @@
 # generate HTML
 # and deploy it on a branch linked to Github Pages
 
-name: "Build and deploy in-file documentation on Github pages"
+name: "CI/CD Doc-string"
 
 on:
   push:
     branches:
       - main
+    paths:
+      - 'comokit4py/**'
   workflow_dispatch:
 
 jobs:
