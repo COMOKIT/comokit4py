@@ -14,7 +14,7 @@ gama = comokit4py.Gama(gamaPathHeadless)
 #	Setup GAMA Exploration
 #	cf. test-gamaExp.py
 #
-explo = comokit4py.GamaExploration(experimentName = "Headless", gamlFile = "/home/roiarthurb/Documents/COMOKIT/Model/COMOKIT/Experiments/Physical Interventions/Significance of Wearing Masks.gaml", replication = 2, final = 5)
+explo = comokit4py.GamaExploration(experimentName = "Headless", gamlFile = "~/Documents/COMOKIT/Model/COMOKIT/Experiments/Physical Interventions/Significance of Wearing Masks.gaml", replication = 2, final = 5)
 explo.calculatesExperimentSpace()
 
 #
@@ -22,10 +22,12 @@ explo.calculatesExperimentSpace()
 #
 ws = comokit4py.Workspace(gama, explo, "./out", True)
 
-print("Verify all :", ws.verifyAll())
+print("Verify all :", ws.verifyAll(slurm = True))
 
 ws.generateNeededForExploration()
-#ws.runGamaHeadless(log = False, cores = 4)
+ws.setEdfBool(True)
+ws.prepareSBatch(jobTimeout = 7, core = 36, nodes = 1, submission = 1, maxSubmission = 6)
+ws.runSlurm(log = False, cores = 4)
 
 print("Exploration done")
 
