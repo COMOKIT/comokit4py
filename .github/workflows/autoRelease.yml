@@ -8,7 +8,7 @@ on:
 
 jobs:
   linter:
-    if: github.actor != 'GitHub Actions' 
+    if: github.actor != "${{ secrets.BOT_GH_NAME }}" 
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout"
@@ -59,7 +59,7 @@ jobs:
 
       - name: "Install Python"
         run: |
-          pip3 install setuptools twine
+          pip3 install setuptools twine wheel
           pip3 install -r base/pre-processing/requirements.txt
           pip3 install -r base/post-processing/requirements.txt
 
@@ -109,7 +109,7 @@ jobs:
 
       - name: "Install Python"
         run: |
-          pip3 install setuptools twine
+          pip3 install setuptools twine wheel
           pip3 install -r base/pre-processing/requirements.txt
           pip3 install -r base/post-processing/requirements.txt
 
