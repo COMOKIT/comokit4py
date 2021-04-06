@@ -8,7 +8,7 @@ on:
 
 jobs:
   linter:
-    if: github.actor != "${{ secrets.BOT_GH_NAME }}" 
+    if: github.actor != "gama-bot" 
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout"
