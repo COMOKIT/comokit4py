@@ -8,7 +8,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="comokit4py",  # Replace with your own username
-    version="0.1.1",    # Format : https://www.python.org/dev/peps/pep-0440/
+    version="0.1.2",    # Format : https://www.python.org/dev/peps/pep-0440/
     author="COMOKIT",
     author_email="contact@comokit.org",
     description="Python3 library to simplify the exploration of COMOKIT",
