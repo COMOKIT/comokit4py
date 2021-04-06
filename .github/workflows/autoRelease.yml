@@ -31,16 +31,18 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: "Update version alpha && push to GitHub"
+      - name: "Git config"
         run: |
           git config --global user.email "actions@github.com"
           git config --global user.name "GitHub Actions"
 
+      - name: "Update version alpha && push to GitHub"
+        run: |
           # Update version
           cat setup.py | grep version | cut -d '"' -f 2 > version.txt
           VERSION=$(perl -pe 's/^((\d+\.)*)(\d+)(.*)$/$1.($3+1).$4/e' < version.txt) && rm version.txt
           sed -Ei "s/version=\"([0-9]\.?)+\"/version=\"$VERSION\"/g" setup.py
-
+          echo $VERSION
           # Push with tag
           git add setup.py
           git commit --message="[BOT] Update alpha version number to v$VERSION"
