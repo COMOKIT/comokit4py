@@ -108,7 +108,7 @@ def genLaunchPack(gama : str, output : str, outputFolder : str, xmlPath : str, n
 	sbatchGamaScript += gama + " -hpc 1 " + xmlPath + "${id_mask}.xml " + outputFolder+"${id_mask}"
 
 	if delay != None:
-		sbatchGamaScript += "\nsleep "+delay
+		sbatchGamaScript += "\nsleep "+ str(delay)
 
 	try:
 		file = open(output + "/launch_pack_8.sh","w")
