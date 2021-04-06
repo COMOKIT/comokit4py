@@ -432,8 +432,8 @@ class Workspace:
 
 		:return: None
 		"""
-		if self.explorationPlan.expSpace == None:
-			self.explorationPlan.ExperimentSpace()
+		if not hasattr(self.explorationPlan, '_expSpace'):
+			self.explorationPlan.calculatesExperimentSpace()
 
 		if not os.path.exists( self.xmlDirectory ):
 			os.mkdir( self.xmlDirectory )
@@ -691,5 +691,5 @@ class Workspace:
 			numberCol = 3
 		)
 	#! generatePng
-	
+
 #! Workspace
