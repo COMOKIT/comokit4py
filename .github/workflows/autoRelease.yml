@@ -110,7 +110,7 @@ jobs:
         run: python3 setup.py sdist bdist_wheel
 
       - name: "Upload to PyPi"
-        run: python3 -m twine upload --repository pypi --username ${{ secrets.PYPI_USERNAME }} --password ${{ secrets.PYPI_PASSWORD }} --non-interactive dist/*
+        run: python3 -m twine upload --repository pypi --username "${{ secrets.TESTPYPI_USERNAME }}" --password "${{ secrets.TESTPYPI_PASSWORD }}" --non-interactive --verbose dist/*
 
       - name: "Git config"
         run: |
