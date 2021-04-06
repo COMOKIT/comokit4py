@@ -8,7 +8,7 @@ on:
 
 jobs:
   linter:
-    if: github.actor != "gama-bot" 
+    if: github.actor != 'gama-bot' 
     runs-on: ubuntu-latest
     steps:
       - name: "Checkout"
@@ -67,7 +67,7 @@ jobs:
         run: python3 setup.py sdist bdist_wheel
 
       - name: "Upload to TestPyPi"
-        run: python3 -m twine upload --repository testpypi --username ${{ secrets.TESTPYPI_USERNAME }} --password ${{ secrets.TESTPYPI_PASSWORD }} --non-interactive dist/*
+        run: python3 -m twine upload --repository testpypi --username "${{ secrets.TESTPYPI_USERNAME }}" --password "${{ secrets.TESTPYPI_PASSWORD }}" --non-interactive --verbose dist/*
 
   build-stable:
     if: ${{ contains(github.event.head_commit.message, 'ci release stable') }} 
