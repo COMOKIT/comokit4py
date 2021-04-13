@@ -300,7 +300,7 @@ class GamaExploration:
 		
 		:return: None
 		"""
-		self._expSpace, self._parametersList = generateMultipleXML.generateExperimentUniverse(self.gamlFile)
+		self._expSpace, self._parametersList = generateMultipleXML.generateExperimentUniverse(self.gamlFile, self.experimentName)
 	#! calculatesExperimentSpace
 
 #! GamaExploration
