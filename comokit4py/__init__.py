@@ -30,8 +30,15 @@ class Gama:
 
 	def __init__(self, pathToHeadlessScript : str, memory : str = "4096m"):
 		"""Gama constructor"""
+
+		if pathToHeadlessScript is None:
+			gamaHome = os.getenv("GAMA_HOME")
+			ext = "bat" if os.name == "nt" else "sh"
+			self.headless = os.path.join(gamaHome, "headless", "headless.%s" % ext)
+		else:
+			self.headless = os.path.abspath(os.path.expanduser(pathToHeadlessScript))
+
 		self.memory = memory
-		self.headless = os.path.abspath(os.path.expanduser(pathToHeadlessScript))
 		self.__generateLocalPathVariables()
 	#! __init__
 	
