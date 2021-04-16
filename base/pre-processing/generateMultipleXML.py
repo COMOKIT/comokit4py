@@ -19,6 +19,7 @@ import numpy
 import itertools 
 import xml.etree.ElementTree as ET
 import argparse
+import re
 
 parametersList = []
 
@@ -110,19 +111,40 @@ def autoIndexSelector( argsFName : str ) -> int :
 	return len([f for f in os.listdir(path) 
 		if (tail[:-4] in f) and os.path.isfile(os.path.join(path, f))])
 
-def generateExperimentUniverse( gamlFilePath : str ) -> list:
+def generateExperimentUniverse( gamlFilePath : str , experimentName : str ) -> list:
 
 	# Turn them all in absolute path
 	gamlFilePath = os.path.abspath(gamlFilePath)
 
+	#   _ Gather all the line within the experiment
+	experimentLines = []
+	with open(gamlFilePath) as f:
+		# when { found -> new block
+		# when } found -> end block
+		# this variable tells which block we are in
+		# 1 is the experiment block
+		block_level = 0
+		for line in f.readlines():
+			if block_level == 0:
+				startExperiment = re.search("experiment (?:\")?" + re.escape(experimentName) + "(?:\")? ", line)
+				if startExperiment:
+					experimentLines.append(line)
+					block_level = 1
+			else:
+				experimentLines.append(line)
+				if "}" in line:
+					block_level += 1
+				if "{" in line:
+					block_level -= 1
+
+
 	# 1 _ Gather all parameters
 	# 
-	with open(gamlFilePath) as f:
-		for l in f.readlines():
-			if "parameter" in l: 
-				temp = extractParametersAttributes( l.strip()  )
-				if temp is not None:
-					parametersList.append( temp )
+	for l in experimentLines:
+		if "parameter" in l: 
+			temp = extractParametersAttributes( l.strip()  )
+			if temp is not None:
+				parametersList.append( temp )
 
 	# 2 _ Create list of possible values for every parameters
 	# 
@@ -281,7 +303,7 @@ if __name__ == '__main__':
 
 	# 1 _ Gather all parameters
 	# 
-	allParamValues, parametersList = generateExperimentUniverse(gamlFilePath)
+	allParamValues, parametersList = generateExperimentUniverse(gamlFilePath, expName)
 
 	# 1.1 _ Inform about whole parameters
 	# 
