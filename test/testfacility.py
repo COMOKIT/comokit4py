@@ -1,4 +1,5 @@
 from importlib import import_module
+from os import path
 import functools as f
 from functools import partial, reduce
 
@@ -11,6 +12,12 @@ success = f.partial(info, "Success: ")
 failed = f.partial(info, "Failed: ")
 
 __allTests = []
+
+def testheader(name):
+	def _(*args, **kwargs):
+		info("===== %s =====" % name)
+		return True
+	__allTests.append(_)
 
 def test(name):
 	def wrapper(testfunc):
@@ -28,6 +35,9 @@ def test(name):
 		__allTests.append(runtest)
 		return runtest
 	return wrapper
+
+def testdir():
+	return path.dirname(__file__)
 
 def runtests():
 	call = lambda x: x()
