@@ -126,7 +126,7 @@ def generateExperimentUniverse( gamlFilePath : str , experimentName : str ) -> l
 		block_level = 0
 		for line in f.readlines():
 			if block_level == 0:
-				startExperiment = re.search("experiment (?:\")?" + re.escape(experimentName) + "(?:\")?", line)
+				startExperiment = re.search("experiment (?:\")?" + re.escape(experimentName) + "(?:\")? ", line)
 				if startExperiment:
 					experimentLines.append(line)
 					block_level = 1
