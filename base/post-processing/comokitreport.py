@@ -2,7 +2,9 @@ import os
 import os.path as path
 import pandas as pd
 import numpy as np
-from comomkit4py.comokit2png import gatheringCSV
+import functools as fp
+
+fp.map = lambda f, x: list(map(f, x))
 
 # list of columns ordered by appearing order in csv
 __columns = [
@@ -48,4 +50,58 @@ def gatherData(batchDir: str, experimentName: str) -> list:
 			replicationData[replicationIndex] = data
 		else:
 			replicationData[replicationIndex] += data
-	return list(replicationData.values())
+
+	returns = list(replicationData.values())
+	for repData in returns:
+		repData.columns = __columns
+	return returns
+
+def deviationDf(df):
+	return df.mean()
+
+def renameDf(df, columns):
+	df.columns = columns
+	return df
+
+def proportion(df):
+	df.columns
+	return proportion
+
+def generateReport(gatheredData):
+	def byColumn(f, column, df):
+		# f: min or max
+		index = f(df[[column]])
+		return df.loc[index, :]
+	minByColumn = fp.partial(byColumn, lambda df: df.idxmin())
+	maxByColumn = fp.partial(byColumn, lambda df: df.idxmax())
+
+	minDf = lambda df: df.min()
+	maxDf = lambda df: df.max()
+	avgDf = lambda df: df.avg()
+	# aggregations
+	meanAgg = pd.DataFrame(map(lambda df: df.mean(), gatheredData))
+	minAgg = pd.DataFrame(map(lambda df: df.min(), gatheredData))
+	maxAgg = pd.DataFrame(map(lambda df: df.max(), gatheredData))
+	# declare list of statistics
+	meanCases = meanAgg.mean().round().astype(int)
+	minCases = minAgg.min().round().astype(int)
+	maxCases = maxAgg.max().round().astype(int)
+	def calculateProportion(d):
+		mean = d.mean()
+		return mean / mean.total
+	#proportion = pd.DataFrame(map(calculateProportion, meanAgg), meanAgg)
+	stats = {"mean": meanCases, "proportion": np.round(meanCases / meanCases.total * 100).astype(int)}
+	def aux(col):
+		stats["min " + col] = minByColumn(col, minAgg).min().round().astype(int)
+		stats["max " + col] = maxByColumn(col, maxAgg).max().round().astype(int)
+	list(map(aux, [
+		"hospitalisation",
+		"ICU",
+		"susceptible",
+		"recovered",
+		"dead"]))
+	result = pd.DataFrame(stats.values())
+	# rename the rows
+	result = result.transpose()
+	result.columns = list(stats.keys())
+	return result.transpose()
