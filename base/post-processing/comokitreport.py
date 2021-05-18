@@ -67,7 +67,26 @@ def proportion(df):
 	df.columns
 	return proportion
 
+def scaleDF(df):
+	"""
+	Scale dataframe `df` to 100k agents
+	"""
+	totalAgents = sum(df.loc[1, :][1:-1])
+	return (df / totalAgents * 100000).round().astype(int)
+
+def firstDay(df):
+	df = scaleDF(df)
+	firstNZ = lambda columnName: df[df[columnName] > 0].first_valid_index()
+	df = pd.DataFrame(map(firstNZ, __columns))
+	df.columns = ["First day of:"]
+	df = df.transpose()
+	df.columns = __columns
+	return df
+
 def generateReport(gatheredData):
+	# scale to 100k
+	gatherData = map(scaleDF, gatheredData)
+
 	def byColumn(f, column, df):
 		# f: min or max
 		index = f(df[[column]])
