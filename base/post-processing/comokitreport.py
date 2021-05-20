@@ -63,10 +63,6 @@ def renameDf(df, columns):
 	df.columns = columns
 	return df
 
-def proportion(df):
-	df.columns
-	return proportion
-
 def scaleDF(df):
 	"""
 	Scale dataframe `df` to 100k agents
@@ -74,53 +70,56 @@ def scaleDF(df):
 	totalAgents = sum(df.loc[1, :][1:-1])
 	return (df / totalAgents * 100000).round().astype(int)
 
-def firstDay(df):
-	df = scaleDF(df)
-	firstNZ = lambda columnName: df[df[columnName] > 0].first_valid_index()
-	df = pd.DataFrame(map(firstNZ, __columns))
-	df.columns = ["First day of:"]
-	df = df.transpose()
-	df.columns = __columns
-	return df
-
 def generateReport(gatheredData):
 	# scale to 100k
-	gatherData = map(scaleDF, gatheredData)
+	data = map(scaleDF, gatheredData)
 
-	def byColumn(f, column, df):
-		# f: min or max
-		index = f(df[[column]])
-		return df.loc[index, :]
-	minByColumn = fp.partial(byColumn, lambda df: df.idxmin())
-	maxByColumn = fp.partial(byColumn, lambda df: df.idxmax())
+	# sample size
+	n = len(gatheredData)
 
-	minDf = lambda df: df.min()
-	maxDf = lambda df: df.max()
-	avgDf = lambda df: df.avg()
-	# aggregations
-	meanAgg = pd.DataFrame(map(lambda df: df.mean(), gatheredData))
-	minAgg = pd.DataFrame(map(lambda df: df.min(), gatheredData))
-	maxAgg = pd.DataFrame(map(lambda df: df.max(), gatheredData))
-	# declare list of statistics
-	meanCases = meanAgg.mean().round().astype(int)
-	minCases = minAgg.min().round().astype(int)
-	maxCases = maxAgg.max().round().astype(int)
-	def calculateProportion(d):
-		mean = d.mean()
-		return mean / mean.total
-	#proportion = pd.DataFrame(map(calculateProportion, meanAgg), meanAgg)
-	stats = {"mean": meanCases, "proportion": np.round(meanCases / meanCases.total * 100).astype(int)}
-	def aux(col):
-		stats["min " + col] = minByColumn(col, minAgg).min().round().astype(int)
-		stats["max " + col] = maxByColumn(col, maxAgg).max().round().astype(int)
-	list(map(aux, [
-		"hospitalisation",
-		"ICU",
-		"susceptible",
-		"recovered",
-		"dead"]))
-	result = pd.DataFrame(stats.values())
-	# rename the rows
-	result = result.transpose()
-	result.columns = list(stats.keys())
-	return result.transpose()
+	# list of aggregations
+	aggregations = {
+			"Min": lambda df: df.min(),
+			"Max": lambda df: df.max(),
+			"First day": lambda df: pd.Series(map(
+				lambda c: df[df[c] > 0].first_valid_index() / 24
+				, __columns)).transpose(),
+			"Last day": lambda df: pd.Series(map(
+				lambda c: df[df[c] > 0].last_valid_index() / 24
+				, __columns)).transpose()
+			}
+
+	# perform aggregate, return dataframe of mean and std
+	def aggregate(k):
+		f = aggregations[k]
+		#sumData = f(gatheredData[0]).fillna(0)
+		#count = 1
+		## mean
+		#for df in gatheredData[1:-1]:
+		#	stat = f(df)
+		#	for c in __columns:
+		#		if stat[c] == np.nan:
+		#			stat[c] = sumData[c] / n
+		#	sumData = sumData + stat
+		#	count = count + 1
+
+		#mean = sumData / count
+		aggData = list(map(f, gatheredData))
+		mean = sum(aggData) / n
+		# std
+		# Python iterators are stateful -_-
+		std = map(lambda df: (df - mean).pow(2), aggData)
+		std = (sum(std) / n).pow(0.5)
+		std = pd.DataFrame(std)
+		std.columns = ["Std. " + k]
+		std = std.transpose()
+		std.columns = __columns
+
+		mean = pd.DataFrame(mean)
+		mean.columns = [k]
+		mean = mean.transpose()
+		mean.columns = __columns
+		return pd.concat([mean, std])
+
+	series = [pd.DataFrame(aggregate(k)) for k in aggregations]
+	return pd.concat(series).round().astype(int)
