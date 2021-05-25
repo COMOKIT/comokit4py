@@ -8,7 +8,7 @@ fp.map = lambda f, x: list(map(f, x))
 
 # list of columns ordered by appearing order in csv
 __columns = [
-		"total",
+		"total incident",
 		"hospitalisation",
 		"ICU",
 		"susceptible",
@@ -67,7 +67,7 @@ def scaleDF(df):
 	"""
 	Scale dataframe `df` to 100k agents
 	"""
-	totalAgents = sum(df.loc[1, :][1:-1])
+	totalAgents = max(df[['total incident']])
 	return (df / totalAgents * 100000).round().astype(int)
 
 def generateReport(gatheredData):
@@ -122,4 +122,6 @@ def generateReport(gatheredData):
 		return pd.concat([mean, std])
 
 	series = [pd.DataFrame(aggregate(k)) for k in aggregations]
-	return pd.concat(series).round().astype(int)
+	result = pd.concat(series).round().astype(int)
+	result.drop('total incident', axis=1, inplace=True)
+	return result
