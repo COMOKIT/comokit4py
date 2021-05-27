@@ -63,16 +63,26 @@ def renameDf(df, columns):
 	df.columns = columns
 	return df
 
-def scaleDF(df):
+@fp.singledispatch
+def scaleDF(*args, **kwargs):
+	raise(Exception("Method not defined"))
+
+@scaleDF.register(pd.DataFrame)
+def _(df):
 	"""
 	Scale dataframe `df` to 100k agents
 	"""
 	totalAgents = max(df[['total incident']])
 	return (df / totalAgents * 100000).round().astype(int)
 
-def generateReport(gatheredData):
+@scaleDF.register(list)
+def _(dfs):
+	assert(type(dfs[0]) != pd.DataFrame), "scaleDF input list must be of type DataFrame")
+	return list(map(scaleDF, dfs))
+
+def generateReport(gatheredData, scaled = True):
 	# scale to 100k
-	data = map(scaleDF, gatheredData)
+	data = scaleDF(gatheredData) if scaled else gatheredData
 
 	# sample size
 	n = len(gatheredData)
