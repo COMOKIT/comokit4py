@@ -23,20 +23,22 @@ def _(df):
 	"""
 	Scale dataframe `df` to 100k agents
 	"""
-	totalAgents = max(df[['total incident']])
-	return (df / totalAgents * 100000).round().astype(int)
+	totalAgents = max(df[common.COLUMNS[0]])
+	return (df.values / totalAgents * 100000).round().astype(int)
 
 @scaleDF.register(list)
 def _(dfs):
-	assert(type(dfs[0]) != pd.DataFrame), "scaleDF input list must be of type DataFrame")
-	return list(map(scaleDF, dfs))
+	assert(type(dfs[0]) != (pd.DataFrame), "scaleDF input list must be of type DataFrame")
+	return [scaleDF(df) for df in dfs]
 
 @fp.singledispatch
-def generateReport():
+def generateReport(*args, **kwargs):
 	raise(common.NotImplemented)
 
 @generateReport.register(list)
 def _(gatheredData, scaled = True):
+	assert(type(gatheredData[0]) != (pd.DataFrame), "scaleDF input list must be of type DataFrame")
+
 	# scale to 100k
 	data = scaleDF(gatheredData) if scaled else gatheredData
 
@@ -49,10 +51,10 @@ def _(gatheredData, scaled = True):
 			"Max": lambda df: df.max(),
 			"First day": lambda df: pd.Series(map(
 				lambda c: df[df[c] > 0].first_valid_index() / 24
-				, COLUMNS)).transpose(),
+				, common.COLUMNS)).transpose(),
 			"Last day": lambda df: pd.Series(map(
 				lambda c: df[df[c] > 0].last_valid_index() / 24
-				, COLUMNS)).transpose()
+				, common.COLUMNS)).transpose()
 			}
 
 	# perform aggregate, return dataframe of mean and std
@@ -67,12 +69,12 @@ def _(gatheredData, scaled = True):
 		std = pd.DataFrame(std)
 		std.columns = ["Std. " + k]
 		std = std.transpose()
-		std.columns = COLUMNS
+		std.columns = common.COLUMNS
 
 		mean = pd.DataFrame(mean)
 		mean.columns = [k]
 		mean = mean.transpose()
-		mean.columns = COLUMNS
+		mean.columns = common.COLUMNS
 		return pd.concat([mean, std])
 
 	series = [pd.DataFrame(aggregate(k)) for k in aggregations]
@@ -82,5 +84,5 @@ def _(gatheredData, scaled = True):
 
 @generateReport.register(str)
 def _(batchDir, experimentName, scaled = True):
-	data = gatheredData(batchDir, experimentName)
+	data = common.gatheredData(batchDir, experimentName)
 	generateReport(data, scaled)
