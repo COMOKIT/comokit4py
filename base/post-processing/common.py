@@ -42,3 +42,5 @@ def gatherData(batchDir: str, experimentName: str) -> list:
 	for repData in returns:
 		repData.columns = COLUMNS
 	return returns
+
+NotImplemented = Exception("Not implemented")

@@ -31,7 +31,12 @@ def _(dfs):
 	assert(type(dfs[0]) != pd.DataFrame), "scaleDF input list must be of type DataFrame")
 	return list(map(scaleDF, dfs))
 
-def generateReport(gatheredData, scaled = True):
+@fp.singledispatch
+def generateReport():
+	raise(common.NotImplemented)
+
+@generateReport.register(list)
+def _(gatheredData, scaled = True):
 	# scale to 100k
 	data = scaleDF(gatheredData) if scaled else gatheredData
 
@@ -74,3 +79,8 @@ def generateReport(gatheredData, scaled = True):
 	result = pd.concat(series).round().astype(int)
 	result.drop('total incident', axis=1, inplace=True)
 	return result
+
+@generateReport.register(str)
+def _(batchDir, experimentName, scaled = True):
+	data = gatheredData(batchDir, experimentName)
+	generateReport(data, scaled)
