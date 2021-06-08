@@ -77,7 +77,7 @@ def _(df):
 
 @scaleDF.register(list)
 def _(dfs):
-	assert(type(dfs[0]) != pd.DataFrame, "scaleDF input list must be of type DataFrame")
+	assert type(dfs[0]) == pd.DataFrame
 	return list(map(scaleDF, dfs))
 
 def generateReport(gatheredData, scaled = True):
