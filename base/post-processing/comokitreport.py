@@ -72,7 +72,7 @@ def _(df):
 	"""
 	Scale dataframe `df` to 100k agents
 	"""
-	totalAgents = max(df[['total incident']])
+	totalAgents = max(df['total incident'])
 	return (df / totalAgents * 100000).round().astype(int)
 
 @scaleDF.register(list)
