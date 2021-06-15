@@ -1,15 +1,19 @@
 import os
 import comokit4py.generateMultipleXML as gen
 import xmldiff
+from testfacility import test, testheader, testdir
 
-base = os.path.dirname(__file__)
+testheader("Regression test")
+
+base = testdir()
 replication = 1
 split = -1
 seed = 0
 final = 1
 until = ""
 
-def runtests():
+@test("XML Generation")
+def _():
 	originalXmlFile = os.path.join(base, "Original.xml")
 	gamlFile = os.path.join(base, "TestExperiment.gaml")
 	expName = "HeadlessComparison"
