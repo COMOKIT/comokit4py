@@ -1,0 +1,2 @@
+day_one_quarter,day_half,day_third_quarter,prop_infected,max_h_a_day,max_icu_a_day,round(nb_bed_days_h),round(nb_bed_days_icu),day_first_h,day_first_death
+55,64,78,0.89,37,14,767,367,33,61

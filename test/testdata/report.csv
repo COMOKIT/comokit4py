@@ -1,0 +1,9 @@
+,hospitalisation,ICU,susceptible,latent,asymptomatic,presymtomatic,symtomatic,recovered,dead
+Min,0,0,9082,0,0,0,0,0,0
+Std. Min,0,0,123,0,0,0,0,0,0
+Max,32,14,80830,12938,21032,6,44,71718,31
+Std. Max,4,3,0,154,230,2,6,122,5
+First day,34,41,0,0,4,37,32,12,51
+Std. First day,9,9,0,0,2,9,8,4,9
+Last day,134,125,214,196,214,108,133,214,214
+Std. Last day,17,18,17,15,18,17,16,17,17
