@@ -13,6 +13,8 @@
   
   <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
 
   
   
@@ -29,6 +31,7 @@
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
@@ -159,8 +162,8 @@
   <div class="section" id="gama">
 <h1>Gama<a class="headerlink" href="#gama" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
-<dt id="comokit4py.Gama">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">comokit4py.</span></code><code class="sig-name descname"><span class="pre">Gama</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pathToHeadlessScript</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'4096m'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#comokit4py.Gama" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="comokit4py.Gama">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">comokit4py.</span></span><span class="sig-name descname"><span class="pre">Gama</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pathToHeadlessScript</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'4096m'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#comokit4py.Gama" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Gama object</p>
 <dl class="field-list simple">
@@ -174,14 +177,14 @@
 </dd>
 </dl>
 <dl class="py method">
-<dt id="comokit4py.Gama.__init__">
-<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pathToHeadlessScript</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'4096m'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#comokit4py.Gama.__init__" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="comokit4py.Gama.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pathToHeadlessScript</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">memory</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">'4096m'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#comokit4py.Gama.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Gama constructor</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="comokit4py.Gama.getBaseDir">
-<code class="sig-name descname"><span class="pre">getBaseDir</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">str</span><a class="headerlink" href="#comokit4py.Gama.getBaseDir" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="comokit4py.Gama.getBaseDir">
+<span class="sig-name descname"><span class="pre">getBaseDir</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">str</span><a class="headerlink" href="#comokit4py.Gama.getBaseDir" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return generated Gama base directory absolute path</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -191,8 +194,8 @@
 </dd></dl>
 
 <dl class="py method">
-<dt id="comokit4py.Gama.getMemory">
-<code class="sig-name descname"><span class="pre">getMemory</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">str</span><a class="headerlink" href="#comokit4py.Gama.getMemory" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="comokit4py.Gama.getMemory">
+<span class="sig-name descname"><span class="pre">getMemory</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">str</span><a class="headerlink" href="#comokit4py.Gama.getMemory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return setted Gama memory JVM</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -202,8 +205,8 @@
 </dd></dl>
 
 <dl class="py method">
-<dt id="comokit4py.Gama.getPathToHeadlessScript">
-<code class="sig-name descname"><span class="pre">getPathToHeadlessScript</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">str</span><a class="headerlink" href="#comokit4py.Gama.getPathToHeadlessScript" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="comokit4py.Gama.getPathToHeadlessScript">
+<span class="sig-name descname"><span class="pre">getPathToHeadlessScript</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">str</span><a class="headerlink" href="#comokit4py.Gama.getPathToHeadlessScript" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return setted Gama headless script absolute path</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -213,8 +216,8 @@
 </dd></dl>
 
 <dl class="py method">
-<dt id="comokit4py.Gama.getVersion">
-<code class="sig-name descname"><span class="pre">getVersion</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">str</span><a class="headerlink" href="#comokit4py.Gama.getVersion" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="comokit4py.Gama.getVersion">
+<span class="sig-name descname"><span class="pre">getVersion</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; <span class="pre">str</span><a class="headerlink" href="#comokit4py.Gama.getVersion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return generated Gama version</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -224,8 +227,8 @@
 </dd></dl>
 
 <dl class="py method">
-<dt id="comokit4py.Gama.setMemory">
-<code class="sig-name descname"><span class="pre">setMemory</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">memory</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="headerlink" href="#comokit4py.Gama.setMemory" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="comokit4py.Gama.setMemory">
+<span class="sig-name descname"><span class="pre">setMemory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">memory</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="headerlink" href="#comokit4py.Gama.setMemory" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set Gama memory JVM</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -238,8 +241,8 @@
 </dd></dl>
 
 <dl class="py method">
-<dt id="comokit4py.Gama.setPathToHeadlessScript">
-<code class="sig-name descname"><span class="pre">setPathToHeadlessScript</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="headerlink" href="#comokit4py.Gama.setPathToHeadlessScript" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="comokit4py.Gama.setPathToHeadlessScript">
+<span class="sig-name descname"><span class="pre">setPathToHeadlessScript</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">None</span><a class="headerlink" href="#comokit4py.Gama.setPathToHeadlessScript" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set Gama headless script path, and turn it in absolute path</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
