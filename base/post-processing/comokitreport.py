@@ -72,12 +72,12 @@ def _(df):
 	"""
 	Scale dataframe `df` to 100k agents
 	"""
-	totalAgents = max(df[['total incident']])
+	totalAgents = max(df['total incident'])
 	return (df / totalAgents * 100000).round().astype(int)
 
 @scaleDF.register(list)
 def _(dfs):
-	assert(type(dfs[0]) != pd.DataFrame), "scaleDF input list must be of type DataFrame")
+	assert type(dfs[0]) == pd.DataFrame
 	return list(map(scaleDF, dfs))
 
 def generateReport(gatheredData, scaled = True):
