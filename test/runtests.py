@@ -5,6 +5,7 @@ from importlib import import_module
 import regression
 import testGama
 import testGamaExperiment
+import PostProcess
 
 result = runtests()
 if result:
